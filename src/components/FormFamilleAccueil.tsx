@@ -56,6 +56,31 @@ export default function FormFamilleAccueil() {
         { ...data, types_acceptes: data.types_acceptes.join(', ') },
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
       );
+      // Save candidature to localStorage for admin tracking
+      const candidature = {
+        id: `fa-${Date.now()}`,
+        type: 'fa',
+        status: 'nouvelle',
+        nom: `${data.prenom} ${data.nom}`,
+        email: data.email,
+        telephone: data.telephone,
+        data: {
+          adresse: `${data.adresse}, ${data.code_postal} ${data.ville}`,
+          logement: `${data.type_logement}, jardin: ${data.jardin}`,
+          situation: data.statut_familial,
+          enfants: data.enfants === 'Oui' ? `Oui (${data.enfants_ages})` : 'Non',
+          duree: data.duree_disponible,
+          types_acceptes: data.types_acceptes.join(', '),
+          urgences: data.urgences,
+          experience: data.experience,
+        },
+        notes: '',
+        createdAt: new Date().toISOString(),
+      };
+      const existing = JSON.parse(localStorage.getItem('candidatures') || '[]');
+      localStorage.setItem('candidatures', JSON.stringify([candidature, ...existing]));
+      const unread = parseInt(localStorage.getItem('candidatures_unread') || '0');
+      localStorage.setItem('candidatures_unread', String(unread + 1));
       setSent(true);
     } catch {
       setError("Une erreur est survenue lors de l'envoi. Veuillez réessayer.");

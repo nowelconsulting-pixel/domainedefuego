@@ -1,25 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import Logo from '../../components/Logo';
+import { authenticate, initDefaultUsers, setSession, getSession } from '../../utils/auth';
 
 export default function AdminLogin() {
+  const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
-  const [show, setShow] = useState(false);
-  const [error, setError] = useState(false);
+  const [show, setShow]         = useState(false);
+  const [error, setError]       = useState('');
+  const [loading, setLoading]   = useState(false);
   const navigate = useNavigate();
 
-  const submit = (e: React.FormEvent) => {
+  useEffect(() => {
+    initDefaultUsers();
+    if (getSession()) navigate('/admin/dashboard', { replace: true });
+  }, [navigate]);
+
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const adminPwd: string | undefined = import.meta.env.VITE_ADMIN_PASSWORD;
-    const expected = adminPwd && adminPwd !== 'undefined' ? adminPwd : 'admin';
-    if (password === expected) {
-      sessionStorage.setItem('admin_auth', '1');
-      navigate('/admin/animaux');
-    } else {
-      setError(true);
+    setLoading(true);
+    setError('');
+    const user = await authenticate(email, password);
+    setLoading(false);
+    if (!user) {
+      setError('Email ou mot de passe incorrect.');
       setPassword('');
+      return;
     }
+    setSession({ userId: user.id, name: user.name, email: user.email, role: user.role });
+    navigate('/admin/dashboard', { replace: true });
   };
 
   return (
@@ -34,6 +44,22 @@ export default function AdminLogin() {
         <form onSubmit={submit} className="space-y-5">
           <div>
             <label className="form-label flex items-center gap-2">
+              <Mail size={14} className="text-gray-400" /> Adresse email
+            </label>
+            <input
+              type="email"
+              className="form-input"
+              value={email}
+              onChange={e => { setEmail(e.target.value); setError(''); }}
+              placeholder="admin@domainedefuego.fr"
+              autoComplete="username"
+              required
+              autoFocus
+            />
+          </div>
+
+          <div>
+            <label className="form-label flex items-center gap-2">
               <Lock size={14} className="text-gray-400" /> Mot de passe
             </label>
             <div className="relative">
@@ -41,9 +67,10 @@ export default function AdminLogin() {
                 type={show ? 'text' : 'password'}
                 className="form-input pr-12"
                 value={password}
-                onChange={e => { setPassword(e.target.value); setError(false); }}
+                onChange={e => { setPassword(e.target.value); setError(''); }}
                 placeholder="••••••••"
-                autoFocus
+                autoComplete="current-password"
+                required
               />
               <button
                 type="button"
@@ -57,18 +84,25 @@ export default function AdminLogin() {
 
           {error && (
             <div className="flex items-center gap-2 p-3 bg-red-50 rounded-lg text-red-700 text-sm">
-              <AlertCircle size={16} />
-              Mot de passe incorrect
+              <AlertCircle size={16} className="flex-shrink-0" />
+              {error}
             </div>
           )}
 
-          <button type="submit" className="btn-primary w-full justify-center">
-            Se connecter
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-primary w-full justify-center disabled:opacity-60"
+          >
+            {loading ? 'Connexion...' : 'Se connecter'}
           </button>
         </form>
 
         <p className="text-center text-xs text-gray-400 mt-6">
-          Mot de passe par défaut : <code className="bg-gray-100 px-1 rounded">admin</code> — ou définissez <code className="bg-gray-100 px-1 rounded">VITE_ADMIN_PASSWORD</code>
+          Compte par défaut :{' '}
+          <code className="bg-gray-100 px-1 rounded">admin@domainedefuego.fr</code>
+          {' / '}
+          <code className="bg-gray-100 px-1 rounded">Admin1234!</code>
         </p>
       </div>
     </div>

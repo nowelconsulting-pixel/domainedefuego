@@ -1,19 +1,36 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import Logo from './Logo';
+import type { AdminPage } from '../types/admin';
+import { SYSTEM_PAGES } from '../types/admin';
 
-const navLinks = [
-  { to: '/', label: 'Accueil' },
-  { to: '/animaux', label: 'Nos animaux' },
-  { to: '/adopter', label: 'Adopter' },
-  { to: '/famille-accueil', label: "Famille d'accueil" },
-  { to: '/faire-un-don', label: 'Faire un don' },
-  { to: '/contact', label: 'Contact' },
-];
+interface NavItem { to: string; label: string; order: number; }
+
+function buildNavItems(): NavItem[] {
+  const systemItems: NavItem[] = SYSTEM_PAGES
+    .filter(p => p.status === 'published')
+    .map(p => ({ to: p.slug ? `/${p.slug}` : '/', label: p.title, order: p.menu_order }));
+
+  const custom: NavItem[] = [];
+  try {
+    const stored = localStorage.getItem('admin_pages');
+    if (stored) {
+      (JSON.parse(stored) as AdminPage[])
+        .filter(p => p.status === 'published' && !p.system && p.slug)
+        .forEach(p => custom.push({ to: `/${p.slug}`, label: p.title, order: p.menu_order }));
+    }
+  } catch { /* ignore */ }
+
+  return [...systemItems, ...custom].sort((a, b) => a.order - b.order);
+}
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen]         = useState(false);
+  const [navItems, setNavItems] = useState<NavItem[]>(buildNavItems);
+
+  // Refresh when navigating (in case admin pages changed)
+  useEffect(() => { setNavItems(buildNavItems()); }, []);
 
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-50">
@@ -23,13 +40,13 @@ export default function Navbar() {
             <Logo size={36} />
           </Link>
 
-          {/* Desktop menu */}
+          {/* Desktop */}
           <div className="hidden lg:flex items-center gap-1">
-            {navLinks.map(link => (
+            {navItems.map(item => (
               <NavLink
-                key={link.to}
-                to={link.to}
-                end={link.to === '/'}
+                key={item.to}
+                to={item.to}
+                end={item.to === '/'}
                 className={({ isActive }) =>
                   `px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ${
                     isActive
@@ -38,7 +55,7 @@ export default function Navbar() {
                   }`
                 }
               >
-                {link.label}
+                {item.label}
               </NavLink>
             ))}
           </div>
@@ -58,21 +75,19 @@ export default function Navbar() {
       {open && (
         <div className="lg:hidden border-t border-gray-100 bg-white">
           <div className="px-4 py-3 space-y-1">
-            {navLinks.map(link => (
+            {navItems.map(item => (
               <NavLink
-                key={link.to}
-                to={link.to}
-                end={link.to === '/'}
+                key={item.to}
+                to={item.to}
+                end={item.to === '/'}
                 onClick={() => setOpen(false)}
                 className={({ isActive }) =>
                   `block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                    isActive
-                      ? 'text-coral-500 bg-coral-50'
-                      : 'text-gray-700 hover:bg-gray-50'
+                    isActive ? 'text-coral-500 bg-coral-50' : 'text-gray-700 hover:bg-gray-50'
                   }`
                 }
               >
-                {link.label}
+                {item.label}
               </NavLink>
             ))}
           </div>

@@ -66,6 +66,33 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
         { ...data, charte_acceptee: data.charte_acceptee ? 'Oui' : 'Non' },
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
       );
+      // Save candidature to localStorage for admin tracking
+      const candidature = {
+        id: `adoption-${Date.now()}`,
+        type: 'adoption',
+        status: 'nouvelle',
+        animal: data.animal_souhaite || undefined,
+        nom: `${data.prenom} ${data.nom}`,
+        email: data.email,
+        telephone: data.telephone,
+        data: {
+          adresse: `${data.adresse}, ${data.code_postal} ${data.ville}`,
+          logement: `${data.type_logement}, jardin: ${data.jardin}`,
+          statut: data.statut_occupant,
+          situation: data.statut_familial,
+          enfants: data.enfants === 'Oui' ? `Oui (${data.enfants_ages})` : 'Non',
+          autres_animaux: data.autres_animaux === 'Oui' ? data.autres_animaux_detail : 'Non',
+          heures_seul: data.heures_seul,
+          vacances: data.vacances,
+          pourquoi_adopter: data.pourquoi_adopter,
+        },
+        notes: '',
+        createdAt: new Date().toISOString(),
+      };
+      const existing = JSON.parse(localStorage.getItem('candidatures') || '[]');
+      localStorage.setItem('candidatures', JSON.stringify([candidature, ...existing]));
+      const unread = parseInt(localStorage.getItem('candidatures_unread') || '0');
+      localStorage.setItem('candidatures_unread', String(unread + 1));
       setSent(true);
     } catch {
       setError("Une erreur est survenue lors de l'envoi. Veuillez réessayer.");

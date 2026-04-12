@@ -8,6 +8,7 @@ Site web complet pour l'association Domaine de Fuego, développé avec React + V
 - **Vite** (bundler)
 - **TailwindCSS v3** (styles)
 - **React Router v7** (navigation SPA)
+- **TipTap** (éditeur WYSIWYG pour le gestionnaire de pages)
 - **EmailJS** (envoi de formulaires sans backend)
 - **Lucide React** (icônes)
 - Données statiques en JSON (`/public/data/`)
@@ -163,16 +164,88 @@ domainedefuego/
 
 Accédez au back-office sur `/admin`.
 
-Le mot de passe est défini par `VITE_ADMIN_PASSWORD` dans `.env`.
-En développement sans `.env`, le mot de passe par défaut est `admin`.
+### Première connexion
 
-### Fonctionnalités
-- **Animaux** : Ajouter, modifier, archiver les animaux
-- **Pages** : Éditer les textes de la page Présentation et Faire un don
-- **Configuration** : Email, liens réseaux sociaux, HelloAsso, chiffres clés
-- **Export/Import** : Sauvegarde complète au format JSON
+> **Compte Super Admin par défaut :**
+> - Email : `admin@domainedefuego.fr`
+> - Mot de passe : `Admin1234!`
+>
+> **Changez ce mot de passe immédiatement** dans Administration → Utilisateurs.
 
-> **Important** : Les données modifiées sont stockées dans le localStorage du navigateur. Utilisez la fonction Export/Import pour sauvegarder et transférer les données.
+### Rôles et permissions
+
+| Rôle | Animaux | Pages | Config | Utilisateurs |
+|------|---------|-------|--------|--------------|
+| Super Admin | ✅ | ✅ | ✅ | ✅ |
+| Administrateur | ✅ | ✅ | ✅ | ❌ |
+| Éditeur | ✅ | ✅ | ❌ | ❌ |
+| Bénévole | ✅ | ❌ | ❌ | ❌ |
+
+### Fonctionnalités back-office
+
+#### Tableau de bord (`/admin/dashboard`)
+- Statistiques rapides (animaux disponibles, réservés, adoptés)
+- Dernières candidatures reçues
+- Animaux récemment ajoutés
+- Raccourcis vers les actions fréquentes
+
+#### Gestion des animaux (`/admin/animaux`)
+- Tableau avec recherche par nom/race et filtres par statut
+- Tri par date d'ajout, nom ou espèce
+- **Upload de photos** directement depuis l'appareil (jusqu'à 10 photos, 2Mo max chacune — compression automatique)
+- **Réorganisation** des photos (flèches), sélection de la photo principale
+- **Vidéo** : lien YouTube (preview thumbnail), Instagram, ou upload MP4 direct
+- Duplication d'une fiche (bouton Copier)
+- Archivage = passage au statut "Adopté"
+
+#### Gestionnaire de pages (`/admin/pages`)
+- Liste de toutes les pages : système (non supprimables) + personnalisées
+- Créer / modifier / supprimer / publier / dépublier des pages personnalisées
+- Les pages publiées apparaissent **automatiquement dans le menu** du site
+- Ordre du menu modifiable (numéro d'ordre)
+
+#### Éditeur de page (`/admin/pages/edit/:id`)
+- Champ titre (génère le slug automatiquement)
+- Éditeur **WYSIWYG** (TipTap) : gras, italique, titres, listes, liens, citations
+- Description SEO (meta description)
+- Blocs de contenu : texte riche, image+légende, carte info, CTA, galerie, formulaire contact
+- Statut : Brouillon / Publié
+
+#### Candidatures (`/admin/candidatures`)
+- Toutes les candidatures adoption + famille d'accueil (enregistrées automatiquement lors des soumissions)
+- Filtres par type et statut
+- Changement de statut : Nouvelle → En cours → Acceptée / Refusée
+- Notes internes par candidature
+- Export CSV
+
+#### Utilisateurs (`/admin/users`) — Super Admin uniquement
+- Ajouter / modifier des comptes (nom, email, mot de passe, rôle)
+- Désactiver un compte sans le supprimer
+- Le Super Admin ne peut pas être désactivé
+
+#### Configuration (`/admin/config`)
+- Email, téléphone, adresse
+- Liens Facebook, Instagram, HelloAsso
+- Chiffres clés page d'accueil
+- **Export total** : télécharge un JSON avec toutes les données (animaux + config + pages)
+- **Import total** : restaure depuis un JSON exporté
+
+### Comment ajouter une page dans le menu
+
+1. Allez dans **Pages** → **Nouvelle page**
+2. Saisissez un titre — le slug s'auto-remplit
+3. Rédigez le contenu (éditeur WYSIWYG + blocs)
+4. Ajustez l'**ordre du menu** (entier, trié croissant)
+5. Cliquez **Publier** — la page apparaît dans le menu et sur `/votre-slug`
+
+### Gestion des médias
+
+- Les photos sont **compressées automatiquement** (max 1400px, qualité 85%)
+- Stockées en **base64 dans le localStorage**
+- Indicateur de stockage utilisé affiché dans l'éditeur
+- Limite pratique : ~10Mo de photos par navigateur
+
+> **Important** : Les données sont dans le localStorage. Exportez régulièrement depuis Administration → Configuration → "Tout exporter". Pour transférer vers un autre navigateur/poste, importez ce fichier.
 
 ---
 

@@ -11,8 +11,9 @@ export default function AdminLogin() {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    const adminPwd = import.meta.env.VITE_ADMIN_PASSWORD;
-    if (password === adminPwd || (!adminPwd && password === 'admin')) {
+    const adminPwd: string | undefined = import.meta.env.VITE_ADMIN_PASSWORD;
+    const expected = adminPwd && adminPwd !== 'undefined' ? adminPwd : 'admin';
+    if (password === expected) {
       sessionStorage.setItem('admin_auth', '1');
       navigate('/admin/animaux');
     } else {
@@ -67,7 +68,7 @@ export default function AdminLogin() {
         </form>
 
         <p className="text-center text-xs text-gray-400 mt-6">
-          Mot de passe défini dans la variable d'environnement <code className="bg-gray-100 px-1 rounded">VITE_ADMIN_PASSWORD</code>
+          Mot de passe par défaut : <code className="bg-gray-100 px-1 rounded">admin</code> — ou définissez <code className="bg-gray-100 px-1 rounded">VITE_ADMIN_PASSWORD</code>
         </p>
       </div>
     </div>

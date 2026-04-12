@@ -1,0 +1,64 @@
+{
+  "presentation": {
+    "titre": "Notre mission",
+    "texte": "Domaine de Fuego est une association loi 1901 fondée en 2016 avec une conviction profonde : chaque animal mérite une vie digne, aimante et sécurisée.\n\nNous recueillons des chiens, chats et autres animaux abandonnés, maltraités ou en danger, et nous les confions à des familles d'accueil bienveillantes le temps de trouver la famille adoptante idéale.\n\nNous croyons que l'adoption est un acte de vie, un engagement sur la durée. C'est pourquoi nous accompagnons chaque adoptant avant, pendant et après l'adoption pour garantir le bonheur de l'animal et de sa nouvelle famille.\n\nBasés principalement en Ardèche et dans le Vaucluse, nous intervenons sur tout le territoire français grâce à notre réseau de bénévoles passionnés.",
+    "valeurs": [
+      {
+        "titre": "Bienveillance",
+        "description": "Chaque animal est traité avec respect, douceur et professionnalisme. Nous refusons toute méthode coercitive."
+      },
+      {
+        "titre": "Transparence",
+        "description": "Nous sommes honnêtes sur le profil de chaque animal, ses besoins et son histoire pour garantir des adoptions durables."
+      },
+      {
+        "titre": "Engagement",
+        "description": "Nous accompagnons les adoptants sur le long terme. Une adoption n'est jamais une transaction — c'est un engagement mutuel."
+      }
+    ],
+    "equipe": [
+      {
+        "nom": "Sophie Martin",
+        "role": "Fondatrice & Présidente",
+        "photo": ""
+      },
+      {
+        "nom": "Thomas Durand",
+        "role": "Responsable des adoptions",
+        "photo": ""
+      },
+      {
+        "nom": "Camille Bernard",
+        "role": "Coordinatrice familles d'accueil",
+        "photo": ""
+      }
+    ],
+    "partenaires": [
+      "Mairie d'Aubenas",
+      "Clinique vétérinaire du Plateau",
+      "Fondation 30 Millions d'Amis",
+      "SPA de l'Ardèche"
+    ]
+  },
+  "faire_un_don": {
+    "titre": "Soutenez notre action",
+    "texte": "Domaine de Fuego fonctionne grâce aux dons de particuliers comme vous. Aucune subvention publique ne vient financer nos actions — c'est votre générosité qui permet à des centaines d'animaux de trouver une famille chaque année.\n\nVotre don, qu'il soit ponctuel ou mensuel, a un impact direct et concret sur la vie des animaux que nous prenons en charge.",
+    "utilisations": [
+      {
+        "titre": "Soins vétérinaires",
+        "description": "Vaccinations, stérilisations, traitements médicaux d'urgence pour les animaux en détresse.",
+        "icone": "Heart"
+      },
+      {
+        "titre": "Hébergement & nourriture",
+        "description": "Prise en charge complète des animaux pendant leur séjour en famille d'accueil.",
+        "icone": "Home"
+      },
+      {
+        "titre": "Sauvetages & transport",
+        "description": "Interventions d'urgence, rapatriements et transports vers les familles d'accueil partout en France.",
+        "icone": "Truck"
+      }
+    ]
+  }
+}

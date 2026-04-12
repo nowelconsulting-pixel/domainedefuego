@@ -1,0 +1,102 @@
+[
+  {
+    "id": "rio-01",
+    "nom": "Rio",
+    "espece": "Chien",
+    "race": "Jack Russell Terrier",
+    "naissance": 2020,
+    "sexe": "Mâle",
+    "departement": "07-Ardèche",
+    "statut": "Disponible",
+    "description": "Rio est un Jack Russell plein de vie et d'énergie ! Ce petit bonhomme adore jouer, courir et explorer. Il est câlin avec les personnes qu'il connaît et adore les balades en forêt. Rio cherche une famille active qui pourra lui offrir de l'exercice quotidien et beaucoup d'amour. Il est bien socialisé et s'entend avec les enfants calmes.",
+    "entente_chiens": true,
+    "entente_chats": false,
+    "entente_enfants": true,
+    "vaccine": true,
+    "sterilise": false,
+    "identifie": true,
+    "participation_frais": 250,
+    "association_nom": "Domaine de Fuego",
+    "association_ville": "Aubenas",
+    "photos": [
+      "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80",
+      "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?w=600&q=80"
+    ],
+    "video_youtube": ""
+  },
+  {
+    "id": "lola-02",
+    "nom": "Lola",
+    "espece": "Chien",
+    "race": "Border Collie",
+    "naissance": 2014,
+    "sexe": "Femelle",
+    "departement": "84-Vaucluse",
+    "statut": "Disponible",
+    "description": "Lola est une belle Border Collie senior pleine de sagesse et de douceur. Malgré son âge, elle reste vive et curieuse. Elle adore les longues promenades tranquilles et les moments de câlins sur le canapé. Lola est parfaitement équilibrée et conviendrait très bien à une famille sereine souhaitant offrir une belle retraite à un chien exceptionnel.",
+    "entente_chiens": true,
+    "entente_chats": true,
+    "entente_enfants": true,
+    "vaccine": true,
+    "sterilise": true,
+    "identifie": true,
+    "participation_frais": 150,
+    "association_nom": "Domaine de Fuego",
+    "association_ville": "Apt",
+    "photos": [
+      "https://images.unsplash.com/photo-1503256207526-0d5523894ea1?w=600&q=80",
+      "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80"
+    ],
+    "video_youtube": ""
+  },
+  {
+    "id": "rex-03",
+    "nom": "Rex",
+    "espece": "Chien",
+    "race": "Croisé Berger",
+    "naissance": 2023,
+    "sexe": "Mâle",
+    "departement": "07-Ardèche",
+    "statut": "Disponible",
+    "description": "Rex est un jeune chien plein de promesses ! Ce beau croisé berger est encore en apprentissage mais il est très intelligent et apprend vite. Il a besoin d'une famille patiente et expérimentée qui pourra l'éduquer avec bienveillance. Rex est joueur, affectueux et déborde d'énergie. Il sera le compagnon idéal pour une famille active avec un jardin.",
+    "entente_chiens": true,
+    "entente_chats": false,
+    "entente_enfants": false,
+    "vaccine": true,
+    "sterilise": false,
+    "identifie": true,
+    "participation_frais": 200,
+    "association_nom": "Domaine de Fuego",
+    "association_ville": "Aubenas",
+    "photos": [
+      "https://images.unsplash.com/photo-1552053831-71594a27632d?w=600&q=80",
+      "https://images.unsplash.com/photo-1477884213360-7e9d7dcc1e48?w=600&q=80"
+    ],
+    "video_youtube": ""
+  },
+  {
+    "id": "mia-04",
+    "nom": "Mia",
+    "espece": "Chat",
+    "race": "Européenne",
+    "naissance": 2020,
+    "sexe": "Femelle",
+    "departement": "95-Val d'Oise",
+    "statut": "Disponible",
+    "description": "Mia est une chatte adulte au caractère bien trempé ! Indépendante et fière, elle aime les câlins quand elle le décide. Elle est très propre, curieuse et adore regarder par la fenêtre. Mia convient parfaitement à une personne seule ou un couple cherchant une compagnie douce et discrète. Elle préfère être l'unique animal du foyer pour être la reine de la maison !",
+    "entente_chiens": false,
+    "entente_chats": false,
+    "entente_enfants": true,
+    "vaccine": true,
+    "sterilise": true,
+    "identifie": true,
+    "participation_frais": 120,
+    "association_nom": "Domaine de Fuego",
+    "association_ville": "Cergy",
+    "photos": [
+      "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600&q=80",
+      "https://images.unsplash.com/photo-1495360010541-f48722b34f7d?w=600&q=80"
+    ],
+    "video_youtube": ""
+  }
+]

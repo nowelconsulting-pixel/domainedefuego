@@ -12,7 +12,7 @@ type FormAnimal = Omit<Animal, 'id'> & { id?: string };
 
 const EMPTY: FormAnimal = {
   nom: '', espece: 'Chien', race: '', naissance: new Date().getFullYear() - 2,
-  sexe: 'Mâle', departement: '', statut: 'Disponible', description: '',
+  sexe: 'Mâle', departement: '', localisation: 'Refuge', statut: 'Disponible', description: '',
   entente_chiens: false, entente_chats: false, entente_enfants: false,
   vaccine: false, sterilise: false, identifie: false,
   participation_frais: 0, association_nom: '', association_ville: '',
@@ -20,14 +20,19 @@ const EMPTY: FormAnimal = {
 };
 
 const STATUT_COLORS: Record<string, string> = {
-  'Disponible':          'bg-green-100 text-green-700',
-  'En famille d\'accueil': 'bg-blue-100 text-blue-700',
-  'Réservé':             'bg-orange-100 text-orange-700',
-  'Adopté':              'bg-gray-100 text-gray-500',
-  'Archivé':             'bg-gray-100 text-gray-400',
+  'Disponible': 'bg-green-100 text-green-700',
+  'Réservé':    'bg-orange-100 text-orange-700',
+  'Adopté':     'bg-gray-100 text-gray-500',
+  'Archivé':    'bg-gray-100 text-gray-400',
 };
 
-const ALL_STATUTS: Animal['statut'][] = ['Disponible', 'En famille d\'accueil', 'Réservé', 'Adopté', 'Archivé'];
+const LOCALISATION_COLORS: Record<string, string> = {
+  'Refuge':           'bg-blue-100 text-blue-700',
+  'Famille d\'accueil': 'bg-purple-100 text-purple-700',
+};
+
+const ALL_STATUTS: Animal['statut'][] = ['Disponible', 'Réservé', 'Adopté', 'Archivé'];
+const ALL_LOCALISATIONS: Animal['localisation'][] = ['Refuge', 'Famille d\'accueil'];
 
 // ─── Form Field ───────────────────────────────────────────────────────────────
 
@@ -107,6 +112,11 @@ function AnimalForm({ initial, onSave, onCancel, isNew }: AnimalFormProps) {
             <Field label="Statut *">
               <select className="form-input" value={form.statut} onChange={e => set('statut', e.target.value as Animal['statut'])}>
                 {ALL_STATUTS.map(v => <option key={v}>{v}</option>)}
+              </select>
+            </Field>
+            <Field label="Localisation *" hint="Où se trouve physiquement l'animal">
+              <select className="form-input" value={form.localisation} onChange={e => set('localisation', e.target.value as Animal['localisation'])}>
+                {ALL_LOCALISATIONS.map(v => <option key={v}>{v}</option>)}
               </select>
             </Field>
             <Field label="Participation aux frais (€)">
@@ -193,7 +203,7 @@ function AnimalForm({ initial, onSave, onCancel, isNew }: AnimalFormProps) {
 
 // ─── Main list component ─────────────────────────────────────────────────────
 
-type FilterTab = 'Tous' | Animal['statut'] | 'Archives';
+type FilterTab = 'Tous' | 'Disponible' | 'Réservé' | 'Adopté' | 'Archives';
 
 export default function AdminAnimaux() {
   const { data: animaux, save } = useAnimaux();
@@ -211,7 +221,6 @@ export default function AdminAnimaux() {
   const TABS: { value: FilterTab; label: string }[] = [
     { value: 'Tous', label: 'Tous' },
     { value: 'Disponible', label: 'Disponible' },
-    { value: 'En famille d\'accueil', label: 'En famille d\'accueil' },
     { value: 'Réservé', label: 'Réservé' },
     { value: 'Adopté', label: 'Adopté' },
     { value: 'Archives', label: 'Archives' },
@@ -388,7 +397,7 @@ export default function AdminAnimaux() {
               <th className="text-left py-3 px-4 font-medium text-gray-500 w-16">Photo</th>
               <th className="text-left py-3 px-4 font-medium text-gray-500">Nom</th>
               <th className="text-left py-3 px-4 font-medium text-gray-500 hidden md:table-cell">Espèce / Race</th>
-              <th className="text-left py-3 px-4 font-medium text-gray-500">Statut</th>
+              <th className="text-left py-3 px-4 font-medium text-gray-500">Statut / Localisation</th>
               <th className="text-left py-3 px-4 font-medium text-gray-500 hidden lg:table-cell">Département</th>
               <th className="text-right py-3 px-4 font-medium text-gray-500">Actions</th>
             </tr>
@@ -406,13 +415,18 @@ export default function AdminAnimaux() {
                 <td className="py-3 px-4 font-medium text-gray-900">{animal.nom}</td>
                 <td className="py-3 px-4 text-gray-500 hidden md:table-cell">{animal.espece} · {animal.race}</td>
                 <td className="py-3 px-4">
-                  <select
-                    className={`text-xs font-medium rounded-full px-2 py-1 border-0 cursor-pointer focus:ring-1 focus:ring-coral-400 ${STATUT_COLORS[animal.statut] ?? ''}`}
-                    value={animal.statut}
-                    onChange={e => changeStatut(animal.id, e.target.value as Animal['statut'])}
-                  >
-                    {ALL_STATUTS.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
+                  <div className="flex flex-col gap-1">
+                    <select
+                      className={`text-xs font-medium rounded-full px-2 py-1 border-0 cursor-pointer focus:ring-1 focus:ring-coral-400 ${STATUT_COLORS[animal.statut] ?? ''}`}
+                      value={animal.statut}
+                      onChange={e => changeStatut(animal.id, e.target.value as Animal['statut'])}
+                    >
+                      {ALL_STATUTS.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                    <span className={`text-xs font-medium rounded-full px-2 py-0.5 w-fit ${LOCALISATION_COLORS[animal.localisation] ?? 'bg-gray-100 text-gray-500'}`}>
+                      {animal.localisation ?? 'Refuge'}
+                    </span>
+                  </div>
                 </td>
                 <td className="py-3 px-4 text-gray-500 hidden lg:table-cell">{animal.departement}</td>
                 <td className="py-3 px-4">

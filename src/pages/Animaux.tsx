@@ -7,12 +7,14 @@ import { getAge } from '../types';
 type EspeceFilter = 'Tous' | 'Chien' | 'Chat' | 'Lapin' | 'Autre';
 type AgeFilter = 'Tous' | 'Junior' | 'Adulte' | 'Senior';
 type SexeFilter = 'Tous' | 'Mâle' | 'Femelle';
+type LocalisationFilter = 'Tous' | 'Refuge' | 'Famille d\'accueil';
 
 export default function Animaux() {
   const { data: animaux, loading } = useAnimaux();
   const [espece, setEspece] = useState<EspeceFilter>('Tous');
   const [age, setAge] = useState<AgeFilter>('Tous');
   const [sexe, setSexe] = useState<SexeFilter>('Tous');
+  const [localisation, setLocalisation] = useState<LocalisationFilter>('Tous');
 
   const filtered = useMemo(() => {
     if (!animaux) return [];
@@ -21,9 +23,10 @@ export default function Animaux() {
       if (espece !== 'Tous' && a.espece !== espece) return false;
       if (age !== 'Tous' && getAge(a.naissance) !== age) return false;
       if (sexe !== 'Tous' && a.sexe !== sexe) return false;
+      if (localisation !== 'Tous' && a.localisation !== localisation) return false;
       return true;
     });
-  }, [animaux, espece, age, sexe]);
+  }, [animaux, espece, age, sexe, localisation]);
 
   const FilterBtn = <T extends string>({
     value,
@@ -90,6 +93,15 @@ export default function Animaux() {
                 <FilterBtn key={v} value={v} current={sexe} set={setSexe} />
               ))}
             </div>
+
+            <div className="hidden sm:block w-px h-6 bg-gray-200" />
+
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Localisation</span>
+              {(['Tous', 'Refuge', 'Famille d\'accueil'] as LocalisationFilter[]).map(v => (
+                <FilterBtn key={v} value={v} current={localisation} set={setLocalisation} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -119,7 +131,7 @@ export default function Animaux() {
               Essayez de modifier vos filtres ou revenez prochainement.
             </p>
             <button
-              onClick={() => { setEspece('Tous'); setAge('Tous'); setSexe('Tous'); }}
+              onClick={() => { setEspece('Tous'); setAge('Tous'); setSexe('Tous'); setLocalisation('Tous'); }}
               className="btn-primary"
             >
               Réinitialiser les filtres

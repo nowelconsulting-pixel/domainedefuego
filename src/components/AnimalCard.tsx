@@ -55,13 +55,24 @@ export default function AnimalCard({ animal }: AnimalCardProps) {
             className={liked ? 'fill-coral-500 text-coral-500' : 'text-gray-400'}
           />
         </button>
-        {animal.statut !== 'Disponible' && (
-          <div className={`absolute top-3 left-3 px-2 py-1 rounded-full text-xs font-semibold ${
-            animal.statut === 'Réservé' ? 'bg-orange-400 text-white' : 'bg-gray-500 text-white'
-          }`}>
-            {animal.statut}
-          </div>
-        )}
+        <div className="absolute top-3 left-3 flex flex-col gap-1">
+          {animal.statut !== 'Disponible' && (
+            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+              animal.statut === 'Réservé' ? 'bg-orange-400 text-white' : 'bg-gray-500 text-white'
+            }`}>
+              {animal.statut}
+            </span>
+          )}
+          {animal.localisation && (
+            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+              animal.localisation === 'Famille d\'accueil'
+                ? 'bg-purple-500 text-white'
+                : 'bg-blue-500 text-white'
+            }`}>
+              {animal.localisation}
+            </span>
+          )}
+        </div>
       </div>
       <div className="p-4">
         <h3 className="font-bold text-gray-900 text-lg mb-1">{animal.nom}</h3>

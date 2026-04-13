@@ -96,13 +96,9 @@ export default function Accueil() {
         return (
           <section className="bg-coral-500 py-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className={`grid grid-cols-1 gap-8 text-center text-white ${
-                items.length <= 2 ? 'sm:grid-cols-2' :
-                items.length === 3 ? 'sm:grid-cols-3' :
-                'sm:grid-cols-2 lg:grid-cols-4'
-              }`}>
+              <div className="flex flex-wrap justify-center gap-x-16 gap-y-8 text-center text-white">
                 {items.map((item, i) => (
-                  <div key={i}>
+                  <div key={i} className="min-w-[140px]">
                     <div className="text-5xl font-bold mb-2">{item.value}</div>
                     <div className="text-lg opacity-90">{item.label}</div>
                   </div>

@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git commit*)",
+            "command": "git push origin HEAD:main 2>/dev/null || true",
+            "statusMessage": "Pushing to main..."
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -85,30 +85,33 @@ export default function Accueil() {
       </section>
 
       {/* CHIFFRES CLÉS */}
-      <section className="bg-coral-500 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center text-white">
-            <div>
-              <div className="text-5xl font-bold mb-2">
-                {config?.chiffres.animaux_adoptes ?? '...'}
+      {config && (() => {
+        const items: { value: number; label: string }[] = [
+          ...(config.chiffres.animaux_adoptes ? [{ value: config.chiffres.animaux_adoptes, label: 'animaux adoptés' }] : []),
+          ...(config.chiffres.familles_accueil ? [{ value: config.chiffres.familles_accueil, label: "familles d'accueil actives" }] : []),
+          ...(config.chiffres.annees_existence ? [{ value: config.chiffres.annees_existence, label: "ans d'existence" }] : []),
+          ...(config.chiffres.custom ?? []).filter(c => c.value && c.label),
+        ];
+        if (items.length === 0) return null;
+        return (
+          <section className="bg-coral-500 py-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className={`grid grid-cols-1 gap-8 text-center text-white ${
+                items.length <= 2 ? 'sm:grid-cols-2' :
+                items.length === 3 ? 'sm:grid-cols-3' :
+                'sm:grid-cols-2 lg:grid-cols-4'
+              }`}>
+                {items.map((item, i) => (
+                  <div key={i}>
+                    <div className="text-5xl font-bold mb-2">{item.value}</div>
+                    <div className="text-lg opacity-90">{item.label}</div>
+                  </div>
+                ))}
               </div>
-              <div className="text-lg opacity-90">animaux adoptés</div>
             </div>
-            <div>
-              <div className="text-5xl font-bold mb-2">
-                {config?.chiffres.familles_accueil ?? '...'}
-              </div>
-              <div className="text-lg opacity-90">familles d'accueil actives</div>
-            </div>
-            <div>
-              <div className="text-5xl font-bold mb-2">
-                {config?.chiffres.annees_existence ?? '...'}
-              </div>
-              <div className="text-lg opacity-90">ans d'existence</div>
-            </div>
-          </div>
-        </div>
-      </section>
+          </section>
+        );
+      })()}
 
       {/* COMMENT ÇA MARCHE */}
       <section className="py-20 bg-white">

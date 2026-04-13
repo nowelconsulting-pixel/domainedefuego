@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Save, Download, Upload, CheckCircle2 } from 'lucide-react';
+import { Save, Download, Upload, CheckCircle2, Plus, Trash2 } from 'lucide-react';
 import { useConfig } from '../../hooks/useData';
 import type { Config } from '../../types';
 
@@ -32,7 +32,15 @@ export default function AdminConfig() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (config) setForm({ ...config });
+    if (config) {
+      setForm({
+        ...config,
+        chiffres: {
+          ...config.chiffres,
+          custom: config.chiffres.custom ?? [],
+        },
+      });
+    }
   }, [config]);
 
   if (!form) return <div className="p-8 text-gray-400">Chargement...</div>;
@@ -46,6 +54,39 @@ export default function AdminConfig() {
         return { ...prev, chiffres: { ...prev.chiffres, [parts[1]]: typeof value === 'string' ? parseInt(value) || 0 : value } };
       }
       return prev;
+    });
+  };
+
+  const addCustomIndicator = () => {
+    setForm(prev => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        chiffres: {
+          ...prev.chiffres,
+          custom: [...(prev.chiffres.custom ?? []), { label: '', value: 0 }],
+        },
+      };
+    });
+  };
+
+  const updateCustomIndicator = (idx: number, field: 'label' | 'value', raw: string) => {
+    setForm(prev => {
+      if (!prev) return prev;
+      const custom = [...(prev.chiffres.custom ?? [])];
+      custom[idx] = {
+        ...custom[idx],
+        [field]: field === 'value' ? parseInt(raw) || 0 : raw,
+      };
+      return { ...prev, chiffres: { ...prev.chiffres, custom } };
+    });
+  };
+
+  const removeCustomIndicator = (idx: number) => {
+    setForm(prev => {
+      if (!prev) return prev;
+      const custom = (prev.chiffres.custom ?? []).filter((_, i) => i !== idx);
+      return { ...prev, chiffres: { ...prev.chiffres, custom } };
     });
   };
 
@@ -105,6 +146,7 @@ export default function AdminConfig() {
       </div>
 
       <div className="space-y-8 max-w-3xl">
+        {/* Contact */}
         <div className="bg-white rounded-xl shadow-sm p-6 space-y-5">
           <h2 className="font-semibold text-gray-900">Contact & Coordonnées</h2>
           <Field label="Email destinataire (formulaires)" value={form.email_destinataire} onChange={v => set('email_destinataire', v)} />
@@ -113,6 +155,7 @@ export default function AdminConfig() {
           <Field label="Adresse" value={form.adresse} onChange={v => set('adresse', v)} />
         </div>
 
+        {/* Social */}
         <div className="bg-white rounded-xl shadow-sm p-6 space-y-5">
           <h2 className="font-semibold text-gray-900">Réseaux sociaux & Don</h2>
           <Field label="URL Facebook" value={form.facebook_url} onChange={v => set('facebook_url', v)} />
@@ -121,11 +164,72 @@ export default function AdminConfig() {
           <Field label="URL HelloAsso (faire un don)" value={form.helloasso_url} onChange={v => set('helloasso_url', v)} />
         </div>
 
+        {/* Chiffres clés */}
         <div className="bg-white rounded-xl shadow-sm p-6 space-y-5">
-          <h2 className="font-semibold text-gray-900">Chiffres clés (page d'accueil)</h2>
-          <Field label="Animaux adoptés" value={form.chiffres.animaux_adoptes} type="number" onChange={v => set('chiffres.animaux_adoptes', v)} />
-          <Field label="Familles d'accueil actives" value={form.chiffres.familles_accueil} type="number" onChange={v => set('chiffres.familles_accueil', v)} />
-          <Field label="Années d'existence" value={form.chiffres.annees_existence} type="number" onChange={v => set('chiffres.annees_existence', v)} />
+          <div>
+            <h2 className="font-semibold text-gray-900">Chiffres clés (page d'accueil)</h2>
+            <p className="text-xs text-gray-400 mt-1">
+              Les indicateurs à 0 ou vides sont masqués sur le site public.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-sm font-medium text-gray-600">Indicateurs fixes</h3>
+            <Field label="Animaux adoptés" value={form.chiffres.animaux_adoptes} type="number"
+              onChange={v => set('chiffres.animaux_adoptes', v)} />
+            <Field label="Familles d'accueil actives" value={form.chiffres.familles_accueil} type="number"
+              onChange={v => set('chiffres.familles_accueil', v)} />
+            <Field label="Années d'existence" value={form.chiffres.annees_existence} type="number"
+              onChange={v => set('chiffres.annees_existence', v)} />
+          </div>
+
+          <div className="space-y-3 pt-2 border-t border-gray-100">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-medium text-gray-600">Indicateurs personnalisés</h3>
+              <button
+                type="button"
+                onClick={addCustomIndicator}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-coral-50 text-coral-600 rounded-lg hover:bg-coral-100 font-medium"
+              >
+                <Plus size={14} />Ajouter un indicateur
+              </button>
+            </div>
+
+            {(form.chiffres.custom ?? []).length === 0 && (
+              <p className="text-sm text-gray-400 italic">Aucun indicateur personnalisé. Cliquez sur "Ajouter" pour en créer un.</p>
+            )}
+
+            {(form.chiffres.custom ?? []).map((item, idx) => (
+              <div key={idx} className="flex items-end gap-3 p-3 bg-gray-50 rounded-lg">
+                <div className="flex-1">
+                  <label className="form-label">Libellé</label>
+                  <input
+                    className="form-input"
+                    value={item.label}
+                    onChange={e => updateCustomIndicator(idx, 'label', e.target.value)}
+                    placeholder="Ex: bénévoles actifs"
+                  />
+                </div>
+                <div className="w-28">
+                  <label className="form-label">Nombre</label>
+                  <input
+                    type="number"
+                    className="form-input"
+                    value={item.value}
+                    onChange={e => updateCustomIndicator(idx, 'value', e.target.value)}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => removeCustomIndicator(idx)}
+                  className="mb-0.5 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                  title="Supprimer"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
 
         <button onClick={handleSave}

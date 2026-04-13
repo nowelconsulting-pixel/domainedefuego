@@ -10,6 +10,7 @@
   "chiffres": {
     "animaux_adoptes": 247,
     "familles_accueil": 38,
-    "annees_existence": 8
+    "annees_existence": 8,
+    "custom": []
   }
 }

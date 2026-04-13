@@ -34,6 +34,7 @@ export interface Config {
     animaux_adoptes: number;
     familles_accueil: number;
     annees_existence: number;
+    custom: { label: string; value: number }[];
   };
 }
 

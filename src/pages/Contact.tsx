@@ -1,6 +1,6 @@
 import { Phone, Mail, MapPin } from 'lucide-react';
 import FormContact from '../components/FormContact';
-import { FacebookIcon, InstagramIcon } from '../components/SocialIcons';
+import { FacebookIcon, InstagramIcon, LinkedInIcon } from '../components/SocialIcons';
 import { useConfig } from '../hooks/useData';
 
 export default function Contact() {
@@ -82,6 +82,17 @@ export default function Contact() {
                   >
                     <InstagramIcon size={20} className="text-pink-500" />
                     Instagram
+                  </a>
+                )}
+                {config?.linkedin_url && (
+                  <a
+                    href={config.linkedin_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 px-5 py-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow font-medium text-gray-800"
+                  >
+                    <LinkedInIcon size={20} className="text-blue-700" />
+                    LinkedIn
                   </a>
                 )}
               </div>

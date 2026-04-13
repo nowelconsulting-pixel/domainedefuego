@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Mail, Phone } from 'lucide-react';
 import Logo from './Logo';
-import { FacebookIcon, InstagramIcon } from './SocialIcons';
+import { FacebookIcon, InstagramIcon, LinkedInIcon } from './SocialIcons';
 import { useConfig } from '../hooks/useData';
 
 export default function Footer() {
@@ -82,6 +82,17 @@ export default function Footer() {
                     aria-label="Instagram"
                   >
                     <InstagramIcon size={18} />
+                  </a>
+                )}
+                {config?.linkedin_url && (
+                  <a
+                    href={config.linkedin_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 bg-gray-800 rounded-lg hover:bg-coral-500 transition-colors"
+                    aria-label="LinkedIn"
+                  >
+                    <LinkedInIcon size={18} />
                   </a>
                 )}
               </li>

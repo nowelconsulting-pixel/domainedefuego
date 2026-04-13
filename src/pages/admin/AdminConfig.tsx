@@ -117,6 +117,7 @@ export default function AdminConfig() {
           <h2 className="font-semibold text-gray-900">Réseaux sociaux & Don</h2>
           <Field label="URL Facebook" value={form.facebook_url} onChange={v => set('facebook_url', v)} />
           <Field label="URL Instagram" value={form.instagram_url} onChange={v => set('instagram_url', v)} />
+          <Field label="URL LinkedIn" value={form.linkedin_url ?? ''} onChange={v => set('linkedin_url', v)} placeholder="https://www.linkedin.com/company/..." />
           <Field label="URL HelloAsso (faire un don)" value={form.helloasso_url} onChange={v => set('helloasso_url', v)} />
         </div>
 

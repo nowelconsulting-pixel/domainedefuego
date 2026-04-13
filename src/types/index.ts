@@ -26,6 +26,7 @@ export interface Config {
   helloasso_url: string;
   facebook_url: string;
   instagram_url: string;
+  linkedin_url: string;
   telephone: string;
   adresse: string;
   email_contact: string;

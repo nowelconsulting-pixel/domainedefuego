@@ -3,9 +3,38 @@ import { Mail, Phone } from 'lucide-react';
 import Logo from './Logo';
 import { FacebookIcon, InstagramIcon, LinkedInIcon } from './SocialIcons';
 import { useConfig } from '../hooks/useData';
+import type { AdminPage } from '../types/admin';
+import { SYSTEM_PAGES } from '../types/admin';
+
+function buildFooterLinks(): { to: string; label: string }[] {
+  const systemData: Record<string, Partial<AdminPage>> = (() => {
+    try { return JSON.parse(localStorage.getItem('system_page_data') || '{}'); }
+    catch { return {}; }
+  })();
+
+  const links: { to: string; label: string; order: number }[] = SYSTEM_PAGES
+    .filter(p => p.show_in_footer)
+    .map(p => ({
+      to: p.slug ? `/${p.slug}` : '/',
+      label: systemData[p.id]?.title ?? p.title,
+      order: p.menu_order,
+    }));
+
+  try {
+    const stored = localStorage.getItem('admin_pages');
+    if (stored) {
+      (JSON.parse(stored) as AdminPage[])
+        .filter(p => p.status === 'published' && !p.system && p.slug && p.show_in_footer)
+        .forEach(p => links.push({ to: `/${p.slug}`, label: p.title, order: p.menu_order }));
+    }
+  } catch { /* ignore */ }
+
+  return links.sort((a, b) => a.order - b.order);
+}
 
 export default function Footer() {
   const { data: config } = useConfig();
+  const footerLinks = buildFooterLinks();
 
   return (
     <footer className="bg-gray-900 text-gray-300 mt-auto">
@@ -23,15 +52,7 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-semibold mb-4">Navigation</h3>
             <ul className="space-y-2 text-sm">
-              {[
-                { to: '/', label: 'Accueil' },
-                { to: '/animaux', label: 'Nos animaux' },
-                { to: '/presentation', label: 'Présentation' },
-                { to: '/adopter', label: 'Adopter' },
-                { to: '/famille-accueil', label: "Famille d'accueil" },
-                { to: '/faire-un-don', label: 'Faire un don' },
-                { to: '/contact', label: 'Contact' },
-              ].map(link => (
+              {footerLinks.map(link => (
                 <li key={link.to}>
                   <Link to={link.to} className="hover:text-coral-400 transition-colors">
                     {link.label}

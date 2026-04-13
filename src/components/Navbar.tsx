@@ -13,7 +13,7 @@ function buildNavItems(): NavItem[] {
     catch { return {}; }
   })();
   const systemItems: NavItem[] = SYSTEM_PAGES
-    .filter(p => p.status === 'published')
+    .filter(p => p.status === 'published' && p.show_in_nav)
     .map(p => ({ to: p.slug ? `/${p.slug}` : '/', label: p.title, order: overrides[p.id] ?? p.menu_order }));
 
   const custom: NavItem[] = [];
@@ -21,7 +21,7 @@ function buildNavItems(): NavItem[] {
     const stored = localStorage.getItem('admin_pages');
     if (stored) {
       (JSON.parse(stored) as AdminPage[])
-        .filter(p => p.status === 'published' && !p.system && p.slug)
+        .filter(p => p.status === 'published' && !p.system && p.slug && (p.show_in_nav ?? true))
         .forEach(p => custom.push({ to: `/${p.slug}`, label: p.title, order: p.menu_order }));
     }
   } catch { /* ignore */ }

@@ -80,6 +80,7 @@ export default function AdminPageEditor() {
       title: '', slug: '', content: '', blocks: [],
       seo_description: '', menu_icon: '', menu_order: 100,
       parent_id: null, status: 'draft', system: false,
+      show_in_nav: true, show_in_footer: false,
       updatedAt: new Date().toISOString(), createdAt: new Date().toISOString(),
     });
     initializedRef.current = true;
@@ -225,6 +226,28 @@ export default function AdminPageEditor() {
             <textarea className="form-input" rows={2} value={page.seo_description}
               onChange={e => set('seo_description', e.target.value)}
               placeholder="Courte description pour les moteurs de recherche (150 caractères max)" />
+          </div>
+
+          {/* Visibility toggles */}
+          <div className="flex flex-wrap gap-6 pt-2">
+            <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-700">
+              <input
+                type="checkbox"
+                className="w-4 h-4 accent-coral-500"
+                checked={page.show_in_nav ?? true}
+                onChange={e => set('show_in_nav', e.target.checked)}
+              />
+              Afficher dans la navigation
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-700">
+              <input
+                type="checkbox"
+                className="w-4 h-4 accent-coral-500"
+                checked={page.show_in_footer ?? false}
+                onChange={e => set('show_in_footer', e.target.checked)}
+              />
+              Afficher dans le footer
+            </label>
           </div>
         </div>
 

@@ -120,6 +120,8 @@ export default function AdminPageManager() {
     parent_id: null,
     status: 'draft',
     system: false,
+    show_in_nav: true,
+    show_in_footer: false,
     updatedAt: new Date().toISOString(),
     createdAt: new Date().toISOString(),
   });

@@ -1,95 +1,75 @@
+import { Heart, Mail } from 'lucide-react';
+import { useConfig } from '../hooks/useData';
+import { FacebookIcon, InstagramIcon, LinkedInIcon } from '../components/SocialIcons';
+
 export default function MaintenancePage() {
+  const { data: config } = useConfig();
+
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        backgroundColor: '#111827',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '1rem',
-        textAlign: 'center',
-        fontFamily: 'Inter, sans-serif',
-      }}
-    >
-      {/* Icon */}
-      <div
-        style={{
-          width: 80,
-          height: 80,
-          borderRadius: '50%',
-          backgroundColor: 'rgba(249,115,22,0.15)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginBottom: '1.5rem',
-          fontSize: '2.5rem',
-        }}
-      >
+    <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center px-6 text-center">
+
+      {/* Paw */}
+      <div className="w-20 h-20 rounded-full bg-coral-500/20 flex items-center justify-center mb-8 text-4xl">
         🐾
       </div>
 
       {/* Title */}
-      <h1
-        style={{
-          fontSize: 'clamp(1.75rem, 5vw, 3rem)',
-          fontWeight: 700,
-          color: '#ffffff',
-          marginBottom: '1rem',
-          lineHeight: 1.2,
-        }}
-      >
+      <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
         Le site arrive bientôt 🐾
       </h1>
 
       {/* Subtitle */}
-      <p
-        style={{
-          color: '#9ca3af',
-          fontSize: '1.125rem',
-          maxWidth: 420,
-          lineHeight: 1.7,
-          marginBottom: '2.5rem',
-        }}
-      >
-        Nous préparons actuellement la plateforme d'adoption.
-        <br />
+      <p className="text-gray-400 text-lg max-w-md leading-relaxed mb-10">
+        Nous préparons actuellement la plateforme d'adoption.<br />
         Merci pour votre patience.
       </p>
 
-      {/* Disabled button */}
+      {/* Disabled CTA */}
       <button
         disabled
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          padding: '0.75rem 2rem',
-          backgroundColor: 'rgba(249,115,22,0.3)',
-          color: '#fdba74',
-          borderRadius: 8,
-          fontWeight: 600,
-          fontSize: '1rem',
-          cursor: 'not-allowed',
-          border: 'none',
-          marginBottom: '2rem',
-        }}
+        className="flex items-center gap-2 px-8 py-3 rounded-lg bg-coral-500/30 text-coral-300 font-semibold cursor-not-allowed mb-10 text-base"
       >
-        ❤️ Voir les animaux
+        <Heart size={18} />
+        Voir les animaux
       </button>
 
-      {/* Email */}
-      <a
-        href="mailto:contact@domainedefuego.fr"
-        style={{
-          color: '#6b7280',
-          fontSize: '0.875rem',
-          textDecoration: 'none',
-        }}
-      >
-        contact@domainedefuego.fr
-      </a>
+      {/* Email from config */}
+      {config?.email_contact && (
+        <a
+          href={`mailto:${config.email_contact}`}
+          className="flex items-center gap-2 text-gray-400 hover:text-coral-400 transition-colors text-sm mb-6"
+        >
+          <Mail size={16} />
+          {config.email_contact}
+        </a>
+      )}
+
+      {/* Social links from config */}
+      {config && (config.facebook_url || config.instagram_url || config.linkedin_url) && (
+        <div className="flex items-center gap-3">
+          {config.facebook_url && (
+            <a href={config.facebook_url} target="_blank" rel="noopener noreferrer"
+              className="p-2 rounded-lg text-gray-500 hover:text-coral-400 hover:bg-white/5 transition-colors"
+              aria-label="Facebook">
+              <FacebookIcon size={20} />
+            </a>
+          )}
+          {config.instagram_url && (
+            <a href={config.instagram_url} target="_blank" rel="noopener noreferrer"
+              className="p-2 rounded-lg text-gray-500 hover:text-coral-400 hover:bg-white/5 transition-colors"
+              aria-label="Instagram">
+              <InstagramIcon size={20} />
+            </a>
+          )}
+          {config.linkedin_url && (
+            <a href={config.linkedin_url} target="_blank" rel="noopener noreferrer"
+              className="p-2 rounded-lg text-gray-500 hover:text-coral-400 hover:bg-white/5 transition-colors"
+              aria-label="LinkedIn">
+              <LinkedInIcon size={20} />
+            </a>
+          )}
+        </div>
+      )}
     </div>
   );
 }

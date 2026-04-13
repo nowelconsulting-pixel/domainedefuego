@@ -31,12 +31,13 @@ const ALL_STATUTS: Animal['statut'][] = ['Disponible', 'En famille d\'accueil', 
 
 // ─── Form Field ───────────────────────────────────────────────────────────────
 
-interface FieldProps { label: string; children: React.ReactNode; }
-function Field({ label, children }: FieldProps) {
+interface FieldProps { label: string; hint?: string; children: React.ReactNode; }
+function Field({ label, hint, children }: FieldProps) {
   return (
     <div>
       <label className="form-label">{label}</label>
       {children}
+      {hint && <p className="text-xs text-gray-400 mt-1">{hint}</p>}
     </div>
   );
 }
@@ -81,7 +82,7 @@ function AnimalForm({ initial, onSave, onCancel, isNew }: AnimalFormProps) {
           <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Identité</h3>
           <div className="grid grid-cols-2 gap-4">
             <Field label="Nom *">
-              <input className="form-input" value={form.nom} onChange={e => set('nom', e.target.value)} />
+              <input className="form-input" value={form.nom} onChange={e => set('nom', e.target.value)} placeholder="Ex: Rex, Mia..." />
             </Field>
             <Field label="Espèce *">
               <select className="form-input" value={form.espece} onChange={e => set('espece', e.target.value as Animal['espece'])}>
@@ -89,9 +90,9 @@ function AnimalForm({ initial, onSave, onCancel, isNew }: AnimalFormProps) {
               </select>
             </Field>
             <Field label="Race">
-              <input className="form-input" value={form.race} onChange={e => set('race', e.target.value)} />
+              <input className="form-input" value={form.race} onChange={e => set('race', e.target.value)} placeholder="Ex: Berger allemand, Européen..." />
             </Field>
-            <Field label="Année de naissance">
+            <Field label="Année de naissance" hint="Année entière, ex: 2021">
               <input type="number" className="form-input" value={form.naissance}
                 onChange={e => set('naissance', parseInt(e.target.value) || 2020)} />
             </Field>

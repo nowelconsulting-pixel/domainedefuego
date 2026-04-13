@@ -151,7 +151,7 @@ export default function AdminPageManager() {
               <th className="text-left py-3 px-4 font-medium text-gray-500 hidden sm:table-cell">Slug</th>
               <th className="text-left py-3 px-4 font-medium text-gray-500">Statut</th>
               <th className="text-left py-3 px-4 font-medium text-gray-500 hidden md:table-cell">Type</th>
-              <th className="text-left py-3 px-4 font-medium text-gray-500">Ordre</th>
+              <th className="text-left py-3 px-4 font-medium text-gray-500">Position</th>
               <th className="text-right py-3 px-4 font-medium text-gray-500">Actions</th>
             </tr>
           </thead>

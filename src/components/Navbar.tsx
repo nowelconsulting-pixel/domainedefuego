@@ -8,9 +8,13 @@ import { SYSTEM_PAGES } from '../types/admin';
 interface NavItem { to: string; label: string; order: number; }
 
 function buildNavItems(): NavItem[] {
+  const overrides: Record<string, number> = (() => {
+    try { return JSON.parse(localStorage.getItem('system_page_orders') || '{}'); }
+    catch { return {}; }
+  })();
   const systemItems: NavItem[] = SYSTEM_PAGES
     .filter(p => p.status === 'published')
-    .map(p => ({ to: p.slug ? `/${p.slug}` : '/', label: p.title, order: p.menu_order }));
+    .map(p => ({ to: p.slug ? `/${p.slug}` : '/', label: p.title, order: overrides[p.id] ?? p.menu_order }));
 
   const custom: NavItem[] = [];
   try {

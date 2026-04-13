@@ -1,18 +1,33 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Edit2, Trash2, Eye, EyeOff, ChevronUp, ChevronDown } from 'lucide-react';
+import { Plus, Edit2, Trash2, Eye, EyeOff, ChevronUp, ChevronDown, X, Save } from 'lucide-react';
 import { useAdminPages } from '../../hooks/useAdminData';
 import type { AdminPage } from '../../types/admin';
 import { SYSTEM_PAGES } from '../../types/admin';
 
+function loadSystemOrders(): Record<string, number> {
+  try { return JSON.parse(localStorage.getItem('system_page_orders') || '{}'); }
+  catch { return {}; }
+}
+
+function saveSystemOrders(orders: Record<string, number>): void {
+  localStorage.setItem('system_page_orders', JSON.stringify(orders));
+}
+
 export default function AdminPageManager() {
   const { pages, save, deletePage } = useAdminPages();
   const [confirm, setConfirm] = useState<string | null>(null);
+  const [systemOrders, setSystemOrders] = useState<Record<string, number>>(loadSystemOrders);
+  // inline order-edit for system pages
+  const [editingOrderId, setEditingOrderId] = useState<string | null>(null);
+  const [editingOrderValue, setEditingOrderValue] = useState(0);
 
-  // Merge system pages (display-only) with custom pages from localStorage
-  const allPages = [
+  const getSystemOrder = (id: string, defaultOrder: number) => systemOrders[id] ?? defaultOrder;
+
+  const allPages: AdminPage[] = [
     ...SYSTEM_PAGES.map(sp => ({
       ...sp,
+      menu_order: getSystemOrder(sp.id, sp.menu_order),
       content: '', blocks: [], seo_description: '', menu_icon: '',
       parent_id: null, updatedAt: '', createdAt: '',
     } as AdminPage)),
@@ -30,11 +45,36 @@ export default function AdminPageManager() {
   };
 
   const moveOrder = (page: AdminPage, dir: -1 | 1) => {
-    if (page.system) return;
+    if (page.system) {
+      const current = getSystemOrder(page.id, page.menu_order);
+      const updated = { ...systemOrders, [page.id]: current + dir * 5 };
+      setSystemOrders(updated);
+      saveSystemOrders(updated);
+      return;
+    }
     const updated = pages.map(p =>
       p.id === page.id ? { ...p, menu_order: p.menu_order + dir * 5, updatedAt: new Date().toISOString() } : p
     );
     save(updated);
+  };
+
+  const openOrderEdit = (page: AdminPage) => {
+    setEditingOrderId(page.id);
+    setEditingOrderValue(getSystemOrder(page.id, page.menu_order));
+  };
+
+  const saveOrderEdit = (page: AdminPage) => {
+    if (page.system) {
+      const updated = { ...systemOrders, [page.id]: editingOrderValue };
+      setSystemOrders(updated);
+      saveSystemOrders(updated);
+    } else {
+      const updated = pages.map(p =>
+        p.id === page.id ? { ...p, menu_order: editingOrderValue, updatedAt: new Date().toISOString() } : p
+      );
+      save(updated);
+    }
+    setEditingOrderId(null);
   };
 
   const handleDelete = (id: string) => {
@@ -71,15 +111,19 @@ export default function AdminPageManager() {
         </Link>
       </div>
 
+      <p className="text-sm text-gray-500 mb-4">
+        Utilisez les flèches ou modifiez le numéro d'ordre pour réorganiser les pages dans le menu de navigation.
+      </p>
+
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="text-left py-3 px-4 font-medium text-gray-500">Titre</th>
-              <th className="text-left py-3 px-4 font-medium text-gray-500">Slug</th>
+              <th className="text-left py-3 px-4 font-medium text-gray-500 hidden sm:table-cell">Slug</th>
               <th className="text-left py-3 px-4 font-medium text-gray-500">Statut</th>
               <th className="text-left py-3 px-4 font-medium text-gray-500 hidden md:table-cell">Type</th>
-              <th className="text-left py-3 px-4 font-medium text-gray-500 hidden lg:table-cell">Ordre</th>
+              <th className="text-left py-3 px-4 font-medium text-gray-500">Ordre</th>
               <th className="text-right py-3 px-4 font-medium text-gray-500">Actions</th>
             </tr>
           </thead>
@@ -87,7 +131,9 @@ export default function AdminPageManager() {
             {allPages.map(page => (
               <tr key={page.id} className="hover:bg-gray-50">
                 <td className="py-3 px-4 font-medium text-gray-900">{page.title}</td>
-                <td className="py-3 px-4 text-gray-400 font-mono text-xs">/{page.slug}</td>
+                <td className="py-3 px-4 text-gray-400 font-mono text-xs hidden sm:table-cell">
+                  /{page.slug}
+                </td>
                 <td className="py-3 px-4">
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                     page.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
@@ -97,23 +143,42 @@ export default function AdminPageManager() {
                 </td>
                 <td className="py-3 px-4 hidden md:table-cell">
                   {page.system ? (
-                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
-                      Système
-                    </span>
+                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700">Système</span>
                   ) : (
-                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-                      Personnalisée
-                    </span>
+                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">Personnalisée</span>
                   )}
                 </td>
-                <td className="py-3 px-4 hidden lg:table-cell">
-                  {!page.system && (
+                <td className="py-3 px-4">
+                  {editingOrderId === page.id ? (
                     <div className="flex items-center gap-1">
-                      <span className="text-gray-500 w-8">{page.menu_order}</span>
-                      <button onClick={() => moveOrder(page, -1)} className="p-1 hover:bg-gray-100 rounded text-gray-400">
+                      <input
+                        type="number"
+                        className="form-input py-1 w-16 text-sm"
+                        value={editingOrderValue}
+                        onChange={e => setEditingOrderValue(parseInt(e.target.value) || 0)}
+                        onKeyDown={e => { if (e.key === 'Enter') saveOrderEdit(page); if (e.key === 'Escape') setEditingOrderId(null); }}
+                        autoFocus
+                      />
+                      <button onClick={() => saveOrderEdit(page)} className="p-1 hover:bg-green-100 text-green-600 rounded">
+                        <Save size={13} />
+                      </button>
+                      <button onClick={() => setEditingOrderId(null)} className="p-1 hover:bg-gray-100 text-gray-400 rounded">
+                        <X size={13} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => openOrderEdit(page)}
+                        className="text-gray-500 w-8 text-sm hover:text-gray-800 hover:underline"
+                        title="Cliquer pour modifier"
+                      >
+                        {getSystemOrder(page.id, page.menu_order)}
+                      </button>
+                      <button onClick={() => moveOrder(page, -1)} className="p-1 hover:bg-gray-100 rounded text-gray-400" title="Remonter">
                         <ChevronUp size={14} />
                       </button>
-                      <button onClick={() => moveOrder(page, 1)} className="p-1 hover:bg-gray-100 rounded text-gray-400">
+                      <button onClick={() => moveOrder(page, 1)} className="p-1 hover:bg-gray-100 rounded text-gray-400" title="Descendre">
                         <ChevronDown size={14} />
                       </button>
                     </div>
@@ -154,10 +219,10 @@ export default function AdminPageManager() {
                       </>
                     )}
                     <a
-                      href={`/${page.slug}`}
+                      href={page.slug ? `/${page.slug}` : '/'}
                       target="_blank"
                       rel="noopener noreferrer"
-                      title="Voir"
+                      title="Voir la page"
                       className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-500"
                     >
                       <Eye size={15} />

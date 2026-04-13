@@ -4,6 +4,7 @@ import { ArrowLeft, Save, Eye, Trash2, Plus, GripVertical, X } from 'lucide-reac
 import RichTextEditor from '../../components/admin/RichTextEditor';
 import { useAdminPages } from '../../hooks/useAdminData';
 import type { AdminPage, Block, BlockType } from '../../types/admin';
+import { SYSTEM_PAGES } from '../../types/admin';
 
 function slugify(s: string) {
   return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
@@ -191,6 +192,27 @@ export default function AdminPageEditor() {
     setTimeout(() => { setSaved(false); navigate('/admin/pages'); }, 1000);
   };
 
+  // Live menu order preview
+  const systemOrders: Record<string, number> = (() => {
+    try { return JSON.parse(localStorage.getItem('system_page_orders') || '{}'); }
+    catch { return {}; }
+  })();
+  const previewItems: { id: string; title: string; order: number; isCurrent: boolean }[] = [
+    ...SYSTEM_PAGES.map(sp => ({
+      id: sp.id,
+      title: sp.title,
+      order: systemOrders[sp.id] ?? sp.menu_order,
+      isCurrent: false,
+    })),
+    ...pages.filter(p => !p.system && p.id !== page.id).map(p => ({
+      id: p.id,
+      title: p.title,
+      order: p.menu_order,
+      isCurrent: false,
+    })),
+    { id: page.id, title: page.title || 'Cette page', order: page.menu_order, isCurrent: true },
+  ].sort((a, b) => a.order - b.order);
+
   return (
     <div className="p-8 max-w-4xl">
       <button onClick={() => navigate('/admin/pages')} className="flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-6 text-sm">
@@ -222,10 +244,12 @@ export default function AdminPageEditor() {
                 />
               </div>
             </div>
-            <div className="w-32">
-              <label className="form-label">Ordre menu</label>
+            <div className="w-40">
+              <label className="form-label">Position dans le menu</label>
               <input type="number" className="form-input" value={page.menu_order}
-                onChange={e => set('menu_order', parseInt(e.target.value) || 100)} />
+                onChange={e => set('menu_order', parseInt(e.target.value) || 100)}
+                title="Chiffre plus petit = plus à gauche dans le menu de navigation" />
+              <p className="text-xs text-gray-400 mt-1">Petit = à gauche</p>
             </div>
           </div>
           <div>
@@ -287,6 +311,27 @@ export default function AdminPageEditor() {
                 />
               ))
             )}
+          </div>
+        </div>
+
+        {/* Menu order preview */}
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <h2 className="font-semibold text-gray-900 mb-3">Aperçu de la position dans le menu de navigation</h2>
+          <p className="text-xs text-gray-400 mb-3">Ordre actuel de toutes les pages (la page en cours est surlignée)</p>
+          <div className="flex flex-wrap gap-2">
+            {previewItems.map((item, i) => (
+              <div
+                key={item.id}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm ${
+                  item.isCurrent
+                    ? 'bg-coral-500 text-white font-semibold'
+                    : 'bg-gray-100 text-gray-600'
+                }`}
+              >
+                <span className={`text-xs ${item.isCurrent ? 'text-coral-200' : 'text-gray-400'}`}>{i + 1}.</span>
+                {item.title}
+              </div>
+            ))}
           </div>
         </div>
 

@@ -257,6 +257,11 @@ export default function AdminAnimaux() {
     save([...animaux, { ...animal, id, nom: `${animal.nom} (copie)`, statut: 'Disponible' }]);
   };
 
+  const changeStatut = (id: string, statut: Animal['statut']) => {
+    if (!animaux) return;
+    save(animaux.map(a => a.id === id ? { ...a, statut } : a));
+  };
+
   const archiver = (id: string) => {
     if (!animaux) return;
     if (!confirm('Archiver cet animal ? Il n\'apparaîtra plus sur le site public.')) return;
@@ -400,9 +405,13 @@ export default function AdminAnimaux() {
                 <td className="py-3 px-4 font-medium text-gray-900">{animal.nom}</td>
                 <td className="py-3 px-4 text-gray-500 hidden md:table-cell">{animal.espece} · {animal.race}</td>
                 <td className="py-3 px-4">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${STATUT_COLORS[animal.statut] ?? ''}`}>
-                    {animal.statut}
-                  </span>
+                  <select
+                    className={`text-xs font-medium rounded-full px-2 py-1 border-0 cursor-pointer focus:ring-1 focus:ring-coral-400 ${STATUT_COLORS[animal.statut] ?? ''}`}
+                    value={animal.statut}
+                    onChange={e => changeStatut(animal.id, e.target.value as Animal['statut'])}
+                  >
+                    {ALL_STATUTS.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
                 </td>
                 <td className="py-3 px-4 text-gray-500 hidden lg:table-cell">{animal.departement}</td>
                 <td className="py-3 px-4">

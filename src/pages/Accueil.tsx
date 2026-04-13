@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Heart, Users, Calendar, ChevronRight, Star } from 'lucide-react';
 import AnimalCard from '../components/AnimalCard';
 import { useAnimaux, useConfig } from '../hooks/useData';
+import { usePageContent } from '../hooks/usePageContent';
 
 const etapes = [
   {
@@ -45,6 +46,7 @@ const temoignages = [
 export default function Accueil() {
   const { data: animaux } = useAnimaux();
   const { data: config } = useConfig();
+  const pc = usePageContent('accueil');
   const derniers = animaux?.filter(a => a.statut === 'Disponible').slice(0, 3) ?? [];
 
   return (
@@ -64,11 +66,10 @@ export default function Accueil() {
               Association loi 1901 · Ardèche &amp; Vaucluse
             </span>
             <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight mb-6">
-              Chaque animal<br />
-              <span className="text-coral-400">mérite un foyer</span>
+              {(pc.hero_title as string) || 'Chaque animal mérite un foyer'}
             </h1>
             <p className="text-xl text-gray-300 mb-10 leading-relaxed">
-              Domaine de Fuego accompagne chiens, chats et autres animaux vers l'adoption responsable depuis 2016.
+              {(pc.hero_subtitle as string) || "Domaine de Fuego accompagne chiens, chats et autres animaux vers l'adoption responsable depuis 2016."}
             </p>
             <div className="flex flex-wrap gap-4">
               <Link to="/animaux" className="btn-primary text-base px-8 py-4">

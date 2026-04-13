@@ -1,20 +1,24 @@
 import { usePages } from '../hooks/useData';
 import { Heart, Eye, Handshake } from 'lucide-react';
+import { usePageContent } from '../hooks/usePageContent';
 
 const valeurIcons = [Heart, Eye, Handshake];
 
 export default function Presentation() {
   const { data: pages, loading } = usePages();
   const pres = pages?.presentation;
+  const pc = usePageContent('presentation');
 
   return (
     <div className="min-h-screen">
       {/* Hero */}
       <div className="bg-gray-900 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-5xl font-bold mb-4">Notre association</h1>
+          <h1 className="text-5xl font-bold mb-4">
+            {(pc.hero_title as string) || 'Notre association'}
+          </h1>
           <p className="text-gray-400 text-xl">
-            Découvrez qui nous sommes, notre mission et nos valeurs.
+            {(pc.hero_subtitle as string) || 'Découvrez qui nous sommes, notre mission et nos valeurs.'}
           </p>
         </div>
       </div>

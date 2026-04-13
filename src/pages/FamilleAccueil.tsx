@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Home, Heart, Clock, Shield, ChevronDown, ChevronUp } from 'lucide-react';
 import FormFamilleAccueil from '../components/FormFamilleAccueil';
+import { usePageContent } from '../hooks/usePageContent';
 
 const avantages = [
   { icon: Home, titre: 'Chez vous', desc: 'L\'animal vit dans votre foyer et s\'intègre à votre quotidien dans un environnement chaleureux.' },
@@ -30,15 +31,18 @@ const faqs = [
 
 export default function FamilleAccueil() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const pc = usePageContent('famille-accueil');
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">Devenir famille d'accueil</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            {(pc.hero_title as string) || "Devenir famille d'accueil"}
+          </h1>
           <p className="text-gray-600 text-lg max-w-2xl">
-            En devenant famille d'accueil, vous offrez un foyer temporaire à un animal en attente d'adoption. Un geste simple, un impact immense.
+            {(pc.hero_subtitle as string) || "En devenant famille d'accueil, vous offrez un foyer temporaire à un animal en attente d'adoption. Un geste simple, un impact immense."}
           </p>
         </div>
       </div>

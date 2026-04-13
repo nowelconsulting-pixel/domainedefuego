@@ -1,5 +1,6 @@
 import { ExternalLink, Heart, Home, Truck } from 'lucide-react';
 import { usePages, useConfig } from '../hooks/useData';
+import { usePageContent } from '../hooks/usePageContent';
 
 const iconMap: Record<string, React.ElementType> = {
   Heart,
@@ -11,15 +12,18 @@ export default function FaireUnDon() {
   const { data: pages, loading } = usePages();
   const { data: config } = useConfig();
   const don = pages?.faire_un_don;
+  const pc = usePageContent('faire-un-don');
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
       <div className="bg-coral-500 text-white py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl font-bold mb-4">Faire un don</h1>
+          <h1 className="text-5xl font-bold mb-4">
+            {(pc.hero_title as string) || 'Faire un don'}
+          </h1>
           <p className="text-coral-100 text-xl leading-relaxed">
-            Votre générosité permet à des centaines d'animaux de trouver une famille chaque année.
+            {(pc.hero_subtitle as string) || "Votre générosité permet à des centaines d'animaux de trouver une famille chaque année."}
           </p>
         </div>
       </div>

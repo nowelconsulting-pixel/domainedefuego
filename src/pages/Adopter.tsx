@@ -1,6 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
 import { ClipboardList, Phone, Heart, CheckCircle2 } from 'lucide-react';
 import FormAdoption from '../components/FormAdoption';
+import { usePageContent } from '../hooks/usePageContent';
 
 const etapes = [
   {
@@ -23,15 +24,18 @@ const etapes = [
 export default function Adopter() {
   const [params] = useSearchParams();
   const defaultAnimal = params.get('animal') ?? '';
+  const pc = usePageContent('adopter');
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">Adopter un animal</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            {(pc.hero_title as string) || 'Adopter un animal'}
+          </h1>
           <p className="text-gray-600 text-lg max-w-2xl">
-            L'adoption est un engagement pour toute la vie de l'animal. Nous vous accompagnons à chaque étape.
+            {(pc.hero_subtitle as string) || "L'adoption est un engagement pour toute la vie de l'animal. Nous vous accompagnons à chaque étape."}
           </p>
         </div>
       </div>

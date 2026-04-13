@@ -19,6 +19,16 @@ function saveSystemPageData(data: Record<string, Partial<AdminPage>>): void {
   localStorage.setItem('system_page_data', JSON.stringify(data));
 }
 
+interface HeroContent { hero_title: string; hero_subtitle: string; }
+function loadPagesContent(): Record<string, HeroContent> {
+  try { return JSON.parse(localStorage.getItem('pages_content') || '{}'); }
+  catch { return {}; }
+}
+function savePagesContent(slug: string, data: HeroContent): void {
+  const all = loadPagesContent();
+  localStorage.setItem('pages_content', JSON.stringify({ ...all, [slug]: { ...(all[slug] ?? {}), ...data } }));
+}
+
 export default function AdminPageEditor() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -29,6 +39,8 @@ export default function AdminPageEditor() {
   const [slugEdited, setSlugEdited] = useState(false);
   const [saved, setSaved] = useState(false);
   const [showBlockPicker, setShowBlockPicker] = useState(false);
+  const [heroTitle, setHeroTitle] = useState('');
+  const [heroSubtitle, setHeroSubtitle] = useState('');
   const initializedRef = useRef(false);
 
   useEffect(() => {
@@ -63,6 +75,10 @@ export default function AdminPageEditor() {
         updatedAt: ov.updatedAt ?? '',
         createdAt: '',
       });
+      // Load hero content overrides
+      const pc = loadPagesContent()[sysMeta.slug] ?? {};
+      setHeroTitle(pc.hero_title ?? '');
+      setHeroSubtitle(pc.hero_subtitle ?? '');
       initializedRef.current = true;
       return;
     }
@@ -128,6 +144,7 @@ export default function AdminPageEditor() {
     if (page.system) {
       const stored = loadSystemPageData();
       saveSystemPageData({ ...stored, [page.id]: updated });
+      savePagesContent(page.slug, { hero_title: heroTitle, hero_subtitle: heroSubtitle });
       setPage(updated);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
@@ -176,7 +193,33 @@ export default function AdminPageEditor() {
               onChange={e => handleTitleChange(e.target.value)}
               placeholder="Ma nouvelle page"
             />
+            <p className="text-xs text-gray-400 mt-1">Nom affiché dans la navigation</p>
           </div>
+
+          {/* Hero content — system pages only */}
+          {page.system && (
+            <div className="border border-blue-100 rounded-xl p-4 space-y-3 bg-blue-50/40">
+              <p className="text-xs font-semibold text-blue-600 uppercase tracking-wide">Contenu du héro (affiché sur la page)</p>
+              <div>
+                <label className="form-label">Titre du héro</label>
+                <input
+                  className="form-input"
+                  value={heroTitle}
+                  onChange={e => setHeroTitle(e.target.value)}
+                  placeholder="Ex: Chaque animal mérite un foyer"
+                />
+              </div>
+              <div>
+                <label className="form-label">Sous-titre du héro</label>
+                <input
+                  className="form-input"
+                  value={heroSubtitle}
+                  onChange={e => setHeroSubtitle(e.target.value)}
+                  placeholder="Courte phrase d'accroche..."
+                />
+              </div>
+            </div>
+          )}
 
           <div className="flex gap-3">
             <div className="flex-1">

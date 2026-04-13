@@ -18,7 +18,10 @@ export interface AdminSession {
   role: Role;
 }
 
-export type BlockType = 'text' | 'image' | 'card' | 'cta' | 'gallery' | 'contact_form';
+export type BlockType =
+  | 'text' | 'image' | 'card' | 'cta' | 'gallery' | 'contact_form'
+  | 'faq' | 'testimonial' | 'video' | 'separator' | 'columns2'
+  | 'hero_banner' | 'stat' | 'team' | 'embed';
 
 export interface Block {
   id: string;

@@ -1,126 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Save, Eye, Trash2, Plus, GripVertical, X } from 'lucide-react';
+import { ArrowLeft, Save, Eye, Trash2, Plus } from 'lucide-react';
 import RichTextEditor from '../../components/admin/RichTextEditor';
+import { BlockEditor, BLOCK_TYPES, newBlock } from '../../components/admin/AdminBlockEditors';
 import { useAdminPages } from '../../hooks/useAdminData';
-import type { AdminPage, Block, BlockType } from '../../types/admin';
+import type { AdminPage, BlockType } from '../../types/admin';
 import { SYSTEM_PAGES } from '../../types/admin';
 
 function slugify(s: string) {
   return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
-const BLOCK_TYPES: { type: BlockType; label: string; emoji: string }[] = [
-  { type: 'text',         label: 'Texte riche',        emoji: '📝' },
-  { type: 'image',        label: 'Image + légende',    emoji: '🖼️' },
-  { type: 'card',         label: 'Carte info',         emoji: '🃏' },
-  { type: 'cta',          label: 'Bouton CTA',         emoji: '🔘' },
-  { type: 'gallery',      label: 'Galerie',            emoji: '📸' },
-  { type: 'contact_form', label: 'Formulaire contact', emoji: '✉️' },
-];
-
-function newBlock(type: BlockType): Block {
-  return { id: `block-${Date.now()}`, type, data: {} };
+function loadSystemPageData(): Record<string, Partial<AdminPage>> {
+  try { return JSON.parse(localStorage.getItem('system_page_data') || '{}'); }
+  catch { return {}; }
 }
-
-function BlockEditor({ block, onChange, onDelete, onMove, isFirst, isLast }: {
-  block: Block;
-  onChange: (b: Block) => void;
-  onDelete: () => void;
-  onMove: (dir: -1 | 1) => void;
-  isFirst: boolean;
-  isLast: boolean;
-}) {
-  const setData = (k: string, v: string) => onChange({ ...block, data: { ...block.data, [k]: v } });
-  const label = BLOCK_TYPES.find(t => t.type === block.type)?.label ?? block.type;
-
-  return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden bg-white">
-      <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200">
-        <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
-          <GripVertical size={16} className="text-gray-400" />
-          {BLOCK_TYPES.find(t => t.type === block.type)?.emoji} {label}
-        </div>
-        <div className="flex items-center gap-1">
-          <button onClick={() => onMove(-1)} disabled={isFirst} className="p-1 hover:bg-gray-200 rounded disabled:opacity-30">▲</button>
-          <button onClick={() => onMove(1)} disabled={isLast} className="p-1 hover:bg-gray-200 rounded disabled:opacity-30">▼</button>
-          <button onClick={onDelete} className="p-1 hover:bg-red-100 text-red-500 rounded"><X size={14} /></button>
-        </div>
-      </div>
-
-      <div className="p-4 space-y-3">
-        {block.type === 'text' && (
-          <RichTextEditor
-            content={(block.data.content as string) || ''}
-            onChange={v => setData('content', v)}
-          />
-        )}
-
-        {block.type === 'image' && (
-          <>
-            <div>
-              <label className="form-label">URL de l'image</label>
-              <input className="form-input" value={(block.data.url as string) || ''} onChange={e => setData('url', e.target.value)} placeholder="https://..." />
-            </div>
-            <div>
-              <label className="form-label">Légende</label>
-              <input className="form-input" value={(block.data.caption as string) || ''} onChange={e => setData('caption', e.target.value)} />
-            </div>
-            {block.data.url && (
-              <img src={block.data.url as string} alt="" className="max-h-40 rounded-lg object-cover" />
-            )}
-          </>
-        )}
-
-        {block.type === 'card' && (
-          <>
-            <div>
-              <label className="form-label">Icône (nom lucide-react)</label>
-              <input className="form-input" value={(block.data.icon as string) || ''} onChange={e => setData('icon', e.target.value)} placeholder="Heart, Star, Home..." />
-            </div>
-            <div>
-              <label className="form-label">Titre</label>
-              <input className="form-input" value={(block.data.title as string) || ''} onChange={e => setData('title', e.target.value)} />
-            </div>
-            <div>
-              <label className="form-label">Texte</label>
-              <textarea className="form-input" rows={3} value={(block.data.text as string) || ''} onChange={e => setData('text', e.target.value)} />
-            </div>
-          </>
-        )}
-
-        {block.type === 'cta' && (
-          <>
-            <div>
-              <label className="form-label">Texte du bouton</label>
-              <input className="form-input" value={(block.data.label as string) || ''} onChange={e => setData('label', e.target.value)} placeholder="En savoir plus" />
-            </div>
-            <div>
-              <label className="form-label">Lien (URL)</label>
-              <input className="form-input" value={(block.data.url as string) || ''} onChange={e => setData('url', e.target.value)} placeholder="/adopter ou https://..." />
-            </div>
-          </>
-        )}
-
-        {block.type === 'gallery' && (
-          <div>
-            <label className="form-label">URLs des photos (une par ligne)</label>
-            <textarea
-              className="form-input font-mono text-xs"
-              rows={4}
-              value={(block.data.photos as string) || ''}
-              onChange={e => setData('photos', e.target.value)}
-              placeholder="https://example.com/photo1.jpg&#10;https://example.com/photo2.jpg"
-            />
-          </div>
-        )}
-
-        {block.type === 'contact_form' && (
-          <p className="text-sm text-gray-500 italic">Le formulaire de contact sera affiché ici sur le front-office.</p>
-        )}
-      </div>
-    </div>
-  );
+function saveSystemPageData(data: Record<string, Partial<AdminPage>>): void {
+  localStorage.setItem('system_page_data', JSON.stringify(data));
 }
 
 export default function AdminPageEditor() {
@@ -133,14 +29,52 @@ export default function AdminPageEditor() {
   const [slugEdited, setSlugEdited] = useState(false);
   const [saved, setSaved] = useState(false);
   const [showBlockPicker, setShowBlockPicker] = useState(false);
+  const initializedRef = useRef(false);
 
   useEffect(() => {
-    // Check if a new page was passed via navigation state
+    if (initializedRef.current) return;
+
     const stateNew = (location.state as { newPage?: AdminPage })?.newPage;
-    if (stateNew) { setPage(stateNew); return; }
+    if (stateNew) {
+      setPage(stateNew);
+      initializedRef.current = true;
+      return;
+    }
+
+    // System page?
+    const sysMeta = SYSTEM_PAGES.find(sp => sp.id === id);
+    if (sysMeta) {
+      const stored = loadSystemPageData();
+      const ov = stored[sysMeta.id] ?? {};
+      setPage({
+        id: sysMeta.id,
+        title: ov.title ?? sysMeta.title,
+        slug: sysMeta.slug,
+        content: ov.content ?? '',
+        blocks: ov.blocks ?? [],
+        seo_description: ov.seo_description ?? '',
+        menu_icon: '',
+        menu_order: ov.menu_order ?? sysMeta.menu_order,
+        parent_id: null,
+        status: sysMeta.status,
+        system: true,
+        updatedAt: ov.updatedAt ?? '',
+        createdAt: '',
+      });
+      initializedRef.current = true;
+      return;
+    }
+
+    if (pages.length === 0) return; // wait for localStorage load
+
     const found = pages.find(p => p.id === id);
-    if (found) { setPage(found); return; }
-    // Brand new page
+    if (found) {
+      setPage(found);
+      initializedRef.current = true;
+      return;
+    }
+
+    // Brand new custom page
     setPage({
       id: id ?? `page-${Date.now()}`,
       title: '', slug: '', content: '', blocks: [],
@@ -148,6 +82,7 @@ export default function AdminPageEditor() {
       parent_id: null, status: 'draft', system: false,
       updatedAt: new Date().toISOString(), createdAt: new Date().toISOString(),
     });
+    initializedRef.current = true;
   }, [id, pages, location.state]);
 
   if (!page) return null;
@@ -158,7 +93,7 @@ export default function AdminPageEditor() {
   const handleTitleChange = (title: string) => {
     setPage(prev => {
       if (!prev) return null;
-      return { ...prev, title, slug: !slugEdited ? slugify(title) : prev.slug };
+      return { ...prev, title, slug: (!slugEdited && !prev.system) ? slugify(title) : prev.slug };
     });
   };
 
@@ -167,7 +102,7 @@ export default function AdminPageEditor() {
     setShowBlockPicker(false);
   };
 
-  const updateBlock = (i: number, b: Block) =>
+  const updateBlock = (i: number, b: import('../../types/admin').Block) =>
     setPage(prev => { if (!prev) return null; const blocks = [...prev.blocks]; blocks[i] = b; return { ...prev, blocks }; });
 
   const deleteBlock = (i: number) =>
@@ -186,10 +121,18 @@ export default function AdminPageEditor() {
 
   const handleSave = (status?: AdminPage['status']) => {
     if (!page.title.trim()) { alert('Le titre est obligatoire.'); return; }
-    const updated = { ...page, status: status ?? page.status, updatedAt: new Date().toISOString() };
-    savePage(updated);
-    setSaved(true);
-    setTimeout(() => { setSaved(false); navigate('/admin/pages'); }, 1000);
+    const updated: AdminPage = { ...page, status: status ?? page.status, updatedAt: new Date().toISOString() };
+    if (page.system) {
+      const stored = loadSystemPageData();
+      saveSystemPageData({ ...stored, [page.id]: updated });
+      setPage(updated);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } else {
+      savePage(updated);
+      setSaved(true);
+      setTimeout(() => { setSaved(false); navigate('/admin/pages'); }, 1000);
+    }
   };
 
   // Live menu order preview
@@ -197,21 +140,21 @@ export default function AdminPageEditor() {
     try { return JSON.parse(localStorage.getItem('system_page_orders') || '{}'); }
     catch { return {}; }
   })();
-  const previewItems: { id: string; title: string; order: number; isCurrent: boolean }[] = [
+  const previewItems = [
     ...SYSTEM_PAGES.map(sp => ({
-      id: sp.id,
-      title: sp.title,
-      order: systemOrders[sp.id] ?? sp.menu_order,
-      isCurrent: false,
+      id: sp.id, title: sp.title, order: systemOrders[sp.id] ?? sp.menu_order, isCurrent: false,
     })),
     ...pages.filter(p => !p.system && p.id !== page.id).map(p => ({
-      id: p.id,
-      title: p.title,
-      order: p.menu_order,
-      isCurrent: false,
+      id: p.id, title: p.title, order: p.menu_order, isCurrent: false,
     })),
     { id: page.id, title: page.title || 'Cette page', order: page.menu_order, isCurrent: true },
   ].sort((a, b) => a.order - b.order);
+
+  // Parent page options (only non-system top-level + system pages, excluding self)
+  const parentOptions = [
+    ...SYSTEM_PAGES.map(sp => ({ id: sp.id, title: sp.title })),
+    ...pages.filter(p => !p.system && p.id !== page.id && !p.parent_id).map(p => ({ id: p.id, title: p.title })),
+  ];
 
   return (
     <div className="p-8 max-w-4xl">
@@ -220,7 +163,7 @@ export default function AdminPageEditor() {
       </button>
 
       <div className="space-y-6">
-        {/* Title + Slug */}
+        {/* Title + Slug + Parent */}
         <div className="bg-white rounded-xl shadow-sm p-6 space-y-4">
           <div>
             <label className="form-label text-base font-semibold">Titre de la page *</label>
@@ -231,27 +174,52 @@ export default function AdminPageEditor() {
               placeholder="Ma nouvelle page"
             />
           </div>
+
           <div className="flex gap-3">
             <div className="flex-1">
               <label className="form-label">Slug (URL)</label>
-              <div className="flex items-center gap-1">
-                <span className="text-gray-400 text-sm">/</span>
-                <input
-                  className="form-input flex-1"
-                  value={page.slug}
-                  onChange={e => { setSlugEdited(true); set('slug', slugify(e.target.value)); }}
-                  placeholder="ma-nouvelle-page"
-                />
-              </div>
+              {page.system ? (
+                <div className="flex items-center gap-1">
+                  <span className="text-gray-400 text-sm">/</span>
+                  <span className="form-input bg-gray-50 text-gray-400 flex-1 select-none">{page.slug || '(racine)'}</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1">
+                  <span className="text-gray-400 text-sm">/</span>
+                  <input
+                    className="form-input flex-1"
+                    value={page.slug}
+                    onChange={e => { setSlugEdited(true); set('slug', slugify(e.target.value)); }}
+                    placeholder="ma-nouvelle-page"
+                  />
+                </div>
+              )}
             </div>
             <div className="w-40">
               <label className="form-label">Position dans le menu</label>
               <input type="number" className="form-input" value={page.menu_order}
-                onChange={e => set('menu_order', parseInt(e.target.value) || 100)}
-                title="Chiffre plus petit = plus à gauche dans le menu de navigation" />
+                onChange={e => set('menu_order', parseInt(e.target.value) || 100)} />
               <p className="text-xs text-gray-400 mt-1">Petit = à gauche</p>
             </div>
           </div>
+
+          {/* Parent page dropdown — custom pages only */}
+          {!page.system && (
+            <div>
+              <label className="form-label">Page parente (sous-menu)</label>
+              <select
+                className="form-input"
+                value={page.parent_id ?? ''}
+                onChange={e => set('parent_id', (e.target.value || null) as AdminPage['parent_id'])}
+              >
+                <option value="">— Aucune (page de premier niveau) —</option>
+                {parentOptions.map(p => (
+                  <option key={p.id} value={p.id}>{p.title}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <div>
             <label className="form-label">Description SEO (meta description)</label>
             <textarea className="form-input" rows={2} value={page.seo_description}
@@ -260,13 +228,13 @@ export default function AdminPageEditor() {
           </div>
         </div>
 
-        {/* Main content */}
+        {/* Main rich-text content */}
         <div className="bg-white rounded-xl shadow-sm p-6">
           <h2 className="font-semibold text-gray-900 mb-4">Contenu principal</h2>
           <RichTextEditor content={page.content} onChange={v => set('content', v)} />
         </div>
 
-        {/* Blocks */}
+        {/* Content blocks */}
         <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="font-semibold text-gray-900">Blocs de contenu supplémentaires</h2>
@@ -278,7 +246,7 @@ export default function AdminPageEditor() {
                 <Plus size={16} />Ajouter un bloc
               </button>
               {showBlockPicker && (
-                <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-10 p-2 min-w-[200px]">
+                <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-10 p-2 min-w-[220px] max-h-80 overflow-y-auto">
                   {BLOCK_TYPES.map(t => (
                     <button
                       key={t.type}
@@ -349,22 +317,26 @@ export default function AdminPageEditor() {
               saved ? 'bg-green-500' : 'bg-coral-500 hover:bg-coral-600'
             }`}
           >
-            <Eye size={16} />{saved ? 'Publié !' : 'Publier'}
+            <Eye size={16} />{saved ? 'Sauvegardé !' : (page.system ? 'Sauvegarder' : 'Publier')}
           </button>
-          <a
-            href={`/${page.slug}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100 border border-gray-200"
-          >
-            <Eye size={16} />Prévisualiser
-          </a>
-          <button
-            onClick={() => navigate('/admin/pages')}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm text-red-500 hover:bg-red-50 border border-red-200 ml-auto"
-          >
-            <Trash2 size={16} />Annuler
-          </button>
+          {!page.system && (
+            <a
+              href={`/${page.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100 border border-gray-200"
+            >
+              <Eye size={16} />Prévisualiser
+            </a>
+          )}
+          {!page.system && (
+            <button
+              onClick={() => navigate('/admin/pages')}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm text-red-500 hover:bg-red-50 border border-red-200 ml-auto"
+            >
+              <Trash2 size={16} />Annuler
+            </button>
+          )}
         </div>
       </div>
     </div>

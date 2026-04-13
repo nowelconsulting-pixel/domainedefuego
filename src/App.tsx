@@ -1,5 +1,7 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Layout from './components/Layout';
+import MaintenancePage from './pages/MaintenancePage';
 import Accueil from './pages/Accueil';
 import Animaux from './pages/Animaux';
 import AnimalDetail from './pages/AnimalDetail';
@@ -22,9 +24,20 @@ import AdminUsers from './pages/admin/AdminUsers';
 import AdminRoles from './pages/admin/AdminRoles';
 import AdminCandidatures from './pages/admin/AdminCandidatures';
 
+const MAINTENANCE = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
+
+function MaintenanceGate({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+  if (MAINTENANCE && !location.pathname.startsWith('/admin')) {
+    return <MaintenancePage />;
+  }
+  return <>{children}</>;
+}
+
 function App() {
   return (
     <BrowserRouter>
+      <MaintenanceGate>
       <Routes>
         {/* Public site */}
         <Route element={<Layout />}>
@@ -55,6 +68,7 @@ function App() {
           <Route path="candidatures"             element={<AdminCandidatures />} />
         </Route>
       </Routes>
+      </MaintenanceGate>
     </BrowserRouter>
   );
 }

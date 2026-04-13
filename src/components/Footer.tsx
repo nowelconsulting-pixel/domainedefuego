@@ -91,10 +91,7 @@ export default function Footer() {
 
         <div className="border-t border-gray-800 mt-10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-gray-500">
           <p>© {new Date().getFullYear()} Domaine de Fuego. Tous droits réservés.</p>
-          <div className="flex gap-4">
-            <Link to="/mentions-legales" className="hover:text-gray-300">Mentions légales</Link>
-            <Link to="/admin" className="hover:text-gray-300">Administration</Link>
-          </div>
+          <Link to="/mentions-legales" className="hover:text-gray-300">Mentions légales</Link>
         </div>
       </div>
     </footer>

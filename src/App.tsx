@@ -25,11 +25,12 @@ import AdminCandidatures from './pages/admin/AdminCandidatures';
 
 // Evaluated once at module load — no hook, no Router needed
 const isMaintenance = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
+const hasPreviewAccess = localStorage.getItem('preview_access') === 'true';
 
 function App() {
   // Maintenance gate: synchronous check using window.location, no router hook needed.
-  // /admin is always accessible so admins can disable maintenance mode.
-  if (isMaintenance && !window.location.pathname.startsWith('/admin')) {
+  // /admin is always accessible; preview_access cookie bypasses maintenance.
+  if (isMaintenance && !hasPreviewAccess && !window.location.pathname.startsWith('/admin')) {
     return <MaintenancePage />;
   }
 

@@ -1,9 +1,25 @@
-import { Heart, Mail } from 'lucide-react';
+import { useState } from 'react';
+import { Mail } from 'lucide-react';
 import { useConfig } from '../hooks/useData';
 import { FacebookIcon, InstagramIcon, LinkedInIcon } from '../components/SocialIcons';
 
+const SECRET_CODE = 'Bigdodo33$';
+
 export default function MaintenancePage() {
   const { data: config } = useConfig();
+  const [showInput, setShowInput] = useState(false);
+  const [code, setCode] = useState('');
+  const [error, setError] = useState(false);
+
+  const handleSubmit = () => {
+    if (code === SECRET_CODE) {
+      localStorage.setItem('preview_access', 'true');
+      window.location.href = '/';
+    } else {
+      setError(true);
+      setTimeout(() => setError(false), 2000);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center px-6 text-center">
@@ -24,15 +40,6 @@ export default function MaintenancePage() {
         Merci pour votre patience.
       </p>
 
-      {/* Disabled CTA */}
-      <button
-        disabled
-        className="flex items-center gap-2 px-8 py-3 rounded-lg bg-coral-500/30 text-coral-300 font-semibold cursor-not-allowed mb-10 text-base"
-      >
-        <Heart size={18} />
-        Voir les animaux
-      </button>
-
       {/* Email from config */}
       {config?.email_contact && (
         <a
@@ -46,7 +53,7 @@ export default function MaintenancePage() {
 
       {/* Social links from config */}
       {config && (config.facebook_url || config.instagram_url || config.linkedin_url) && (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 mb-16">
           {config.facebook_url && (
             <a href={config.facebook_url} target="_blank" rel="noopener noreferrer"
               className="p-2 rounded-lg text-gray-500 hover:text-coral-400 hover:bg-white/5 transition-colors"
@@ -70,6 +77,38 @@ export default function MaintenancePage() {
           )}
         </div>
       )}
+
+      {/* Secret access */}
+      <div className="mt-auto pt-8 pb-6">
+        {!showInput ? (
+          <button
+            onClick={() => setShowInput(true)}
+            className="text-gray-700 hover:text-gray-500 text-xs transition-colors"
+          >
+            Accès
+          </button>
+        ) : (
+          <div className="flex items-center gap-2">
+            <input
+              type="password"
+              value={code}
+              onChange={e => setCode(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+              placeholder="Code d'accès"
+              className={`px-3 py-1.5 rounded-lg bg-gray-800 text-white text-sm border ${
+                error ? 'border-red-500' : 'border-gray-700'
+              } focus:outline-none focus:border-gray-500`}
+              autoFocus
+            />
+            <button
+              onClick={handleSubmit}
+              className="px-3 py-1.5 rounded-lg bg-gray-800 text-gray-400 hover:text-white text-sm border border-gray-700 hover:border-gray-500 transition-colors"
+            >
+              OK
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

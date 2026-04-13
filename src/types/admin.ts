@@ -79,10 +79,11 @@ export function canEditPages(role: Role) { return role !== 'benevole'; }
 export function canEditAnimaux(_role: Role) { return true; }
 
 export const SYSTEM_PAGES: Pick<AdminPage, 'id' | 'title' | 'slug' | 'menu_order' | 'system' | 'status'>[] = [
-  { id: 'sys-accueil',   title: 'Accueil',            slug: '',               menu_order: 0,  system: true, status: 'published' },
-  { id: 'sys-animaux',   title: 'Nos animaux',        slug: 'animaux',        menu_order: 10, system: true, status: 'published' },
-  { id: 'sys-adopter',   title: 'Adopter',            slug: 'adopter',        menu_order: 20, system: true, status: 'published' },
-  { id: 'sys-fa',        title: "Famille d'accueil",  slug: 'famille-accueil',menu_order: 30, system: true, status: 'published' },
-  { id: 'sys-don',       title: 'Faire un don',       slug: 'faire-un-don',   menu_order: 40, system: true, status: 'published' },
-  { id: 'sys-contact',   title: 'Contact',            slug: 'contact',        menu_order: 50, system: true, status: 'published' },
+  { id: 'sys-accueil',      title: 'Accueil',           slug: '',                menu_order: 0,  system: true, status: 'published' },
+  { id: 'sys-presentation', title: "L'association",     slug: 'presentation',    menu_order: 5,  system: true, status: 'published' },
+  { id: 'sys-animaux',      title: 'Nos animaux',       slug: 'animaux',         menu_order: 10, system: true, status: 'published' },
+  { id: 'sys-adopter',      title: 'Adopter',           slug: 'adopter',         menu_order: 20, system: true, status: 'published' },
+  { id: 'sys-fa',           title: "Famille d'accueil", slug: 'famille-accueil', menu_order: 30, system: true, status: 'published' },
+  { id: 'sys-don',          title: 'Faire un don',      slug: 'faire-un-don',    menu_order: 40, system: true, status: 'published' },
+  { id: 'sys-contact',      title: 'Contact',           slug: 'contact',         menu_order: 50, system: true, status: 'published' },
 ];

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Outlet, NavLink, useNavigate, Link } from 'react-router-dom';
 import {
   PawPrint, FileText, Settings, LogOut, Home,
-  LayoutDashboard, Users, Inbox, ChevronDown, ChevronUp, Shield
+  LayoutDashboard, Users, Inbox, Shield
 } from 'lucide-react';
 import { getSession, clearSession } from '../../utils/auth';
 import type { AdminSession } from '../../types/admin';
@@ -13,7 +13,7 @@ import { useCandidatures } from '../../hooks/useAdminData';
 export default function AdminLayout() {
   const navigate = useNavigate();
   const [session, setSession] = useState<AdminSession | null>(null);
-  const [animauxOpen, setAnimauxOpen] = useState(false);
+
   const { data: animaux } = useAnimaux();
   const { unread } = useCandidatures();
 
@@ -69,28 +69,7 @@ export default function AdminLayout() {
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {navItem('/admin/dashboard', LayoutDashboard, 'Tableau de bord')}
 
-          {/* Animaux with sub-items */}
-          <div>
-            <button
-              onClick={() => setAnimauxOpen(o => !o)}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
-            >
-              <PawPrint size={18} className="flex-shrink-0" />
-              <span className="flex-1 text-left">Animaux</span>
-              {disponibles > 0 && (
-                <span className="bg-green-600 text-white text-xs rounded-full px-1.5 py-0.5 font-bold">
-                  {disponibles}
-                </span>
-              )}
-              {animauxOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-            </button>
-            {animauxOpen && (
-              <div className="ml-6 mt-1 space-y-1">
-                {navItem('/admin/animaux', PawPrint, 'Tous les animaux')}
-                {navItem('/admin/animaux/new', PawPrint, 'Ajouter un animal')}
-              </div>
-            )}
-          </div>
+          {navItem('/admin/animaux', PawPrint, 'Animaux', disponibles > 0 ? disponibles : undefined)}
 
           {navItem('/admin/pages', FileText, 'Pages')}
           {navItem('/admin/candidatures', Inbox, 'Candidatures', unread)}

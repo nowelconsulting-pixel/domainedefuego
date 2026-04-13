@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Plus, Edit2, Archive, X, Save, Copy, Search, ChevronDown } from 'lucide-react';
+import { Plus, Edit2, Archive, ArchiveRestore, X, Save, Copy, Search, ChevronDown } from 'lucide-react';
 import { useAnimaux } from '../../hooks/useData';
 import type { Animal } from '../../types';
 import MediaUploader from '../../components/admin/MediaUploader';
@@ -20,17 +20,18 @@ const EMPTY: FormAnimal = {
 };
 
 const STATUT_COLORS: Record<string, string> = {
-  'Disponible': 'bg-green-100 text-green-700',
-  'Réservé':    'bg-orange-100 text-orange-700',
-  'Adopté':     'bg-gray-100 text-gray-500',
+  'Disponible':          'bg-green-100 text-green-700',
+  'En famille d\'accueil': 'bg-blue-100 text-blue-700',
+  'Réservé':             'bg-orange-100 text-orange-700',
+  'Adopté':              'bg-gray-100 text-gray-500',
+  'Archivé':             'bg-gray-100 text-gray-400',
 };
 
-// ─── Form Field — defined OUTSIDE to prevent remount on re-render ─────────
+const ALL_STATUTS: Animal['statut'][] = ['Disponible', 'En famille d\'accueil', 'Réservé', 'Adopté', 'Archivé'];
 
-interface FieldProps {
-  label: string;
-  children: React.ReactNode;
-}
+// ─── Form Field ───────────────────────────────────────────────────────────────
+
+interface FieldProps { label: string; children: React.ReactNode; }
 function Field({ label, children }: FieldProps) {
   return (
     <div>
@@ -40,7 +41,7 @@ function Field({ label, children }: FieldProps) {
   );
 }
 
-// ─── Animal Form (page or modal) ─────────────────────────────────────────────
+// ─── Animal Form ─────────────────────────────────────────────────────────────
 
 interface AnimalFormProps {
   initial: FormAnimal;
@@ -104,7 +105,7 @@ function AnimalForm({ initial, onSave, onCancel, isNew }: AnimalFormProps) {
             </Field>
             <Field label="Statut *">
               <select className="form-input" value={form.statut} onChange={e => set('statut', e.target.value as Animal['statut'])}>
-                {['Disponible','Réservé','Adopté'].map(v => <option key={v}>{v}</option>)}
+                {ALL_STATUTS.map(v => <option key={v}>{v}</option>)}
               </select>
             </Field>
             <Field label="Participation aux frais (€)">
@@ -191,37 +192,52 @@ function AnimalForm({ initial, onSave, onCancel, isNew }: AnimalFormProps) {
 
 // ─── Main list component ─────────────────────────────────────────────────────
 
+type FilterTab = 'Tous' | Animal['statut'] | 'Archives';
+
 export default function AdminAnimaux() {
   const { data: animaux, save } = useAnimaux();
   const navigate = useNavigate();
   const { action } = useParams<{ action?: string }>();
 
   const [search, setSearch]         = useState('');
-  const [filterStatut, setFilter]   = useState('Tous');
+  const [filterTab, setFilterTab]   = useState<FilterTab>('Tous');
   const [sortBy, setSortBy]         = useState<'nom'|'espece'|'date'>('date');
   const [editingAnimal, setEditing] = useState<FormAnimal | null>(null);
   const [isNew, setIsNew]           = useState(false);
 
   const isFormOpen = action === 'new' || editingAnimal !== null;
 
+  const TABS: { value: FilterTab; label: string }[] = [
+    { value: 'Tous', label: 'Tous' },
+    { value: 'Disponible', label: 'Disponible' },
+    { value: 'En famille d\'accueil', label: 'En famille d\'accueil' },
+    { value: 'Réservé', label: 'Réservé' },
+    { value: 'Adopté', label: 'Adopté' },
+    { value: 'Archives', label: 'Archives' },
+  ];
+
   const filtered = useMemo(() => {
     if (!animaux) return [];
     return animaux
       .filter(a => {
-        if (filterStatut !== 'Tous' && a.statut !== filterStatut) return false;
-        if (search && !a.nom.toLowerCase().includes(search.toLowerCase()) &&
-            !a.race.toLowerCase().includes(search.toLowerCase())) return false;
-        return true;
+        if (filterTab === 'Archives') return a.statut === 'Archivé';
+        if (filterTab === 'Tous') return a.statut !== 'Archivé';
+        return a.statut === filterTab;
+      })
+      .filter(a => {
+        if (!search) return true;
+        return a.nom.toLowerCase().includes(search.toLowerCase()) ||
+               a.race.toLowerCase().includes(search.toLowerCase());
       })
       .sort((a, b) => {
         if (sortBy === 'nom') return a.nom.localeCompare(b.nom);
         if (sortBy === 'espece') return a.espece.localeCompare(b.espece);
-        return 0; // date = natural order
+        return 0;
       });
-  }, [animaux, search, filterStatut, sortBy]);
+  }, [animaux, search, filterTab, sortBy]);
 
-  const openNew = () => { setIsNew(true); setEditing({ ...EMPTY }); navigate('/admin/animaux/new'); };
-  const openEdit = (a: Animal) => { setIsNew(false); setEditing({ ...a }); };
+  const openNew   = () => { setIsNew(true); setEditing({ ...EMPTY }); navigate('/admin/animaux/new'); };
+  const openEdit  = (a: Animal) => { setIsNew(false); setEditing({ ...a }); };
   const closeForm = () => { setEditing(null); navigate('/admin/animaux'); };
 
   const handleSave = (form: FormAnimal) => {
@@ -241,10 +257,15 @@ export default function AdminAnimaux() {
     save([...animaux, { ...animal, id, nom: `${animal.nom} (copie)`, statut: 'Disponible' }]);
   };
 
-  const archive = (id: string) => {
+  const archiver = (id: string) => {
     if (!animaux) return;
-    if (!confirm('Marquer cet animal comme adopté ?')) return;
-    save(animaux.map(a => a.id === id ? { ...a, statut: 'Adopté' as const } : a));
+    if (!confirm('Archiver cet animal ? Il n\'apparaîtra plus sur le site public.')) return;
+    save(animaux.map(a => a.id === id ? { ...a, statut: 'Archivé' as const } : a));
+  };
+
+  const desarchiver = (id: string) => {
+    if (!animaux) return;
+    save(animaux.map(a => a.id === id ? { ...a, statut: 'Disponible' as const } : a));
   };
 
   const exportData = () => {
@@ -267,7 +288,6 @@ export default function AdminAnimaux() {
     reader.readAsText(file); e.target.value = '';
   };
 
-  // Show form if editing
   if (isFormOpen && (editingAnimal !== null || action === 'new')) {
     return (
       <div className="p-8">
@@ -287,7 +307,7 @@ export default function AdminAnimaux() {
       <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
         <h1 className="text-2xl font-bold text-gray-900">
           Animaux
-          <span className="ml-2 text-sm font-normal text-gray-400">({animaux?.length ?? 0})</span>
+          <span className="ml-2 text-sm font-normal text-gray-400">({animaux?.filter(a => a.statut !== 'Archivé').length ?? 0})</span>
         </h1>
         <div className="flex gap-3">
           <button onClick={exportData} className="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50">Exporter</button>
@@ -300,7 +320,29 @@ export default function AdminAnimaux() {
         </div>
       </div>
 
-      {/* Filters */}
+      {/* Tabs */}
+      <div className="flex flex-wrap gap-1 mb-4 border-b border-gray-200">
+        {TABS.map(tab => (
+          <button
+            key={tab.value}
+            onClick={() => setFilterTab(tab.value)}
+            className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+              filterTab === tab.value
+                ? 'bg-white border border-b-white border-gray-200 -mb-px text-coral-500'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            {tab.label}
+            {tab.value === 'Archives' && (
+              <span className="ml-1.5 text-xs text-gray-400">
+                ({animaux?.filter(a => a.statut === 'Archivé').length ?? 0})
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Search + Sort */}
       <div className="flex flex-wrap gap-3 mb-5">
         <div className="relative flex-1 min-w-[180px] max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -310,16 +352,6 @@ export default function AdminAnimaux() {
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
-        </div>
-        <div className="relative">
-          <select
-            className="form-input py-2 pr-8 appearance-none"
-            value={filterStatut}
-            onChange={e => setFilter(e.target.value)}
-          >
-            {['Tous','Disponible','Réservé','Adopté'].map(v => <option key={v}>{v}</option>)}
-          </select>
-          <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
         </div>
         <div className="relative">
           <select
@@ -334,6 +366,13 @@ export default function AdminAnimaux() {
           <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
         </div>
       </div>
+
+      {/* Archives banner */}
+      {filterTab === 'Archives' && (
+        <div className="mb-4 p-4 bg-gray-50 rounded-xl border border-gray-200 text-sm text-gray-600">
+          Les animaux archivés n'apparaissent pas sur le site public. Utilisez "Désarchiver" pour les remettre en disponible.
+        </div>
+      )}
 
       {/* Table */}
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
@@ -368,18 +407,33 @@ export default function AdminAnimaux() {
                 <td className="py-3 px-4 text-gray-500 hidden lg:table-cell">{animal.departement}</td>
                 <td className="py-3 px-4">
                   <div className="flex justify-end gap-1">
-                    <button onClick={() => openEdit(animal)} title="Modifier"
-                      className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700">
-                      <Edit2 size={15} />
-                    </button>
-                    <button onClick={() => duplicate(animal)} title="Dupliquer"
-                      className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-600">
-                      <Copy size={15} />
-                    </button>
-                    <button onClick={() => archive(animal.id)} title="Marquer adopté"
-                      className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-orange-500">
-                      <Archive size={15} />
-                    </button>
+                    {animal.statut === 'Archivé' ? (
+                      <>
+                        <button onClick={() => desarchiver(animal.id)} title="Désarchiver (remettre en Disponible)"
+                          className="flex items-center gap-1 px-2 py-1.5 rounded-lg hover:bg-green-50 text-gray-500 hover:text-green-600 text-xs">
+                          <ArchiveRestore size={14} />Désarchiver
+                        </button>
+                        <button onClick={() => openEdit(animal)} title="Modifier"
+                          className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700">
+                          <Edit2 size={15} />
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button onClick={() => openEdit(animal)} title="Modifier"
+                          className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700">
+                          <Edit2 size={15} />
+                        </button>
+                        <button onClick={() => duplicate(animal)} title="Dupliquer"
+                          className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-600">
+                          <Copy size={15} />
+                        </button>
+                        <button onClick={() => archiver(animal.id)} title="Archiver"
+                          className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-orange-500">
+                          <Archive size={15} />
+                        </button>
+                      </>
+                    )}
                   </div>
                 </td>
               </tr>
@@ -388,7 +442,8 @@ export default function AdminAnimaux() {
         </table>
         {filtered.length === 0 && (
           <div className="text-center py-12 text-gray-400">
-            {search || filterStatut !== 'Tous' ? 'Aucun résultat pour cette recherche' : 'Aucun animal enregistré'}
+            {search ? 'Aucun résultat pour cette recherche' :
+             filterTab === 'Archives' ? 'Aucun animal archivé' : 'Aucun animal dans cette catégorie'}
           </div>
         )}
       </div>

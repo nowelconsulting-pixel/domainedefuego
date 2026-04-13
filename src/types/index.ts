@@ -6,7 +6,7 @@ export interface Animal {
   naissance: number;
   sexe: 'Mâle' | 'Femelle';
   departement: string;
-  statut: 'Disponible' | 'Réservé' | 'Adopté';
+  statut: 'Disponible' | 'En famille d\'accueil' | 'Réservé' | 'Adopté' | 'Archivé';
   description: string;
   entente_chiens: boolean;
   entente_chats: boolean;

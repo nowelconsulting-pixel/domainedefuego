@@ -17,7 +17,7 @@ export default function Animaux() {
   const filtered = useMemo(() => {
     if (!animaux) return [];
     return animaux.filter(a => {
-      if (a.statut === 'Adopté') return false;
+      if (a.statut === 'Adopté' || a.statut === 'Archivé') return false;
       if (espece !== 'Tous' && a.espece !== espece) return false;
       if (age !== 'Tous' && getAge(a.naissance) !== age) return false;
       if (sexe !== 'Tous' && a.sexe !== sexe) return false;

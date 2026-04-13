@@ -1,5 +1,4 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import MaintenancePage from './pages/MaintenancePage';
 import Accueil from './pages/Accueil';
@@ -24,20 +23,18 @@ import AdminUsers from './pages/admin/AdminUsers';
 import AdminRoles from './pages/admin/AdminRoles';
 import AdminCandidatures from './pages/admin/AdminCandidatures';
 
-const MAINTENANCE = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
-
-function MaintenanceGate({ children }: { children: React.ReactNode }) {
-  const location = useLocation();
-  if (MAINTENANCE && !location.pathname.startsWith('/admin')) {
-    return <MaintenancePage />;
-  }
-  return <>{children}</>;
-}
+// Evaluated once at module load — no hook, no Router needed
+const isMaintenance = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
 
 function App() {
+  // Maintenance gate: synchronous check using window.location, no router hook needed.
+  // /admin is always accessible so admins can disable maintenance mode.
+  if (isMaintenance && !window.location.pathname.startsWith('/admin')) {
+    return <MaintenancePage />;
+  }
+
   return (
     <BrowserRouter>
-      <MaintenanceGate>
       <Routes>
         {/* Public site */}
         <Route element={<Layout />}>
@@ -50,25 +47,23 @@ function App() {
           <Route path="/faire-un-don"       element={<FaireUnDon />} />
           <Route path="/contact"            element={<Contact />} />
           <Route path="/mentions-legales"   element={<MentionsLegales />} />
-          {/* Custom pages (created via admin) */}
           <Route path="/:slug"              element={<CustomPage />} />
         </Route>
 
-        {/* Admin */}
+        {/* Admin — always accessible */}
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminLayout />}>
-          <Route path="dashboard"                element={<AdminDashboard />} />
-          <Route path="animaux"                  element={<AdminAnimaux />} />
-          <Route path="animaux/:action"          element={<AdminAnimaux />} />
-          <Route path="pages"                    element={<AdminPageManager />} />
-          <Route path="pages/edit/:id"           element={<AdminPageEditor />} />
-          <Route path="config"                   element={<AdminConfig />} />
-          <Route path="users"                    element={<AdminUsers />} />
-          <Route path="roles"                    element={<AdminRoles />} />
-          <Route path="candidatures"             element={<AdminCandidatures />} />
+          <Route path="dashboard"       element={<AdminDashboard />} />
+          <Route path="animaux"         element={<AdminAnimaux />} />
+          <Route path="animaux/:action" element={<AdminAnimaux />} />
+          <Route path="pages"           element={<AdminPageManager />} />
+          <Route path="pages/edit/:id"  element={<AdminPageEditor />} />
+          <Route path="config"          element={<AdminConfig />} />
+          <Route path="users"           element={<AdminUsers />} />
+          <Route path="roles"           element={<AdminRoles />} />
+          <Route path="candidatures"    element={<AdminCandidatures />} />
         </Route>
       </Routes>
-      </MaintenanceGate>
     </BrowserRouter>
   );
 }

@@ -19,6 +19,7 @@ import AdminPageManager from './pages/admin/AdminPageManager';
 import AdminPageEditor from './pages/admin/AdminPageEditor';
 import AdminConfig from './pages/admin/AdminConfig';
 import AdminUsers from './pages/admin/AdminUsers';
+import AdminRoles from './pages/admin/AdminRoles';
 import AdminCandidatures from './pages/admin/AdminCandidatures';
 
 function App() {
@@ -50,6 +51,7 @@ function App() {
           <Route path="pages/edit/:id"           element={<AdminPageEditor />} />
           <Route path="config"                   element={<AdminConfig />} />
           <Route path="users"                    element={<AdminUsers />} />
+          <Route path="roles"                    element={<AdminRoles />} />
           <Route path="candidatures"             element={<AdminCandidatures />} />
         </Route>
       </Routes>

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Outlet, NavLink, useNavigate, Link } from 'react-router-dom';
 import {
   PawPrint, FileText, Settings, LogOut, Home,
-  LayoutDashboard, Users, Inbox, ChevronDown, ChevronUp
+  LayoutDashboard, Users, Inbox, ChevronDown, ChevronUp, Shield
 } from 'lucide-react';
 import { getSession, clearSession } from '../../utils/auth';
 import type { AdminSession } from '../../types/admin';
@@ -95,6 +95,7 @@ export default function AdminLayout() {
           {navItem('/admin/pages', FileText, 'Pages')}
           {navItem('/admin/candidatures', Inbox, 'Candidatures', unread)}
           {navItem('/admin/users', Users, 'Utilisateurs')}
+          {session?.role === 'superadmin' && navItem('/admin/roles', Shield, 'Rôles & Permissions')}
           {navItem('/admin/config', Settings, 'Configuration')}
         </nav>
 

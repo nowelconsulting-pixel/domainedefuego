@@ -58,6 +58,8 @@ export default function AdminPageEditor() {
         parent_id: null,
         status: sysMeta.status,
         system: true,
+        show_in_nav: ov.show_in_nav ?? sysMeta.show_in_nav,
+        show_in_footer: ov.show_in_footer ?? sysMeta.show_in_footer,
         updatedAt: ov.updatedAt ?? '',
         createdAt: '',
       });

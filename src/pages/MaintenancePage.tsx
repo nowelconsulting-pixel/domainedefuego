@@ -1,5 +1,6 @@
-import { Heart, Facebook, Instagram, Mail } from 'lucide-react';
+import { Heart, Mail } from 'lucide-react';
 import Logo from '../components/Logo';
+import { FacebookIcon, InstagramIcon } from '../components/SocialIcons';
 import { useConfig } from '../hooks/useData';
 
 export default function MaintenancePage() {
@@ -59,7 +60,7 @@ export default function MaintenancePage() {
               className="p-2 rounded-lg text-gray-500 hover:text-coral-400 hover:bg-white/5 transition-colors"
               aria-label="Facebook"
             >
-              <Facebook size={20} />
+              <FacebookIcon size={20} />
             </a>
           )}
           {config.instagram_url && (
@@ -70,7 +71,7 @@ export default function MaintenancePage() {
               className="p-2 rounded-lg text-gray-500 hover:text-coral-400 hover:bg-white/5 transition-colors"
               aria-label="Instagram"
             >
-              <Instagram size={20} />
+              <InstagramIcon size={20} />
             </a>
           )}
         </div>

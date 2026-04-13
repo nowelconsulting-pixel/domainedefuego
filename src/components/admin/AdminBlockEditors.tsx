@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Plus, Trash2, GripVertical, X } from 'lucide-react';
 import RichTextEditor from './RichTextEditor';
 import type { Block, BlockType } from '../../types/admin';
-import { detectVideoType, getYoutubeEmbedUrl, getYoutubeThumbnail } from '../../utils/image';
+import { detectVideoType, getYoutubeThumbnail } from '../../utils/image';
 
 export const BLOCK_TYPES: { type: BlockType; label: string; emoji: string }[] = [
   { type: 'text',         label: 'Texte riche',           emoji: '📝' },

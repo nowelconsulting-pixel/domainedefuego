@@ -23,7 +23,7 @@ export default function AnimalDetail() {
 
   const animal = animaux?.find(a => a.id === id);
 
-  if (!animal) {
+  if (!animal || animal.statut === 'Archivé') {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-center px-4">
         <div className="text-6xl">🐾</div>

@@ -10,32 +10,44 @@ interface FormData {
   type_logement: string; jardin: string; surface: string; statut_occupant: string;
   statut_familial: string; enfants: string; enfants_ages: string;
   autres_animaux: string; autres_animaux_detail: string;
-  heures_seul: string; vacances: string;
-  duree_disponible: string;
-  types_acceptes: string[];
-  urgences: string;
-  experience: string;
+  duree_disponible: string; types_acceptes: string[];
+  urgences: string; experience: string;
 }
 
 const initialData: FormData = {
   prenom: '', nom: '', email: '', telephone: '', adresse: '', code_postal: '', ville: '',
   type_logement: '', jardin: '', surface: '', statut_occupant: '',
   statut_familial: '', enfants: '', enfants_ages: '', autres_animaux: '', autres_animaux_detail: '',
-  heures_seul: '', vacances: '',
   duree_disponible: '', types_acceptes: [], urgences: '', experience: '',
 };
 
 const typesAnimaux = ['Chien', 'Chat', 'Lapin', 'Autre'];
 
+// required string fields per step
+const REQUIRED: Record<number, (keyof FormData)[]> = {
+  0: ['prenom', 'nom', 'email', 'telephone', 'adresse', 'code_postal', 'ville'],
+  1: ['type_logement', 'jardin', 'statut_occupant'],
+  2: ['statut_familial'],
+  3: ['duree_disponible', 'urgences'],
+};
+
+function Err({ msg }: { msg?: string }) {
+  if (!msg) return null;
+  return <p className="text-xs text-red-500 mt-1">{msg}</p>;
+}
+
 export default function FormFamilleAccueil() {
   const [step, setStep] = useState(0);
   const [data, setData] = useState<FormData>(initialData);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
 
-  const set = (k: keyof FormData, v: string | boolean) =>
+  const set = (k: keyof FormData, v: string | boolean) => {
     setData(prev => ({ ...prev, [k]: v }));
+    setErrors(prev => { const n = { ...prev }; delete n[k as string]; return n; });
+  };
 
   const toggleType = (t: string) => {
     setData(prev => ({
@@ -44,9 +56,28 @@ export default function FormFamilleAccueil() {
         ? prev.types_acceptes.filter(x => x !== t)
         : [...prev.types_acceptes, t],
     }));
+    setErrors(prev => { const n = { ...prev }; delete n.types_acceptes; return n; });
+  };
+
+  const validateStep = (s: number): boolean => {
+    const required = REQUIRED[s] ?? [];
+    const newErrors: Record<string, string> = {};
+    for (const field of required) {
+      if (!data[field]) newErrors[field as string] = 'Champ obligatoire';
+    }
+    if (s === 3 && data.types_acceptes.length === 0) {
+      newErrors.types_acceptes = 'Champ obligatoire';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const next = () => {
+    if (validateStep(step)) setStep(s => Math.min(s + 1, 3));
   };
 
   const sendEmail = async () => {
+    if (!validateStep(3)) return;
     setSending(true);
     setError('');
     try {
@@ -56,14 +87,9 @@ export default function FormFamilleAccueil() {
         { ...data, types_acceptes: data.types_acceptes.join(', ') },
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
       );
-      // Save candidature to localStorage for admin tracking
       const candidature = {
-        id: `fa-${Date.now()}`,
-        type: 'fa',
-        status: 'nouvelle',
-        nom: `${data.prenom} ${data.nom}`,
-        email: data.email,
-        telephone: data.telephone,
+        id: `fa-${Date.now()}`, type: 'fa', status: 'nouvelle',
+        nom: `${data.prenom} ${data.nom}`, email: data.email, telephone: data.telephone,
         data: {
           adresse: `${data.adresse}, ${data.code_postal} ${data.ville}`,
           logement: `${data.type_logement}, jardin: ${data.jardin}`,
@@ -74,8 +100,7 @@ export default function FormFamilleAccueil() {
           urgences: data.urgences,
           experience: data.experience,
         },
-        notes: '',
-        createdAt: new Date().toISOString(),
+        notes: '', createdAt: new Date().toISOString(),
       };
       const existing = JSON.parse(localStorage.getItem('candidatures') || '[]');
       localStorage.setItem('candidatures', JSON.stringify([candidature, ...existing]));
@@ -127,15 +152,43 @@ export default function FormFamilleAccueil() {
           <div className="space-y-5">
             <h3 className="text-xl font-semibold text-gray-900">Votre identité</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div><label className="form-label">Prénom *</label><input className="form-input" value={data.prenom} onChange={e => set('prenom', e.target.value)} /></div>
-              <div><label className="form-label">Nom *</label><input className="form-input" value={data.nom} onChange={e => set('nom', e.target.value)} /></div>
-              <div><label className="form-label">Email *</label><input type="email" className="form-input" value={data.email} onChange={e => set('email', e.target.value)} /></div>
-              <div><label className="form-label">Téléphone *</label><input type="tel" className="form-input" value={data.telephone} onChange={e => set('telephone', e.target.value)} /></div>
+              <div>
+                <label className="form-label">Prénom *</label>
+                <input className={`form-input ${errors.prenom ? 'border-red-400' : ''}`} value={data.prenom} onChange={e => set('prenom', e.target.value)} placeholder="Jean" />
+                <Err msg={errors.prenom} />
+              </div>
+              <div>
+                <label className="form-label">Nom *</label>
+                <input className={`form-input ${errors.nom ? 'border-red-400' : ''}`} value={data.nom} onChange={e => set('nom', e.target.value)} placeholder="Dupont" />
+                <Err msg={errors.nom} />
+              </div>
+              <div>
+                <label className="form-label">Email *</label>
+                <input type="email" className={`form-input ${errors.email ? 'border-red-400' : ''}`} value={data.email} onChange={e => set('email', e.target.value)} placeholder="jean@exemple.fr" />
+                <Err msg={errors.email} />
+              </div>
+              <div>
+                <label className="form-label">Téléphone *</label>
+                <input type="tel" className={`form-input ${errors.telephone ? 'border-red-400' : ''}`} value={data.telephone} onChange={e => set('telephone', e.target.value)} placeholder="06 00 00 00 00" />
+                <Err msg={errors.telephone} />
+              </div>
             </div>
-            <div><label className="form-label">Adresse *</label><input className="form-input" value={data.adresse} onChange={e => set('adresse', e.target.value)} /></div>
+            <div>
+              <label className="form-label">Adresse *</label>
+              <input className={`form-input ${errors.adresse ? 'border-red-400' : ''}`} value={data.adresse} onChange={e => set('adresse', e.target.value)} placeholder="12 rue des Fleurs" />
+              <Err msg={errors.adresse} />
+            </div>
             <div className="grid grid-cols-2 gap-5">
-              <div><label className="form-label">Code postal *</label><input className="form-input" value={data.code_postal} onChange={e => set('code_postal', e.target.value)} /></div>
-              <div><label className="form-label">Ville *</label><input className="form-input" value={data.ville} onChange={e => set('ville', e.target.value)} /></div>
+              <div>
+                <label className="form-label">Code postal *</label>
+                <input className={`form-input ${errors.code_postal ? 'border-red-400' : ''}`} value={data.code_postal} onChange={e => set('code_postal', e.target.value)} placeholder="07200" />
+                <Err msg={errors.code_postal} />
+              </div>
+              <div>
+                <label className="form-label">Ville *</label>
+                <input className={`form-input ${errors.ville ? 'border-red-400' : ''}`} value={data.ville} onChange={e => set('ville', e.target.value)} placeholder="Aubenas" />
+                <Err msg={errors.ville} />
+              </div>
             </div>
           </div>
         )}
@@ -146,30 +199,33 @@ export default function FormFamilleAccueil() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
                 <label className="form-label">Type de logement *</label>
-                <select className="form-input" value={data.type_logement} onChange={e => set('type_logement', e.target.value)}>
+                <select className={`form-input ${errors.type_logement ? 'border-red-400' : ''}`} value={data.type_logement} onChange={e => set('type_logement', e.target.value)}>
                   <option value="">Choisir...</option>
                   <option>Maison</option><option>Appartement</option><option>Autre</option>
                 </select>
+                <Err msg={errors.type_logement} />
               </div>
               <div>
                 <label className="form-label">Jardin / extérieur *</label>
-                <select className="form-input" value={data.jardin} onChange={e => set('jardin', e.target.value)}>
+                <select className={`form-input ${errors.jardin ? 'border-red-400' : ''}`} value={data.jardin} onChange={e => set('jardin', e.target.value)}>
                   <option value="">Choisir...</option>
                   <option>Oui, clôturé</option><option>Oui, non clôturé</option><option>Non</option>
                 </select>
+                <Err msg={errors.jardin} />
               </div>
               <div>
                 <label className="form-label">Surface (m²)</label>
-                <input type="number" className="form-input" value={data.surface} onChange={e => set('surface', e.target.value)} />
+                <input type="number" className="form-input" value={data.surface} onChange={e => set('surface', e.target.value)} placeholder="Ex: 70" />
               </div>
               <div>
                 <label className="form-label">Statut *</label>
-                <select className="form-input" value={data.statut_occupant} onChange={e => set('statut_occupant', e.target.value)}>
+                <select className={`form-input ${errors.statut_occupant ? 'border-red-400' : ''}`} value={data.statut_occupant} onChange={e => set('statut_occupant', e.target.value)}>
                   <option value="">Choisir...</option>
                   <option>Propriétaire</option>
                   <option>Locataire avec autorisation</option>
                   <option>Locataire (à vérifier)</option>
                 </select>
+                <Err msg={errors.statut_occupant} />
               </div>
             </div>
           </div>
@@ -181,10 +237,11 @@ export default function FormFamilleAccueil() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
                 <label className="form-label">Situation familiale *</label>
-                <select className="form-input" value={data.statut_familial} onChange={e => set('statut_familial', e.target.value)}>
+                <select className={`form-input ${errors.statut_familial ? 'border-red-400' : ''}`} value={data.statut_familial} onChange={e => set('statut_familial', e.target.value)}>
                   <option value="">Choisir...</option>
                   <option>Seul(e)</option><option>En couple</option><option>Famille</option>
                 </select>
+                <Err msg={errors.statut_familial} />
               </div>
               <div>
                 <label className="form-label">Enfants à la maison ?</label>
@@ -195,7 +252,10 @@ export default function FormFamilleAccueil() {
               </div>
             </div>
             {data.enfants === 'Oui' && (
-              <div><label className="form-label">Âge(s) des enfants</label><input className="form-input" value={data.enfants_ages} onChange={e => set('enfants_ages', e.target.value)} /></div>
+              <div>
+                <label className="form-label">Âge(s) des enfants</label>
+                <input className="form-input" value={data.enfants_ages} onChange={e => set('enfants_ages', e.target.value)} placeholder="Ex: 4 ans, 8 ans" />
+              </div>
             )}
             <div>
               <label className="form-label">Autres animaux à la maison ?</label>
@@ -205,7 +265,10 @@ export default function FormFamilleAccueil() {
               </select>
             </div>
             {data.autres_animaux === 'Oui' && (
-              <div><label className="form-label">Précisez</label><input className="form-input" value={data.autres_animaux_detail} onChange={e => set('autres_animaux_detail', e.target.value)} /></div>
+              <div>
+                <label className="form-label">Précisez</label>
+                <input className="form-input" value={data.autres_animaux_detail} onChange={e => set('autres_animaux_detail', e.target.value)} placeholder="Ex: 1 chat, 1 labrador" />
+              </div>
             )}
           </div>
         )}
@@ -215,13 +278,14 @@ export default function FormFamilleAccueil() {
             <h3 className="text-xl font-semibold text-gray-900">Vos disponibilités</h3>
             <div>
               <label className="form-label">Durée disponible *</label>
-              <select className="form-input" value={data.duree_disponible} onChange={e => set('duree_disponible', e.target.value)}>
+              <select className={`form-input ${errors.duree_disponible ? 'border-red-400' : ''}`} value={data.duree_disponible} onChange={e => set('duree_disponible', e.target.value)}>
                 <option value="">Choisir...</option>
                 <option>Court terme (quelques jours)</option>
                 <option>Moyen terme (quelques semaines)</option>
                 <option>Long terme (plusieurs mois)</option>
                 <option>Flexible selon les besoins</option>
               </select>
+              <Err msg={errors.duree_disponible} />
             </div>
             <div>
               <label className="form-label">Types d'animaux acceptés *</label>
@@ -238,14 +302,16 @@ export default function FormFamilleAccueil() {
                   </label>
                 ))}
               </div>
+              <Err msg={errors.types_acceptes} />
             </div>
             <div>
               <label className="form-label">Urgences acceptées (accueil immédiat) ? *</label>
-              <select className="form-input" value={data.urgences} onChange={e => set('urgences', e.target.value)}>
+              <select className={`form-input ${errors.urgences ? 'border-red-400' : ''}`} value={data.urgences} onChange={e => set('urgences', e.target.value)}>
                 <option value="">Choisir...</option>
                 <option>Oui, selon disponibilités</option>
                 <option>Non</option>
               </select>
+              <Err msg={errors.urgences} />
             </div>
             <div>
               <label className="form-label">Votre expérience avec les animaux</label>
@@ -271,11 +337,11 @@ export default function FormFamilleAccueil() {
             <ChevronLeft size={20} />Précédent
           </button>
           {step < 3 ? (
-            <button onClick={() => setStep(s => s + 1)} className="btn-primary">
+            <button onClick={next} className="btn-primary">
               Suivant<ChevronRight size={20} />
             </button>
           ) : (
-            <button onClick={sendEmail} disabled={sending || data.types_acceptes.length === 0}
+            <button onClick={sendEmail} disabled={sending}
               className="btn-primary disabled:opacity-50">
               {sending ? 'Envoi...' : 'Envoyer ma candidature'}
             </button>

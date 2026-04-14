@@ -1,18 +1,13 @@
 import { ExternalLink, Heart, Home, Truck } from 'lucide-react';
-import { usePages, useConfig } from '../hooks/useData';
+import { useConfig } from '../hooks/useData';
 import { usePageContent } from '../hooks/usePageContent';
 
-const iconMap: Record<string, React.ElementType> = {
-  Heart,
-  Home,
-  Truck,
-};
+const iconMap: Record<string, React.ElementType> = { Heart, Home, Truck };
 
 export default function FaireUnDon() {
-  const { data: pages, loading } = usePages();
   const { data: config } = useConfig();
-  const don = pages?.faire_un_don;
   const pc = usePageContent('faire-un-don');
+  const utilisations = pc.utilisations as Array<{ titre: string; description: string; icone: string }> | undefined;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -32,18 +27,12 @@ export default function FaireUnDon() {
 
         {/* Texte + CTA */}
         <section className="bg-white rounded-2xl p-8 md:p-12 shadow-sm text-center max-w-3xl mx-auto">
-          {loading ? (
-            <div className="space-y-4 animate-pulse">
-              {[...Array(4)].map((_, i) => <div key={i} className="h-4 bg-gray-200 rounded mx-auto" style={{ width: `${60 + Math.random() * 30}%` }} />)}
-            </div>
-          ) : (
-            <>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">{don?.titre}</h2>
-              {don?.texte.split('\n\n').map((p, i) => (
-                <p key={i} className="text-gray-700 leading-relaxed mb-4 text-lg">{p}</p>
-              ))}
-            </>
-          )}
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            {(pc.intro_title as string) || 'Soutenez notre action'}
+          </h2>
+          {((pc.intro_text as string) || '').split('\n\n').map((p, i) => (
+            <p key={i} className="text-gray-700 leading-relaxed mb-4 text-lg">{p}</p>
+          ))}
           <div className="mt-8">
             <a
               href={config?.helloasso_url || '#'}
@@ -62,11 +51,11 @@ export default function FaireUnDon() {
         </section>
 
         {/* Utilisations */}
-        {don?.utilisations && (
+        {utilisations && utilisations.length > 0 && (
           <section>
             <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">À quoi sert votre don ?</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {don.utilisations.map((u, i) => {
+              {utilisations.map((u, i) => {
                 const Icon = iconMap[u.icone] ?? Heart;
                 return (
                   <div key={i} className="bg-white rounded-2xl p-8 shadow-sm text-center">

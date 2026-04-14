@@ -1,22 +1,17 @@
+import pageDefaults from '../data/pageDefaults';
+
 export type PageContentData = Record<string, unknown>;
 
-/** Reads editable content from localStorage('page_content_{slug}'). */
+/** Read editable content for a page. Checks localStorage first, falls back to built-in defaults. */
 export function usePageContent(slug: string): PageContentData {
   try {
     const raw = localStorage.getItem(`page_content_${slug}`);
-    return raw ? (JSON.parse(raw) as PageContentData) : {};
-  } catch {
-    return {};
-  }
+    if (raw) return JSON.parse(raw) as PageContentData;
+  } catch { /* ignore */ }
+  return pageDefaults[slug] ?? {};
 }
 
-/** Saves (merges) content into localStorage('page_content_{slug}'). */
+/** Persist the full content object for a page slug. */
 export function savePageContent(slug: string, data: PageContentData): void {
-  try {
-    const existing = (() => {
-      try { return JSON.parse(localStorage.getItem(`page_content_${slug}`) || '{}') as PageContentData; }
-      catch { return {}; }
-    })();
-    localStorage.setItem(`page_content_${slug}`, JSON.stringify({ ...existing, ...data }));
-  } catch { /* ignore */ }
+  localStorage.setItem(`page_content_${slug}`, JSON.stringify(data));
 }

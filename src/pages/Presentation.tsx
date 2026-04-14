@@ -1,13 +1,13 @@
-import { usePages } from '../hooks/useData';
 import { Heart, Eye, Handshake } from 'lucide-react';
 import { usePageContent } from '../hooks/usePageContent';
 
 const valeurIcons = [Heart, Eye, Handshake];
 
 export default function Presentation() {
-  const { data: pages, loading } = usePages();
-  const pres = pages?.presentation;
   const pc = usePageContent('presentation');
+  const valeurs = pc.valeurs as Array<{ titre: string; description: string }> | undefined;
+  const equipe  = pc.equipe  as Array<{ nom: string; role: string; photo: string }> | undefined;
+  const partenaires = pc.partenaires as string[] | undefined;
 
   return (
     <div className="min-h-screen">
@@ -26,32 +26,22 @@ export default function Presentation() {
       {/* Mission */}
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          {loading ? (
-            <div className="space-y-4 animate-pulse">
-              {[...Array(5)].map((_, i) => (
-                <div key={i} className="h-4 bg-gray-200 rounded" style={{ width: `${80 + Math.random() * 20}%` }} />
-              ))}
-            </div>
-          ) : (
-            <>
-              <h2 className="text-3xl font-bold text-gray-900 mb-8">{pres?.titre}</h2>
-              {pres?.texte.split('\n\n').map((p, i) => (
-                <p key={i} className="text-gray-700 leading-relaxed mb-6 text-lg">
-                  {p}
-                </p>
-              ))}
-            </>
-          )}
+          <h2 className="text-3xl font-bold text-gray-900 mb-8">
+            {(pc.mission_title as string) || 'Notre mission'}
+          </h2>
+          {((pc.mission_text as string) || '').split('\n\n').map((p, i) => (
+            <p key={i} className="text-gray-700 leading-relaxed mb-6 text-lg">{p}</p>
+          ))}
         </div>
       </section>
 
       {/* Valeurs */}
-      {pres?.valeurs && (
+      {valeurs && valeurs.length > 0 && (
         <section className="py-20 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-gray-900 text-center mb-14">Nos valeurs</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {pres.valeurs.map((v, i) => {
+              {valeurs.map((v, i) => {
                 const Icon = valeurIcons[i] ?? Heart;
                 return (
                   <div key={i} className="bg-white rounded-2xl p-8 shadow-sm text-center">
@@ -69,20 +59,18 @@ export default function Presentation() {
       )}
 
       {/* Équipe */}
-      {pres?.equipe && (
+      {equipe && equipe.length > 0 && (
         <section className="py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-gray-900 text-center mb-14">Notre équipe</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
-              {pres.equipe.map((membre, i) => (
+              {equipe.map((membre, i) => (
                 <div key={i} className="text-center">
                   <div className="w-32 h-32 bg-gray-100 rounded-full mx-auto mb-4 overflow-hidden">
                     {membre.photo ? (
                       <img src={membre.photo} alt={membre.nom} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-4xl text-gray-400">
-                        👤
-                      </div>
+                      <div className="w-full h-full flex items-center justify-center text-4xl text-gray-400">👤</div>
                     )}
                   </div>
                   <h3 className="font-semibold text-gray-900">{membre.nom}</h3>
@@ -95,16 +83,13 @@ export default function Presentation() {
       )}
 
       {/* Partenaires */}
-      {pres?.partenaires && pres.partenaires.length > 0 && (
+      {partenaires && partenaires.length > 0 && (
         <section className="py-20 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-gray-900 text-center mb-14">Nos partenaires</h2>
             <div className="flex flex-wrap justify-center gap-4">
-              {pres.partenaires.map((p, i) => (
-                <div
-                  key={i}
-                  className="bg-white px-6 py-4 rounded-xl shadow-sm border border-gray-100 text-gray-700 font-medium"
-                >
+              {partenaires.map((p, i) => (
+                <div key={i} className="bg-white px-6 py-4 rounded-xl shadow-sm border border-gray-100 text-gray-700 font-medium">
                   {p}
                 </div>
               ))}

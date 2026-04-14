@@ -25,7 +25,11 @@ const pageDefaults: Record<string, Record<string, unknown>> = {
     show_derniers: true,
     derniers_title: 'Derniers arrivants',
     derniers_subtitle: 'Ces animaux attendent leur famille idéale',
+    // Section "Blog"
+    show_latest_blog: true,
+    latest_blog_title: 'Dernière actualité',
     // Témoignages
+    show_temoignages: true,
     temoignages_title: 'Ils ont adopté',
     temoignages_subtitle: 'Les témoignages de nos familles adoptantes',
     temoignages: [

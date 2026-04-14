@@ -50,7 +50,11 @@ const PAGE_CONTENT_SCHEMA: Record<string, FieldDef[]> = {
     { type: 'boolean', key: 'show_derniers',    label: 'Afficher la section' },
     { type: 'text',    key: 'derniers_title',   label: 'Titre' },
     { type: 'text',    key: 'derniers_subtitle', label: 'Sous-titre' },
+    { type: 'section', label: 'Dernière actualité (Blog)' },
+    { type: 'boolean', key: 'show_latest_blog',   label: 'Afficher la section' },
+    { type: 'text',    key: 'latest_blog_title',  label: 'Titre de section' },
     { type: 'section', label: 'Témoignages' },
+    { type: 'boolean', key: 'show_temoignages',       label: 'Afficher la section' },
     { type: 'text',    key: 'temoignages_title',    label: 'Titre' },
     { type: 'text',    key: 'temoignages_subtitle', label: 'Sous-titre' },
     { type: 'array',   key: 'temoignages',          label: 'Témoignages',
@@ -191,7 +195,33 @@ function ContentEditor({ schema, data, onChange }: ContentEditorProps) {
 
   return (
     <div className="space-y-6">
-      {schema.map(field => {
+      {schema.map((field, fi) => {
+        if (field.type === 'section') {
+          return (
+            <div key={`section-${fi}`} className="pt-4 pb-1 border-b border-gray-200">
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">{field.label}</h3>
+            </div>
+          );
+        }
+
+        if (field.type === 'boolean') {
+          const val = (data[field.key] as boolean) ?? true;
+          return (
+            <div key={field.key} className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => set(field.key, !val)}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 focus:outline-none ${val ? 'bg-green-500' : 'bg-gray-300'}`}
+              >
+                <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-200 ${val ? 'translate-x-6' : 'translate-x-1'}`} />
+              </button>
+              <span className={`text-sm font-medium select-none ${val ? 'text-green-600' : 'text-gray-400'}`}>
+                {field.label} — {val ? 'Affiché' : 'Masqué'}
+              </span>
+            </div>
+          );
+        }
+
         if (field.type === 'text') {
           return (
             <div key={field.key}>

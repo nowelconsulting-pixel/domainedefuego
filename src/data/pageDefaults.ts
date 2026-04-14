@@ -15,6 +15,7 @@ const pageDefaults: Record<string, Record<string, unknown>> = {
     how_title: 'Comment ça marche ?',
     how_subtitle: 'Un processus simple et bienveillant en 3 étapes',
     how_cta_label: 'Déposer une candidature',
+    how_cta_url: '/adopter',
     etapes: [
       { num: '01', titre: 'Candidature', desc: 'Remplissez notre formulaire en ligne. Présentez-vous, votre logement et votre projet de vie avec un animal.' },
       { num: '02', titre: 'Entretien',   desc: "Un bénévole de l'association vous contacte pour échanger et vérifier la compatibilité avec l'animal." },

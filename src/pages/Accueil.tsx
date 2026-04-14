@@ -4,6 +4,15 @@ import AnimalCard from '../components/AnimalCard';
 import { useAnimaux, useConfig } from '../hooks/useData';
 import { usePageContent } from '../hooks/usePageContent';
 
+// Smart CTA: renders a link or a visually-disabled span when url is empty
+function Cta({ label, url, className, children }: { label: string; url: string; className?: string; children?: React.ReactNode }) {
+  const cls = `${className ?? ''} inline-flex items-center gap-2`.trim();
+  if (!label) return null;
+  if (!url) return <span className={`${cls} opacity-40 cursor-not-allowed`}>{label}{children}</span>;
+  if (url.startsWith('http')) return <a href={url} className={cls} target="_blank" rel="noopener noreferrer">{label}{children}</a>;
+  return <Link to={url} className={cls}>{label}{children}</Link>;
+}
+
 export default function Accueil() {
   const { data: animaux } = useAnimaux();
   const { data: config } = useConfig();
@@ -12,6 +21,21 @@ export default function Accueil() {
   const etapes = (pc.etapes as Array<{ num: string; titre: string; desc: string }>) || [];
   const temoignages = (pc.temoignages as Array<{ texte: string; auteur: string; lieu: string }>) || [];
 
+  const heroCta1Label = (pc.hero_cta1_label as string) || 'Voir les animaux';
+  const heroCta1Url   = (pc.hero_cta1_url   as string) ?? '/animaux';
+  const heroCta2Label = (pc.hero_cta2_label as string) || 'Faire un don';
+  const heroCta2Url   = (pc.hero_cta2_url   as string) ?? '/faire-un-don';
+
+  const howCtaLabel = (pc.how_cta_label as string) || 'Déposer une candidature';
+  const howCtaUrl   = (pc.how_cta_url   as string) ?? '/adopter';
+
+  const ctaBtn1Label = (pc.cta_btn1_label as string) || 'Adopter un animal';
+  const ctaBtn1Url   = (pc.cta_btn1_url   as string) ?? '/animaux';
+  const ctaBtn2Label = (pc.cta_btn2_label as string) || "Devenir famille d'accueil";
+  const ctaBtn2Url   = (pc.cta_btn2_url   as string) ?? '/famille-accueil';
+  const ctaBtn3Label = (pc.cta_btn3_label as string) || 'Faire un don';
+  const ctaBtn3Url   = (pc.cta_btn3_url   as string) ?? '/faire-un-don';
+
   return (
     <>
       {/* HERO */}
@@ -19,14 +43,13 @@ export default function Accueil() {
         <div
           className="absolute inset-0 bg-cover bg-center opacity-40"
           style={{
-            backgroundImage:
-              'url(https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=1920&q=80)',
+            backgroundImage: `url(${(pc.hero_bg_url as string) || 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=1920&q=80'})`,
           }}
         />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="max-w-2xl">
             <span className="inline-block bg-coral-500/20 text-coral-400 border border-coral-500/30 px-4 py-1 rounded-full text-sm font-medium mb-6">
-              Association loi 1901 · Ardèche &amp; Vaucluse
+              {(pc.hero_badge as string) || 'Association loi 1901 · Ardèche & Vaucluse'}
             </span>
             <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight mb-6">
               {(pc.hero_title as string) || 'Chaque animal mérite un foyer'}
@@ -35,14 +58,12 @@ export default function Accueil() {
               {(pc.hero_subtitle as string) || "Domaine de Fuego accompagne chiens, chats et autres animaux vers l'adoption responsable depuis 2016."}
             </p>
             <div className="flex flex-wrap gap-4">
-              <Link to="/animaux" className="btn-primary text-base px-8 py-4">
-                Voir les animaux
+              <Cta label={heroCta1Label} url={heroCta1Url} className="btn-primary text-base px-8 py-4">
                 <ChevronRight size={20} />
-              </Link>
-              <Link to="/faire-un-don" className="btn-secondary text-base px-8 py-4">
-                Faire un don
+              </Cta>
+              <Cta label={heroCta2Label} url={heroCta2Url} className="btn-secondary text-base px-8 py-4">
                 <Heart size={20} />
-              </Link>
+              </Cta>
             </div>
           </div>
         </div>
@@ -77,8 +98,8 @@ export default function Accueil() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <h2 className="section-title">Comment ça marche ?</h2>
-            <p className="section-subtitle">Un processus simple et bienveillant en 3 étapes</p>
+            <h2 className="section-title">{(pc.how_title as string) || 'Comment ça marche ?'}</h2>
+            <p className="section-subtitle">{(pc.how_subtitle as string) || 'Un processus simple et bienveillant en 3 étapes'}</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {etapes.map(e => (
@@ -92,21 +113,20 @@ export default function Accueil() {
             ))}
           </div>
           <div className="text-center mt-10">
-            <Link to="/adopter" className="btn-primary">
-              Déposer une candidature
+            <Cta label={howCtaLabel} url={howCtaUrl} className="btn-primary">
               <ChevronRight size={20} />
-            </Link>
+            </Cta>
           </div>
         </div>
       </section>
 
       {/* DERNIERS ARRIVANTS */}
-      {derniers.length > 0 && (
+      {(pc.show_derniers !== false) && derniers.length > 0 && (
         <section className="py-20 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-14">
-              <h2 className="section-title">Derniers arrivants</h2>
-              <p className="section-subtitle">Ces animaux attendent leur famille idéale</p>
+              <h2 className="section-title">{(pc.derniers_title as string) || 'Derniers arrivants'}</h2>
+              <p className="section-subtitle">{(pc.derniers_subtitle as string) || 'Ces animaux attendent leur famille idéale'}</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {derniers.map(animal => (
@@ -124,30 +144,32 @@ export default function Accueil() {
       )}
 
       {/* TÉMOIGNAGES */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <h2 className="section-title">Ils ont adopté</h2>
-            <p className="section-subtitle">Les témoignages de nos familles adoptantes</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {temoignages.map((t, i) => (
-              <div key={i} className="bg-gray-50 rounded-2xl p-8">
-                <div className="flex gap-1 mb-4">
-                  {[...Array(5)].map((_, j) => (
-                    <Star key={j} size={16} className="fill-coral-400 text-coral-400" />
-                  ))}
+      {(pc.show_temoignages !== false) && temoignages.length > 0 && (
+        <section className="py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-14">
+              <h2 className="section-title">{(pc.temoignages_title as string) || 'Ils ont adopté'}</h2>
+              <p className="section-subtitle">{(pc.temoignages_subtitle as string) || 'Les témoignages de nos familles adoptantes'}</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {temoignages.map((t, i) => (
+                <div key={i} className="bg-gray-50 rounded-2xl p-8">
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(5)].map((_, j) => (
+                      <Star key={j} size={16} className="fill-coral-400 text-coral-400" />
+                    ))}
+                  </div>
+                  <p className="text-gray-700 leading-relaxed mb-6 italic">"{t.texte}"</p>
+                  <div>
+                    <div className="font-semibold text-gray-900">{t.auteur}</div>
+                    <div className="text-sm text-gray-500">{t.lieu}</div>
+                  </div>
                 </div>
-                <p className="text-gray-700 leading-relaxed mb-6 italic">"{t.texte}"</p>
-                <div>
-                  <div className="font-semibold text-gray-900">{t.auteur}</div>
-                  <div className="text-sm text-gray-500">{t.lieu}</div>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* CTA FINAL */}
       <section className="py-20 bg-gray-900">
@@ -159,18 +181,15 @@ export default function Accueil() {
             {(pc.cta_subtitle as string) || "Devenez adoptant ou famille d'accueil — chaque geste compte pour nos animaux."}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link to="/animaux" className="btn-primary">
+            <Cta label={ctaBtn1Label} url={ctaBtn1Url} className="btn-primary">
               <Heart size={20} />
-              Adopter un animal
-            </Link>
-            <Link to="/famille-accueil" className="btn-secondary border-gray-600 text-gray-300 hover:bg-gray-800">
+            </Cta>
+            <Cta label={ctaBtn2Label} url={ctaBtn2Url} className="btn-secondary border-gray-600 text-gray-300 hover:bg-gray-800">
               <Users size={20} />
-              Devenir famille d'accueil
-            </Link>
-            <Link to="/faire-un-don" className="btn-secondary border-gray-600 text-gray-300 hover:bg-gray-800">
+            </Cta>
+            <Cta label={ctaBtn3Label} url={ctaBtn3Url} className="btn-secondary border-gray-600 text-gray-300 hover:bg-gray-800">
               <Calendar size={20} />
-              Faire un don
-            </Link>
+            </Cta>
           </div>
         </div>
       </section>

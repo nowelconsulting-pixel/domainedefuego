@@ -43,6 +43,7 @@ const PAGE_CONTENT_SCHEMA: Record<string, FieldDef[]> = {
     { type: 'text',    key: 'how_title',     label: 'Titre' },
     { type: 'text',    key: 'how_subtitle',  label: 'Sous-titre' },
     { type: 'text',    key: 'how_cta_label', label: 'Bouton — libellé' },
+    { type: 'text',    key: 'how_cta_url',   label: 'Bouton — lien' },
     { type: 'array',   key: 'etapes',        label: 'Étapes',
       itemFields: [{ key: 'num', label: 'N°' }, { key: 'titre', label: 'Titre' }, { key: 'desc', label: 'Description', multiline: true }] },
     { type: 'section', label: 'Section "Derniers arrivants"' },

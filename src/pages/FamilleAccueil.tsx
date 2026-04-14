@@ -3,14 +3,14 @@ import { Home, Heart, Clock, Shield, ChevronDown, ChevronUp } from 'lucide-react
 import FormFamilleAccueil from '../components/FormFamilleAccueil';
 import { usePageContent } from '../hooks/usePageContent';
 
-const avantages = [
+const DEFAULT_AVANTAGES = [
   { icon: Home, titre: 'Chez vous', desc: 'L\'animal vit dans votre foyer et s\'intègre à votre quotidien dans un environnement chaleureux.' },
   { icon: Heart, titre: 'Lien unique', desc: 'Vous créez un lien fort avec l\'animal le temps de son accueil, une expérience profondément humaine.' },
   { icon: Clock, titre: 'À votre rythme', desc: 'Vous choisissez la durée et le type d\'animal selon vos disponibilités et votre mode de vie.' },
   { icon: Shield, titre: 'Soutien complet', desc: 'L\'association prend en charge tous les frais vétérinaires et vous accompagne au quotidien.' },
 ];
 
-const faqs = [
+const DEFAULT_FAQS = [
   {
     q: 'Est-ce que je peux adopter l\'animal que j\'accueille ?',
     r: 'Oui, sous certaines conditions. Les familles d\'accueil qui souhaitent adopter l\'animal dont elles s\'occupent sont souvent prioritaires, après validation par l\'association.',
@@ -32,6 +32,11 @@ const faqs = [
 export default function FamilleAccueil() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const pc = usePageContent('famille-accueil');
+  const pcAvantages = pc.avantages as Array<{ titre: string; desc: string }> | undefined;
+  const avantages = pcAvantages
+    ? DEFAULT_AVANTAGES.map((a, i) => ({ ...a, titre: pcAvantages[i]?.titre ?? a.titre, desc: pcAvantages[i]?.desc ?? a.desc }))
+    : DEFAULT_AVANTAGES;
+  const faqs = (pc.faq as typeof DEFAULT_FAQS | undefined) ?? DEFAULT_FAQS;
 
   return (
     <div className="min-h-screen bg-gray-50">

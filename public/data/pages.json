@@ -1,62 +1,87 @@
 {
-  "presentation": {
-    "hero_title": "Notre association",
-    "hero_subtitle": "Découvrez qui nous sommes, notre mission et nos valeurs.",
-    "blocks": [],
-    "titre": "Notre mission",
-    "texte": "Domaine de Fuego est une association loi 1901 fondée en 2016 avec une conviction profonde : chaque animal mérite une vie digne, aimante et sécurisée.\n\nNous recueillons des chiens, chats et autres animaux abandonnés, maltraités ou en danger, et nous les confions à des familles d'accueil bienveillantes le temps de trouver la famille adoptante idéale.\n\nNous croyons que l'adoption est un acte de vie, un engagement sur la durée. C'est pourquoi nous accompagnons chaque adoptant avant, pendant et après l'adoption pour garantir le bonheur de l'animal et de sa nouvelle famille.\n\nBasés principalement en Ardèche et dans le Vaucluse, nous intervenons sur tout le territoire français grâce à notre réseau de bénévoles passionnés.",
-    "valeurs": [
-      { "titre": "Bienveillance", "description": "Chaque animal est traité avec respect, douceur et professionnalisme. Nous refusons toute méthode coercitive." },
-      { "titre": "Transparence", "description": "Nous sommes honnêtes sur le profil de chaque animal, ses besoins et son histoire pour garantir des adoptions durables." },
-      { "titre": "Engagement", "description": "Nous accompagnons les adoptants sur le long terme. Une adoption n'est jamais une transaction — c'est un engagement mutuel." }
-    ],
-    "equipe": [
-      { "nom": "Sophie Martin",   "role": "Fondatrice & Présidente",              "photo": "" },
-      { "nom": "Thomas Durand",   "role": "Responsable des adoptions",             "photo": "" },
-      { "nom": "Camille Bernard", "role": "Coordinatrice familles d'accueil",      "photo": "" }
-    ],
-    "partenaires": ["Mairie d'Aubenas", "Clinique vétérinaire du Plateau", "Fondation 30 Millions d'Amis", "SPA de l'Ardèche"]
-  },
-  "faire_un_don": {
-    "hero_title": "Soutenez notre action",
-    "hero_subtitle": "Chaque don, même petit, change la vie d'un animal.",
-    "blocks": [],
-    "titre": "Soutenez notre action",
-    "texte": "Domaine de Fuego fonctionne grâce aux dons de particuliers comme vous. Aucune subvention publique ne vient financer nos actions — c'est votre générosité qui permet à des centaines d'animaux de trouver une famille chaque année.\n\nVotre don, qu'il soit ponctuel ou mensuel, a un impact direct et concret sur la vie des animaux que nous prenons en charge.",
-    "utilisations": [
-      { "titre": "Soins vétérinaires",    "description": "Vaccinations, stérilisations, traitements médicaux d'urgence pour les animaux en détresse.", "icone": "Heart" },
-      { "titre": "Hébergement & nourriture", "description": "Prise en charge complète des animaux pendant leur séjour en famille d'accueil.", "icone": "Home" },
-      { "titre": "Sauvetages & transport", "description": "Interventions d'urgence, rapatriements et transports vers les familles d'accueil partout en France.", "icone": "Truck" }
-    ]
-  },
   "accueil": {
     "hero_title": "Chaque animal mérite un foyer",
     "hero_subtitle": "Domaine de Fuego accompagne chiens, chats et autres animaux vers l'adoption responsable depuis 2016.",
-    "blocks": []
+    "etapes": [
+      { "num": "01", "titre": "Candidature", "desc": "Remplissez notre formulaire en ligne. Présentez-vous, votre logement et votre projet de vie avec un animal." },
+      { "num": "02", "titre": "Entretien",   "desc": "Un bénévole de l'association vous contacte pour échanger et vérifier la compatibilité avec l'animal." },
+      { "num": "03", "titre": "Adoption",    "desc": "Signature du contrat d'adoption, versement de la participation aux frais, et votre nouveau compagnon rentre à la maison !" }
+    ],
+    "temoignages": [
+      { "texte": "Nous avons adopté Rex il y a 6 mois et c'est le plus beau cadeau qu'on se soit fait. L'équipe de Domaine de Fuego nous a accompagnés avec beaucoup de professionnalisme et de bienveillance.", "auteur": "Marie & Julien", "lieu": "Lyon (69)" },
+      { "texte": "Lola a rejoint notre famille et elle s'est intégrée en quelques jours seulement. Merci à l'association pour leur suivi post-adoption, c'est vraiment rassurant.", "auteur": "Pascal", "lieu": "Montpellier (34)" },
+      { "texte": "J'avais des craintes avec mes jeunes enfants mais l'association a très bien évalué la compatibilité. Mia adore nos enfants, c'est magique !", "auteur": "Sandrine", "lieu": "Paris (75)" }
+    ],
+    "cta_title": "Prêt à changer une vie ?",
+    "cta_subtitle": "Devenez adoptant ou famille d'accueil — chaque geste compte pour nos animaux."
+  },
+  "presentation": {
+    "hero_title": "Notre association",
+    "hero_subtitle": "Découvrez qui nous sommes, notre mission et nos valeurs.",
+    "mission_title": "Notre mission",
+    "mission_text": "Domaine de Fuego est une association loi 1901 fondée en 2016 avec une conviction profonde : chaque animal mérite une vie digne, aimante et sécurisée.\n\nNous recueillons des chiens, chats et autres animaux abandonnés, maltraités ou en danger, et nous les confions à des familles d'accueil bienveillantes le temps de trouver la famille adoptante idéale.\n\nNous croyons que l'adoption est un acte de vie, un engagement sur la durée. C'est pourquoi nous accompagnons chaque adoptant avant, pendant et après l'adoption pour garantir le bonheur de l'animal et de sa nouvelle famille.\n\nBasés principalement en Ardèche et dans le Vaucluse, nous intervenons sur tout le territoire français grâce à notre réseau de bénévoles passionnés.",
+    "valeurs": [
+      { "titre": "Bienveillance", "description": "Chaque animal est traité avec respect, douceur et professionnalisme. Nous refusons toute méthode coercitive." },
+      { "titre": "Transparence",  "description": "Nous sommes honnêtes sur le profil de chaque animal, ses besoins et son histoire pour garantir des adoptions durables." },
+      { "titre": "Engagement",    "description": "Nous accompagnons les adoptants sur le long terme. Une adoption n'est jamais une transaction — c'est un engagement mutuel." }
+    ],
+    "equipe": [
+      { "nom": "Sophie Martin",   "role": "Fondatrice & Présidente",          "photo": "" },
+      { "nom": "Thomas Durand",   "role": "Responsable des adoptions",         "photo": "" },
+      { "nom": "Camille Bernard", "role": "Coordinatrice familles d'accueil",  "photo": "" }
+    ],
+    "partenaires": ["Mairie d'Aubenas", "Clinique vétérinaire du Plateau", "Fondation 30 Millions d'Amis", "SPA de l'Ardèche"]
   },
   "animaux": {
     "hero_title": "Nos animaux",
-    "hero_subtitle": "Trouvez le compagnon qui vous correspond.",
-    "blocks": []
+    "hero_subtitle": "Trouvez le compagnon qui vous correspond."
   },
   "adopter": {
     "hero_title": "Adopter un animal",
-    "hero_subtitle": "Un processus simple et bienveillant pour vous accompagner vers votre nouveau compagnon.",
-    "blocks": []
+    "hero_subtitle": "L'adoption est un engagement pour toute la vie de l'animal. Nous vous accompagnons à chaque étape.",
+    "process_steps": [
+      { "titre": "1. Candidature en ligne",    "desc": "Remplissez notre formulaire. Nous avons besoin de bien vous connaître pour trouver l'animal qui vous correspond." },
+      { "titre": "2. Entretien téléphonique",  "desc": "Un bénévole vous rappelle pour échanger sur votre projet, vos attentes et vous présenter l'animal." },
+      { "titre": "3. Rencontre & adoption",    "desc": "Rencontre avec l'animal, signature du contrat, paiement de la participation aux frais. Bienvenue dans la famille !" }
+    ]
   },
   "famille-accueil": {
     "hero_title": "Devenir famille d'accueil",
-    "hero_subtitle": "Accueillez temporairement un animal et participez activement à son bonheur futur.",
-    "blocks": []
+    "hero_subtitle": "En devenant famille d'accueil, vous offrez un foyer temporaire à un animal en attente d'adoption. Un geste simple, un impact immense.",
+    "avantages": [
+      { "titre": "Chez vous",      "desc": "L'animal vit dans votre foyer et s'intègre à votre quotidien dans un environnement chaleureux." },
+      { "titre": "Lien unique",    "desc": "Vous créez un lien fort avec l'animal le temps de son accueil, une expérience profondément humaine." },
+      { "titre": "À votre rythme","desc": "Vous choisissez la durée et le type d'animal selon vos disponibilités et votre mode de vie." },
+      { "titre": "Soutien complet","desc": "L'association prend en charge tous les frais vétérinaires et vous accompagne au quotidien." }
+    ],
+    "faq": [
+      { "q": "Est-ce que je peux adopter l'animal que j'accueille ?", "r": "Oui, sous certaines conditions. Les familles d'accueil qui souhaitent adopter l'animal dont elles s'occupent sont souvent prioritaires, après validation par l'association." },
+      { "q": "Qui paie les frais vétérinaires ?",                     "r": "L'association prend en charge l'intégralité des frais vétérinaires (nourriture, soins, médicaments) pendant tout le séjour de l'animal chez vous." },
+      { "q": "Combien de temps dure un accueil ?",                    "r": "Cela dépend des situations. Un accueil peut durer quelques jours (urgence) ou plusieurs semaines/mois. Vous êtes consulté au préalable et vous restez libre d'accepter ou non." },
+      { "q": "Puis-je accueillir si j'ai déjà un animal ?",          "r": "Oui, dans la majorité des cas. Nous veillons à la compatibilité entre les animaux. Un test de rencontre est toujours organisé avant de confirmer l'accueil." }
+    ]
+  },
+  "faire-un-don": {
+    "hero_title": "Faire un don",
+    "hero_subtitle": "Votre générosité permet à des centaines d'animaux de trouver une famille chaque année.",
+    "intro_text": "Domaine de Fuego fonctionne grâce aux dons de particuliers comme vous. Aucune subvention publique ne vient financer nos actions — c'est votre générosité qui permet à des centaines d'animaux de trouver une famille chaque année.\n\nVotre don, qu'il soit ponctuel ou mensuel, a un impact direct et concret sur la vie des animaux que nous prenons en charge.",
+    "helloasso_text": "Faire un don en ligne"
   },
   "contact": {
-    "hero_title": "Contactez-nous",
-    "hero_subtitle": "Notre équipe de bénévoles est là pour répondre à toutes vos questions.",
-    "blocks": []
+    "hero_title": "Contact",
+    "hero_subtitle": "Une question ? N'hésitez pas à nous écrire."
   },
   "mentions-legales": {
     "hero_title": "Mentions légales",
-    "hero_subtitle": "",
-    "blocks": []
+    "hero_subtitle": ""
+  },
+  "faire_un_don": {
+    "titre": "Soutenez notre action",
+    "texte": "Domaine de Fuego fonctionne grâce aux dons de particuliers comme vous. Aucune subvention publique ne vient financer nos actions — c'est votre générosité qui permet à des centaines d'animaux de trouver une famille chaque année.\n\nVotre don, qu'il soit ponctuel ou mensuel, a un impact direct et concret sur la vie des animaux que nous prenons en charge.",
+    "utilisations": [
+      { "titre": "Soins vétérinaires",       "description": "Vaccinations, stérilisations, traitements médicaux d'urgence pour les animaux en détresse.",         "icone": "Heart" },
+      { "titre": "Hébergement & nourriture", "description": "Prise en charge complète des animaux pendant leur séjour en famille d'accueil.",                      "icone": "Home"  },
+      { "titre": "Sauvetages & transport",   "description": "Interventions d'urgence, rapatriements et transports vers les familles d'accueil partout en France.", "icone": "Truck" }
+    ]
   }
 }

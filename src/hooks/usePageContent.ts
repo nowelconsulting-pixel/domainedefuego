@@ -1,33 +1,22 @@
-/**
- * Reads editable page content from localStorage('pages_content'),
- * falling back to an empty object (callers supply hardcoded defaults).
- */
-export interface PageContentData {
-  hero_title?: string;
-  hero_subtitle?: string;
-  blocks?: unknown[];
-  [key: string]: unknown;
-}
+export type PageContentData = Record<string, unknown>;
 
+/** Reads editable content from localStorage('page_content_{slug}'). */
 export function usePageContent(slug: string): PageContentData {
   try {
-    const stored: Record<string, PageContentData> = JSON.parse(
-      localStorage.getItem('pages_content') || '{}'
-    );
-    return stored[slug] ?? {};
+    const raw = localStorage.getItem(`page_content_${slug}`);
+    return raw ? (JSON.parse(raw) as PageContentData) : {};
   } catch {
     return {};
   }
 }
 
-export function savePageContent(slug: string, data: Partial<PageContentData>): void {
+/** Saves (merges) content into localStorage('page_content_{slug}'). */
+export function savePageContent(slug: string, data: PageContentData): void {
   try {
-    const stored: Record<string, PageContentData> = JSON.parse(
-      localStorage.getItem('pages_content') || '{}'
-    );
-    localStorage.setItem(
-      'pages_content',
-      JSON.stringify({ ...stored, [slug]: { ...(stored[slug] ?? {}), ...data } })
-    );
+    const existing = (() => {
+      try { return JSON.parse(localStorage.getItem(`page_content_${slug}`) || '{}') as PageContentData; }
+      catch { return {}; }
+    })();
+    localStorage.setItem(`page_content_${slug}`, JSON.stringify({ ...existing, ...data }));
   } catch { /* ignore */ }
 }

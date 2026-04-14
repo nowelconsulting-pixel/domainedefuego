@@ -4,43 +4,16 @@ import AnimalCard from '../components/AnimalCard';
 import { useAnimaux, useConfig } from '../hooks/useData';
 import { usePageContent } from '../hooks/usePageContent';
 
-const etapes = [
-  {
-    num: '01',
-    titre: 'Candidature',
-    desc: 'Remplissez notre formulaire en ligne. Présentez-vous, votre logement et votre projet de vie avec un animal.',
-  },
-  {
-    num: '02',
-    titre: 'Entretien',
-    desc: "Un bénévole de l'association vous contacte pour échanger et vérifier la compatibilité avec l'animal.",
-  },
-  {
-    num: '03',
-    titre: 'Adoption',
-    desc: "Signature du contrat d'adoption, versement de la participation aux frais, et votre nouveau compagnon rentre à la maison !",
-  },
+const DEFAULT_ETAPES = [
+  { num: '01', titre: 'Candidature', desc: 'Remplissez notre formulaire en ligne. Présentez-vous, votre logement et votre projet de vie avec un animal.' },
+  { num: '02', titre: 'Entretien',   desc: "Un bénévole de l'association vous contacte pour échanger et vérifier la compatibilité avec l'animal." },
+  { num: '03', titre: 'Adoption',    desc: "Signature du contrat d'adoption, versement de la participation aux frais, et votre nouveau compagnon rentre à la maison !" },
 ];
 
-const temoignages = [
-  {
-    texte:
-      "Nous avons adopté Rex il y a 6 mois et c'est le plus beau cadeau qu'on se soit fait. L'équipe de Domaine de Fuego nous a accompagnés avec beaucoup de professionnalisme et de bienveillance.",
-    auteur: 'Marie & Julien',
-    lieu: 'Lyon (69)',
-  },
-  {
-    texte:
-      "Lola a rejoint notre famille et elle s'est intégrée en quelques jours seulement. Merci à l'association pour leur suivi post-adoption, c'est vraiment rassurant.",
-    auteur: 'Pascal',
-    lieu: 'Montpellier (34)',
-  },
-  {
-    texte:
-      "J'avais des craintes avec mes jeunes enfants mais l'association a très bien évalué la compatibilité. Mia adore nos enfants, c'est magique !",
-    auteur: 'Sandrine',
-    lieu: 'Paris (75)',
-  },
+const DEFAULT_TEMOIGNAGES = [
+  { texte: "Nous avons adopté Rex il y a 6 mois et c'est le plus beau cadeau qu'on se soit fait. L'équipe de Domaine de Fuego nous a accompagnés avec beaucoup de professionnalisme et de bienveillance.", auteur: 'Marie & Julien', lieu: 'Lyon (69)' },
+  { texte: "Lola a rejoint notre famille et elle s'est intégrée en quelques jours seulement. Merci à l'association pour leur suivi post-adoption, c'est vraiment rassurant.", auteur: 'Pascal', lieu: 'Montpellier (34)' },
+  { texte: "J'avais des craintes avec mes jeunes enfants mais l'association a très bien évalué la compatibilité. Mia adore nos enfants, c'est magique !", auteur: 'Sandrine', lieu: 'Paris (75)' },
 ];
 
 export default function Accueil() {
@@ -48,6 +21,8 @@ export default function Accueil() {
   const { data: config } = useConfig();
   const pc = usePageContent('accueil');
   const derniers = animaux?.filter(a => a.statut === 'Disponible').slice(0, 3) ?? [];
+  const etapes = (pc.etapes as typeof DEFAULT_ETAPES | undefined) ?? DEFAULT_ETAPES;
+  const temoignages = (pc.temoignages as typeof DEFAULT_TEMOIGNAGES | undefined) ?? DEFAULT_TEMOIGNAGES;
 
   return (
     <>
@@ -190,10 +165,10 @@ export default function Accueil() {
       <section className="py-20 bg-gray-900">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Prêt à changer une vie ?
+            {(pc.cta_title as string) || 'Prêt à changer une vie ?'}
           </h2>
           <p className="text-gray-400 text-lg mb-10">
-            Devenez adoptant ou famille d'accueil — chaque geste compte pour nos animaux.
+            {(pc.cta_subtitle as string) || "Devenez adoptant ou famille d'accueil — chaque geste compte pour nos animaux."}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link to="/animaux" className="btn-primary">

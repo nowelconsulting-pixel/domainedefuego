@@ -3,7 +3,7 @@ import { ClipboardList, Phone, Heart, CheckCircle2 } from 'lucide-react';
 import FormAdoption from '../components/FormAdoption';
 import { usePageContent } from '../hooks/usePageContent';
 
-const etapes = [
+const DEFAULT_ETAPES = [
   {
     icon: ClipboardList,
     titre: '1. Candidature en ligne',
@@ -25,6 +25,10 @@ export default function Adopter() {
   const [params] = useSearchParams();
   const defaultAnimal = params.get('animal') ?? '';
   const pc = usePageContent('adopter');
+  const pcSteps = pc.process_steps as Array<{ titre: string; desc: string }> | undefined;
+  const etapes = pcSteps
+    ? DEFAULT_ETAPES.map((e, i) => ({ ...e, titre: pcSteps[i]?.titre ?? e.titre, desc: pcSteps[i]?.desc ?? e.desc }))
+    : DEFAULT_ETAPES;
 
   return (
     <div className="min-h-screen bg-gray-50">

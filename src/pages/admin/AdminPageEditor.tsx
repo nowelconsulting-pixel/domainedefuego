@@ -4,6 +4,7 @@ import { ArrowLeft, Save, Eye, Trash2, Plus } from 'lucide-react';
 import RichTextEditor from '../../components/admin/RichTextEditor';
 import { BlockEditor, BLOCK_TYPES, newBlock } from '../../components/admin/AdminBlockEditors';
 import { useAdminPages } from '../../hooks/useAdminData';
+import { savePageContent } from '../../hooks/usePageContent';
 import type { AdminPage, BlockType } from '../../types/admin';
 import { SYSTEM_PAGES } from '../../types/admin';
 
@@ -19,15 +20,6 @@ function saveSystemPageData(data: Record<string, Partial<AdminPage>>): void {
   localStorage.setItem('system_page_data', JSON.stringify(data));
 }
 
-interface HeroContent { hero_title: string; hero_subtitle: string; }
-function loadPagesContent(): Record<string, HeroContent> {
-  try { return JSON.parse(localStorage.getItem('pages_content') || '{}'); }
-  catch { return {}; }
-}
-function savePagesContent(slug: string, data: HeroContent): void {
-  const all = loadPagesContent();
-  localStorage.setItem('pages_content', JSON.stringify({ ...all, [slug]: { ...(all[slug] ?? {}), ...data } }));
-}
 
 export default function AdminPageEditor() {
   const { id } = useParams<{ id: string }>();
@@ -76,9 +68,10 @@ export default function AdminPageEditor() {
         createdAt: '',
       });
       // Load hero content overrides
-      const pc = loadPagesContent()[sysMeta.slug] ?? {};
-      setHeroTitle(pc.hero_title ?? '');
-      setHeroSubtitle(pc.hero_subtitle ?? '');
+      const pcRaw = localStorage.getItem(`page_content_${sysMeta.slug}`);
+      const pc = pcRaw ? (JSON.parse(pcRaw) as Record<string, unknown>) : {};
+      setHeroTitle((pc.hero_title as string) ?? '');
+      setHeroSubtitle((pc.hero_subtitle as string) ?? '');
       initializedRef.current = true;
       return;
     }
@@ -144,7 +137,7 @@ export default function AdminPageEditor() {
     if (page.system) {
       const stored = loadSystemPageData();
       saveSystemPageData({ ...stored, [page.id]: updated });
-      savePagesContent(page.slug, { hero_title: heroTitle, hero_subtitle: heroSubtitle });
+      savePageContent(page.slug, { hero_title: heroTitle, hero_subtitle: heroSubtitle });
       setPage(updated);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);

@@ -370,6 +370,10 @@ export default function AdminPageEditor() {
       if (!prev) return null;
       return { ...prev, title, slug: (!slugEdited && !prev.system) ? slugify(title) : prev.slug };
     });
+    // Keep hero_title in sync so the front-office fallback title matches the nav label
+    if (page?.system) {
+      setContentData(prev => ({ ...prev, hero_title: title }));
+    }
   };
 
   const addBlock = (type: BlockType) => {
@@ -396,6 +400,7 @@ export default function AdminPageEditor() {
 
   const handleSave = (status?: AdminPage['status']) => {
     if (!page.title.trim()) { alert('Le titre est obligatoire.'); return; }
+    if (slugConflict) { alert('Ce slug est déjà utilisé par une autre page. Choisissez un slug unique.'); return; }
     const updated: AdminPage = { ...page, status: status ?? page.status, updatedAt: new Date().toISOString() };
     if (page.system) {
       saveSystemPageData({ ...loadSystemPageData(), [page.id]: updated });
@@ -426,6 +431,7 @@ export default function AdminPageEditor() {
   ];
 
   const contentSchema = page.system ? (PAGE_CONTENT_SCHEMA[page.slug] ?? []) : [];
+  const slugConflict = !page.system && !!page.slug && pages.some(p => p.slug === page.slug && p.id !== page.id);
 
   return (
     <div className="p-8 max-w-4xl">
@@ -456,15 +462,20 @@ export default function AdminPageEditor() {
                   <span className="form-input bg-gray-50 text-gray-400 flex-1 select-none">{page.slug || '(racine)'}</span>
                 </div>
               ) : (
-                <div className="flex items-center gap-1">
-                  <span className="text-gray-400 text-sm">/</span>
-                  <input
-                    className="form-input flex-1"
-                    value={page.slug}
-                    onChange={e => { setSlugEdited(true); set('slug', slugify(e.target.value)); }}
-                    placeholder="ma-nouvelle-page"
-                  />
-                </div>
+                <>
+                  <div className="flex items-center gap-1">
+                    <span className="text-gray-400 text-sm">/</span>
+                    <input
+                      className={`form-input flex-1 ${slugConflict ? 'border-red-400 focus:ring-red-400' : ''}`}
+                      value={page.slug}
+                      onChange={e => { setSlugEdited(true); set('slug', slugify(e.target.value)); }}
+                      placeholder="ma-nouvelle-page"
+                    />
+                  </div>
+                  {slugConflict && (
+                    <p className="text-xs text-red-500 mt-1">⚠ Ce slug est déjà utilisé par une autre page.</p>
+                  )}
+                </>
               )}
             </div>
             <div className="w-40">

@@ -3,32 +3,20 @@ import { ClipboardList, Phone, Heart, CheckCircle2 } from 'lucide-react';
 import FormAdoption from '../components/FormAdoption';
 import { usePageContent } from '../hooks/usePageContent';
 
-const DEFAULT_ETAPES = [
-  {
-    icon: ClipboardList,
-    titre: '1. Candidature en ligne',
-    desc: 'Remplissez notre formulaire. Nous avons besoin de bien vous connaître pour trouver l\'animal qui vous correspond.',
-  },
-  {
-    icon: Phone,
-    titre: '2. Entretien téléphonique',
-    desc: 'Un bénévole vous rappelle pour échanger sur votre projet, vos attentes et vous présenter l\'animal.',
-  },
-  {
-    icon: Heart,
-    titre: '3. Rencontre & adoption',
-    desc: 'Rencontre avec l\'animal, signature du contrat, paiement de la participation aux frais. Bienvenue dans la famille !',
-  },
-];
+// Icons are presentational — kept in code, content comes from hook
+const ETAPE_ICONS = [ClipboardList, Phone, Heart];
 
 export default function Adopter() {
   const [params] = useSearchParams();
   const defaultAnimal = params.get('animal') ?? '';
   const pc = usePageContent('adopter');
-  const pcSteps = pc.process_steps as Array<{ titre: string; desc: string }> | undefined;
-  const etapes = pcSteps
-    ? DEFAULT_ETAPES.map((e, i) => ({ ...e, titre: pcSteps[i]?.titre ?? e.titre, desc: pcSteps[i]?.desc ?? e.desc }))
-    : DEFAULT_ETAPES;
+  const pcSteps = (pc.process_steps as Array<{ titre: string; desc: string }>) || [];
+  const etapes = ETAPE_ICONS.map((icon, i) => ({
+    icon,
+    titre: pcSteps[i]?.titre ?? '',
+    desc:  pcSteps[i]?.desc  ?? '',
+  }));
+  const conditions = (pc.conditions as Array<{ text: string }>) || [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -64,24 +52,19 @@ export default function Adopter() {
         </div>
 
         {/* Conditions */}
-        <div className="bg-coral-50 border border-coral-200 rounded-2xl p-6 mb-12">
-          <h3 className="font-semibold text-coral-700 mb-3">Conditions d'adoption</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {[
-              'Être majeur',
-              'Avoir un logement adapté',
-              'Avoir l\'accord du propriétaire si locataire',
-              'S\'engager pour toute la vie de l\'animal',
-              'Accepter une visite de contrôle à domicile',
-              'Payer la participation aux frais vétérinaires',
-            ].map((c, i) => (
-              <div key={i} className="flex items-center gap-2 text-sm text-coral-800">
-                <CheckCircle2 size={16} className="text-coral-500 flex-shrink-0" />
-                {c}
-              </div>
-            ))}
+        {conditions.length > 0 && (
+          <div className="bg-coral-50 border border-coral-200 rounded-2xl p-6 mb-12">
+            <h3 className="font-semibold text-coral-700 mb-3">Conditions d'adoption</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {conditions.map((c, i) => (
+                <div key={i} className="flex items-center gap-2 text-sm text-coral-800">
+                  <CheckCircle2 size={16} className="text-coral-500 flex-shrink-0" />
+                  {c.text}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Form */}
         <div className="max-w-3xl mx-auto">

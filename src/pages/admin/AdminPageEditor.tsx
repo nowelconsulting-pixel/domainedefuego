@@ -57,6 +57,8 @@ const PAGE_CONTENT_SCHEMA: Record<string, FieldDef[]> = {
     { type: 'text',  key: 'hero_subtitle', label: 'Sous-titre' },
     { type: 'array', key: 'process_steps', label: 'Étapes du processus',
       itemFields: [{ key: 'titre', label: 'Titre' }, { key: 'desc', label: 'Description', multiline: true }] },
+    { type: 'array', key: 'conditions',    label: "Conditions d'adoption",
+      itemFields: [{ key: 'text', label: 'Condition' }] },
   ],
   'famille-accueil': [
     { type: 'text',  key: 'hero_title',    label: 'Titre principal' },

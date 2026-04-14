@@ -48,8 +48,16 @@ const pageDefaults: Record<string, Record<string, unknown>> = {
     hero_subtitle: "L'adoption est un engagement pour toute la vie de l'animal. Nous vous accompagnons à chaque étape.",
     process_steps: [
       { titre: '1. Candidature en ligne',   desc: "Remplissez notre formulaire. Nous avons besoin de bien vous connaître pour trouver l'animal qui vous correspond." },
-      { titre: '2. Entretien téléphonique', desc: 'Un bénévole vous rappelle pour échanger sur votre projet, vos attentes et vous présenter l\'animal.' },
+      { titre: '2. Entretien téléphonique', desc: "Un bénévole vous rappelle pour échanger sur votre projet, vos attentes et vous présenter l'animal." },
       { titre: '3. Rencontre & adoption',   desc: "Rencontre avec l'animal, signature du contrat, paiement de la participation aux frais. Bienvenue dans la famille !" },
+    ],
+    conditions: [
+      { text: 'Être majeur' },
+      { text: 'Avoir un logement adapté' },
+      { text: "Avoir l'accord du propriétaire si locataire" },
+      { text: "S'engager pour toute la vie de l'animal" },
+      { text: 'Accepter une visite de contrôle à domicile' },
+      { text: 'Payer la participation aux frais vétérinaires' },
     ],
   },
 

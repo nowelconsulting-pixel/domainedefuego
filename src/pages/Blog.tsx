@@ -29,9 +29,9 @@ export default function Blog() {
       <div className="bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <h1 className="section-title">Blog</h1>
-          {pc.subtitle && (
+          {pc.subtitle ? (
             <p className="section-subtitle">{pc.subtitle as string}</p>
-          )}
+          ) : null}
         </div>
       </div>
 

@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# ── Server-managed files (Hostinger) ──────────────────────────────────────────
+# These files must be uploaded/maintained manually on the server after each deploy.
+# They are intentionally NOT tracked by git so that git pull / CI deploys
+# never overwrite them.  See public/PROTECTED_FILES.md for the full list.
+public/.htaccess
+public/*.html

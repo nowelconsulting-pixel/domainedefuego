@@ -249,6 +249,18 @@ Accédez au back-office sur `/admin`.
 
 ---
 
+## ⚠️ Fichiers à maintenir manuellement sur Hostinger
+
+Les fichiers suivants dans `public/` ne sont **pas dans ce dépôt git** et doivent
+être **re-uploadés manuellement** sur Hostinger après chaque déploiement :
+
+- **`.htaccess`** — règles Apache pour le routage SPA (indispensable !)
+- Tout fichier `.html` personnalisé ajouté directement sur le serveur
+
+> Voir `public/PROTECTED_FILES.md` pour la procédure complète.
+
+---
+
 ## Mise à jour des données JSON
 
 Pour mettre à jour les données initiales (avant tout passage par le back-office) :

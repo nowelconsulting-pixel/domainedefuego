@@ -29,10 +29,19 @@ const pageDefaults: Record<string, Record<string, unknown>> = {
     show_latest_animals: true,
     section_title: 'Derniers arrivants',
     section_subtitle: 'Ces animaux attendent leur famille idéale',
-    // Section "Blog"
-    show_latest_blog: true,
-    latest_blog_title: 'Dernière actualité',
-    featured_article_id: '',
+    // Bloc article mis en avant (géré via les blocs de page)
+    blocks: [
+      {
+        id: 'default-blog-block',
+        type: 'featured-article',
+        data: {
+          auto: 'true',
+          section_title: 'Dernière actualité',
+          cta_text: "Lire l'article",
+          fallback_url: '/blog',
+        },
+      },
+    ],
     // Témoignages
     show_temoignages: true,
     temoignages_title: 'Ils ont adopté',

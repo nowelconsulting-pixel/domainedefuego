@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
-import { Heart, Users, ChevronRight, Star, Calendar, ArrowRight } from 'lucide-react';
+import { Heart, Users, ChevronRight, Star, ArrowRight } from 'lucide-react';
 import AnimalCard from '../components/AnimalCard';
 import { useAnimaux, useConfig } from '../hooks/useData';
 import { usePageContent } from '../hooks/usePageContent';
+import pageDefaults from '../data/pageDefaults';
+import { resolveImageUrl } from '../utils/image';
 
 // ─── Smart CTA link ───────────────────────────────────────────────────────────
 function Cta({ label, url, className, children }: { label: string; url: string; className?: string; children?: React.ReactNode }) {
@@ -13,31 +15,30 @@ function Cta({ label, url, className, children }: { label: string; url: string; 
   return <Link to={url} className={cls}>{label}{children}</Link>;
 }
 
-// ─── Latest blog article type (matches articles.json) ────────────────────────
-interface Article {
-  id: string; title: string; slug: string; excerpt: string;
-  cover_url: string; author: string; published: boolean;
-  published_at: string; featured: boolean;
-}
+// ─── Load the featured-article block from sys-accueil page blocks ─────────────
+interface FeaturedArticleData { auto?: string; article_id?: string; section_title?: string; cta_text?: string; fallback_url?: string; }
+interface SimpleBlock { type: string; data: Record<string, string>; }
 
-function useLatestArticle(featuredId?: string): Article | null {
+function loadFeaturedArticleBlock(): SimpleBlock | null {
+  let blocks: SimpleBlock[] = [];
   try {
-    const stored = localStorage.getItem('articles');
-    const list: Article[] = stored ? JSON.parse(stored) : [];
-    const pub = list.filter(a => a.published);
-    if (featuredId) {
-      const pinned = pub.find(a => a.id === featuredId);
-      if (pinned) return pinned;
+    const sysData = localStorage.getItem('system_page_data');
+    if (sysData) {
+      const parsed = JSON.parse(sysData);
+      blocks = parsed['sys-accueil']?.blocks ?? [];
     }
-    return pub.find(a => a.featured) ?? pub.sort((a, b) => b.published_at.localeCompare(a.published_at))[0] ?? null;
-  } catch { return null; }
+  } catch { /**/ }
+  if (!blocks.length) {
+    const defaults = (pageDefaults.accueil as { blocks?: SimpleBlock[] }).blocks ?? [];
+    blocks = defaults;
+  }
+  return blocks.find(b => b.type === 'featured-article') ?? null;
 }
 
 export default function Accueil() {
   const { data: animaux } = useAnimaux();
   const { data: config }  = useConfig();
   const pc = usePageContent('accueil');
-  const latestArticle = useLatestArticle((pc.featured_article_id as string) || undefined);
 
   const derniers = animaux?.filter(a => a.statut === 'Disponible').slice(0, 3) ?? [];
   const etapes   = (pc.etapes as Array<{ num: string; titre: string; desc: string }>) || [];
@@ -61,7 +62,7 @@ export default function Accueil() {
         {/* Background */}
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${(pc.hero_bg_url as string) || 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=1920&q=80'})` }}
+          style={{ backgroundImage: `url(${resolveImageUrl((pc.hero_bg_url as string) || 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=1920&q=80')})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-gray-900/70 via-gray-900/50 to-gray-900/80" />
 
@@ -169,38 +170,60 @@ export default function Accueil() {
         </section>
       )}
 
-      {/* ── DERNIÈRE ACTUALITÉ ────────────────────────────────────────────── */}
-      {(pc.show_latest_blog !== false) && latestArticle && (
-        <section className="py-24 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="section-title mb-12">{(pc.latest_blog_title as string) || 'Dernière actualité'}</h2>
-            <div className="bg-gray-50 rounded-3xl overflow-hidden flex flex-col md:flex-row shadow-sm max-w-4xl">
-              {latestArticle.cover_url && (
-                <div className="md:w-80 flex-shrink-0">
-                  <img
-                    src={latestArticle.cover_url}
-                    alt={latestArticle.title}
-                    className="w-full h-56 md:h-full object-cover"
-                    loading="lazy"
-                  />
+      {/* ── DERNIÈRE ACTUALITÉ (bloc featured-article) ───────────────────── */}
+      {(() => {
+        const block = loadFeaturedArticleBlock();
+        if (!block) return null;
+        const d = block.data as FeaturedArticleData;
+
+        let allArticles: { id: string; title: string; slug: string; excerpt: string; cover_url: string; author: string; published_at: string; published: boolean }[] = [];
+        try {
+          const raw = localStorage.getItem('articles');
+          if (raw) allArticles = JSON.parse(raw);
+        } catch { /**/ }
+        const published = allArticles.filter(a => a.published);
+        const isAuto = d.auto !== 'false';
+        const article = isAuto
+          ? published.sort((a, b) => b.published_at.localeCompare(a.published_at))[0]
+          : published.find(a => a.id === d.article_id);
+        if (!article) return null;
+
+        const sectionTitle = d.section_title || 'Dernière actualité';
+        const ctaText = d.cta_text || "Lire l'article";
+
+        return (
+          <section className="py-24 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 className="section-title mb-12">{sectionTitle}</h2>
+              <div className="bg-gray-50 rounded-3xl overflow-hidden flex flex-col md:flex-row shadow-sm max-w-4xl">
+                {article.cover_url && (
+                  <div className="md:w-80 flex-shrink-0">
+                    <img
+                      src={article.cover_url}
+                      alt={article.title}
+                      className="w-full h-56 md:h-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
+                <div className="p-8 flex flex-col justify-center gap-4">
+                  {article.published_at && (
+                    <div className="text-xs text-gray-400 uppercase tracking-wider">
+                      {new Date(article.published_at).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}
+                      {article.author && <span className="ml-2">· {article.author}</span>}
+                    </div>
+                  )}
+                  <h3 className="text-2xl font-bold text-gray-900">{article.title}</h3>
+                  {article.excerpt && <p className="text-gray-600 leading-relaxed">{article.excerpt}</p>}
+                  <Link to={`/blog/${article.slug}`} className="btn-primary self-start mt-2">
+                    {ctaText} <ArrowRight size={16} />
+                  </Link>
                 </div>
-              )}
-              <div className="p-8 flex flex-col justify-center gap-4">
-                <div className="flex items-center gap-2 text-xs text-gray-400 uppercase tracking-wider">
-                  <Calendar size={14} />
-                  {latestArticle.published_at ? new Date(latestArticle.published_at).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' }) : ''}
-                  {latestArticle.author && <span className="ml-2">· {latestArticle.author}</span>}
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900">{latestArticle.title}</h3>
-                {latestArticle.excerpt && <p className="text-gray-600 leading-relaxed">{latestArticle.excerpt}</p>}
-                <Link to={`/blog/${latestArticle.slug}`} className="btn-primary self-start mt-2">
-                  Lire l'article <ArrowRight size={16} />
-                </Link>
               </div>
             </div>
-          </div>
-        </section>
-      )}
+          </section>
+        );
+      })()}
 
       {/* ── TÉMOIGNAGES ───────────────────────────────────────────────────── */}
       {(pc.show_temoignages !== false) && temoignages.length > 0 && (
@@ -221,7 +244,7 @@ export default function Accueil() {
                   <p className="text-gray-700 leading-relaxed mb-6 italic flex-1">"{t.texte}"</p>
                   <div className="border-t border-gray-100 pt-4 flex items-center gap-3">
                     {t.photo_url && (
-                      <img src={t.photo_url} alt={t.auteur} className="w-10 h-10 rounded-full object-cover flex-shrink-0" />
+                      <img src={resolveImageUrl(t.photo_url)} alt={t.auteur} className="w-10 h-10 rounded-full object-cover flex-shrink-0" />
                     )}
                     <div>
                       <div className="font-semibold text-gray-900">{t.auteur}</div>

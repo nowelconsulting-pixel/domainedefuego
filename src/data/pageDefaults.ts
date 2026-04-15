@@ -51,6 +51,8 @@ const pageDefaults: Record<string, Record<string, unknown>> = {
   presentation: {
     hero_title: 'Notre association',
     hero_subtitle: 'Découvrez qui nous sommes, notre mission et nos valeurs.',
+    cta_label: 'Adopter un animal',
+    cta_url: '/animaux',
     mission_title: 'Notre mission',
     mission_text:
       "Domaine de Fuego est une association loi 1901 fondée en 2016 avec une conviction profonde : chaque animal mérite une vie digne, aimante et sécurisée.\n\nNous recueillons des chiens, chats et autres animaux abandonnés, maltraités ou en danger, et nous les confions à des familles d'accueil bienveillantes le temps de trouver la famille adoptante idéale.\n\nNous croyons que l'adoption est un acte de vie, un engagement sur la durée. C'est pourquoi nous accompagnons chaque adoptant avant, pendant et après l'adoption pour garantir le bonheur de l'animal et de sa nouvelle famille.\n\nBasés principalement en Ardèche et dans le Vaucluse, nous intervenons sur tout le territoire français grâce à notre réseau de bénévoles passionnés.",
@@ -80,6 +82,8 @@ const pageDefaults: Record<string, Record<string, unknown>> = {
   adopter: {
     hero_title: 'Adopter un animal',
     hero_subtitle: "L'adoption est un engagement pour toute la vie de l'animal. Nous vous accompagnons à chaque étape.",
+    cta_label: "Devenir famille d'accueil",
+    cta_url: '/famille-accueil',
     process_steps: [
       { titre: '1. Candidature en ligne',   desc: "Remplissez notre formulaire. Nous avons besoin de bien vous connaître pour trouver l'animal qui vous correspond." },
       { titre: '2. Entretien téléphonique', desc: "Un bénévole vous rappelle pour échanger sur votre projet, vos attentes et vous présenter l'animal." },
@@ -102,6 +106,8 @@ const pageDefaults: Record<string, Record<string, unknown>> = {
   'famille-accueil': {
     hero_title: "Devenir famille d'accueil",
     hero_subtitle: "En devenant famille d'accueil, vous offrez un foyer temporaire à un animal en attente d'adoption. Un geste simple, un impact immense.",
+    cta_label: 'Adopter un animal',
+    cta_url: '/animaux',
     avantages_title: "Pourquoi devenir famille d'accueil ?",
     avantages: [
       { titre: 'Chez vous',       desc: "L'animal vit dans votre foyer et s'intègre à votre quotidien dans un environnement chaleureux." },
@@ -128,6 +134,7 @@ const pageDefaults: Record<string, Record<string, unknown>> = {
   'faire-un-don': {
     hero_title: 'Faire un don',
     hero_subtitle: "Votre générosité permet à des centaines d'animaux de trouver une famille chaque année.",
+    helloasso_url: '',
     intro_title: 'Soutenez notre action',
     intro_text:
       "Domaine de Fuego fonctionne grâce aux dons de particuliers comme vous. Aucune subvention publique ne vient financer nos actions — c'est votre générosité qui permet à des centaines d'animaux de trouver une famille chaque année.\n\nVotre don, qu'il soit ponctuel ou mensuel, a un impact direct et concret sur la vie des animaux que nous prenons en charge.",
@@ -152,6 +159,8 @@ const pageDefaults: Record<string, Record<string, unknown>> = {
     reseaux_title: 'Réseaux sociaux',
     show_form: true,
     form_title: 'Envoyer un message',
+    cta_label: 'Adopter un animal',
+    cta_url: '/animaux',
   },
 
   'mentions-legales': {

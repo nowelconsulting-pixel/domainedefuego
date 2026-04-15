@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Home, Heart, Clock, Shield, ChevronDown, ChevronUp } from 'lucide-react';
+import { Home, Heart, Clock, Shield, ChevronDown, ChevronUp, ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import FormFamilleAccueil from '../components/FormFamilleAccueil';
 import { usePageContent } from '../hooks/usePageContent';
 
@@ -88,6 +89,23 @@ export default function FamilleAccueil() {
         </section>
 
       </div>
+
+      {/* Optional CTA button */}
+      {(pc.cta_url as string) && (
+        <div className="bg-coral-500 py-14 text-center">
+          {(pc.cta_url as string).startsWith('http') ? (
+            <a href={pc.cta_url as string} target="_blank" rel="noopener noreferrer"
+              className="bg-white text-coral-600 hover:bg-coral-50 font-semibold px-10 py-4 rounded-xl inline-flex items-center gap-2 transition-colors">
+              {(pc.cta_label as string) || 'En savoir plus'} <ChevronRight size={20} />
+            </a>
+          ) : (
+            <Link to={pc.cta_url as string}
+              className="bg-white text-coral-600 hover:bg-coral-50 font-semibold px-10 py-4 rounded-xl inline-flex items-center gap-2 transition-colors">
+              {(pc.cta_label as string) || 'En savoir plus'} <ChevronRight size={20} />
+            </Link>
+          )}
+        </div>
+      )}
     </div>
   );
 }

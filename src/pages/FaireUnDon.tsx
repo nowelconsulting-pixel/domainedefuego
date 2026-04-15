@@ -35,17 +35,17 @@ export default function FaireUnDon() {
           ))}
           <div className="mt-8">
             <a
-              href={config?.helloasso_url || '#'}
+              href={(pc.helloasso_url as string) || config?.helloasso_url || '#'}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-primary text-lg px-10 py-4 inline-flex"
             >
               <Heart size={22} />
-              Faire un don via HelloAsso
+              {(pc.helloasso_btn_label as string) || 'Faire un don via HelloAsso'}
               <ExternalLink size={18} />
             </a>
             <p className="text-xs text-gray-400 mt-3">
-              HelloAsso est une plateforme sécurisée. 100% de votre don va à l'association (aucune commission).
+              {(pc.helloasso_note as string) || 'HelloAsso est une plateforme sécurisée. 100% de votre don va à l\'association (aucune commission).'}
             </p>
           </div>
         </section>

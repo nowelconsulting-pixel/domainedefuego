@@ -485,6 +485,7 @@ export default function AdminPageEditor() {
 
   const contentSchema = page.system ? (PAGE_CONTENT_SCHEMA[page.slug] ?? []) : [];
   const slugConflict = !page.system && !!page.slug && pages.some(p => p.slug === page.slug && p.id !== page.id);
+  const hasChildren = pages.some(p => p.parent_id === page.id);
 
   return (
     <div className="p-8 max-w-4xl">
@@ -545,16 +546,25 @@ export default function AdminPageEditor() {
           {!page.system && (
             <div>
               <label className="form-label">Page parente (sous-menu)</label>
-              <select
-                className="form-input"
-                value={page.parent_id ?? ''}
-                onChange={e => set('parent_id', (e.target.value || null) as AdminPage['parent_id'])}
-              >
-                <option value="">— Aucune (page de premier niveau) —</option>
-                {parentOptions.map(p => (
-                  <option key={p.id} value={p.id}>{p.title}</option>
-                ))}
-              </select>
+              {hasChildren ? (
+                <>
+                  <select className="form-input bg-gray-50 text-gray-400 cursor-not-allowed" disabled value="">
+                    <option value="">— Aucune (page de premier niveau) —</option>
+                  </select>
+                  <p className="text-xs text-amber-600 mt-1">⚠ Cette page a des sous-pages — elle ne peut pas être elle-même une sous-page.</p>
+                </>
+              ) : (
+                <select
+                  className="form-input"
+                  value={page.parent_id ?? ''}
+                  onChange={e => set('parent_id', (e.target.value || null) as AdminPage['parent_id'])}
+                >
+                  <option value="">— Aucune (page de premier niveau) —</option>
+                  {parentOptions.map(p => (
+                    <option key={p.id} value={p.id}>{p.title}</option>
+                  ))}
+                </select>
+              )}
             </div>
           )}
 

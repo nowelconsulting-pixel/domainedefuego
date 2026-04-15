@@ -33,10 +33,12 @@ const pageDefaults: Record<string, Record<string, unknown>> = {
     temoignages_title: 'Ils ont adopté',
     temoignages_subtitle: 'Les témoignages de nos familles adoptantes',
     temoignages: [
-      { texte: "Nous avons adopté Rex il y a 6 mois et c'est le plus beau cadeau qu'on se soit fait. L'équipe de Domaine de Fuego nous a accompagnés avec beaucoup de professionnalisme et de bienveillance.", auteur: 'Marie & Julien', lieu: 'Lyon (69)' },
-      { texte: "Lola a rejoint notre famille et elle s'est intégrée en quelques jours seulement. Merci à l'association pour leur suivi post-adoption, c'est vraiment rassurant.", auteur: 'Pascal', lieu: 'Montpellier (34)' },
-      { texte: "J'avais des craintes avec mes jeunes enfants mais l'association a très bien évalué la compatibilité. Mia adore nos enfants, c'est magique !", auteur: 'Sandrine', lieu: 'Paris (75)' },
+      { texte: "Nous avons adopté Rex il y a 6 mois et c'est le plus beau cadeau qu'on se soit fait. L'équipe de Domaine de Fuego nous a accompagnés avec beaucoup de professionnalisme et de bienveillance.", auteur: 'Marie & Julien', lieu: 'Lyon (69)', photo_url: '', animal: 'Rex' },
+      { texte: "Lola a rejoint notre famille et elle s'est intégrée en quelques jours seulement. Merci à l'association pour leur suivi post-adoption, c'est vraiment rassurant.", auteur: 'Pascal', lieu: 'Montpellier (34)', photo_url: '', animal: 'Lola' },
+      { texte: "J'avais des craintes avec mes jeunes enfants mais l'association a très bien évalué la compatibilité. Mia adore nos enfants, c'est magique !", auteur: 'Sandrine', lieu: 'Paris (75)', photo_url: '', animal: 'Mia' },
     ],
+    // Chiffres clés
+    show_stats: true,
     // Appel à l'action final
     cta_title: 'Prêt à changer une vie ?',
     cta_subtitle: "Devenez adoptant ou famille d'accueil — chaque geste compte pour nos animaux.",

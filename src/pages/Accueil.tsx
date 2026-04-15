@@ -37,7 +37,7 @@ export default function Accueil() {
 
   const derniers = animaux?.filter(a => a.statut === 'Disponible').slice(0, 3) ?? [];
   const etapes   = (pc.etapes as Array<{ num: string; titre: string; desc: string }>) || [];
-  const temoignages = (pc.temoignages as Array<{ texte: string; auteur: string; lieu: string }>) || [];
+  const temoignages = (pc.temoignages as Array<{ texte: string; auteur: string; lieu: string; photo_url?: string; animal?: string }>) || [];
 
   const heroCta1Label = (pc.hero_cta1_label as string) || 'Voir les animaux';
   const heroCta1Url   = (pc.hero_cta1_url   as string) ?? '/animaux';
@@ -89,7 +89,7 @@ export default function Accueil() {
       </section>
 
       {/* ── STATS BAR ─────────────────────────────────────────────────────── */}
-      {config && (() => {
+      {(pc.show_stats !== false) && config && (() => {
         const items: { value: number; label: string }[] = [
           ...(config.chiffres.animaux_adoptes  ? [{ value: config.chiffres.animaux_adoptes,  label: 'animaux adoptés' }]          : []),
           ...(config.chiffres.familles_accueil ? [{ value: config.chiffres.familles_accueil, label: "familles d'accueil" }]        : []),
@@ -206,16 +206,25 @@ export default function Accueil() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {temoignages.map((t, i) => (
-                <div key={i} className="bg-white rounded-2xl p-8 shadow-sm">
+                <div key={i} className="bg-white rounded-2xl p-8 shadow-sm flex flex-col">
                   <div className="flex gap-1 mb-5">
                     {[...Array(5)].map((_, j) => (
                       <Star key={j} size={16} className="fill-coral-400 text-coral-400" />
                     ))}
                   </div>
-                  <p className="text-gray-700 leading-relaxed mb-6 italic">"{t.texte}"</p>
-                  <div className="border-t border-gray-100 pt-4">
-                    <div className="font-semibold text-gray-900">{t.auteur}</div>
-                    <div className="text-sm text-gray-400">{t.lieu}</div>
+                  <p className="text-gray-700 leading-relaxed mb-6 italic flex-1">"{t.texte}"</p>
+                  <div className="border-t border-gray-100 pt-4 flex items-center gap-3">
+                    {t.photo_url && (
+                      <img src={t.photo_url} alt={t.auteur} className="w-10 h-10 rounded-full object-cover flex-shrink-0" />
+                    )}
+                    <div>
+                      <div className="font-semibold text-gray-900">{t.auteur}</div>
+                      <div className="text-sm text-gray-400">
+                        {t.animal && <span className="text-coral-500 font-medium">{t.animal}</span>}
+                        {t.animal && t.lieu && ' · '}
+                        {t.lieu}
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}

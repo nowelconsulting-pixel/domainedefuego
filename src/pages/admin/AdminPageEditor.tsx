@@ -377,7 +377,9 @@ export default function AdminPageEditor() {
 
   const [page, setPage] = useState<AdminPage | null>(null);
   const [slugEdited, setSlugEdited] = useState(false);
+  const [slugFormatError, setSlugFormatError] = useState('');
   const [saved, setSaved] = useState(false);
+  const [savedMsg, setSavedMsg] = useState('Modifications enregistrées');
   const [showBlockPicker, setShowBlockPicker] = useState(false);
   const [contentData, setContentData] = useState<Record<string, unknown>>({});
   const initializedRef = useRef(false);
@@ -491,12 +493,14 @@ export default function AdminPageEditor() {
 
   const handleSave = (status?: AdminPage['status']) => {
     if (!page.title.trim()) { alert('Le titre est obligatoire.'); return; }
+    if (slugFormatError) { alert('Le slug contient des caractères invalides.'); return; }
     if (slugConflict) { alert('Ce slug est déjà utilisé par une autre page. Choisissez un slug unique.'); return; }
     const updated: AdminPage = { ...page, status: status ?? page.status, updatedAt: new Date().toISOString() };
     if (page.system) {
       saveSystemPageData({ ...loadSystemPageData(), [page.id]: updated });
       savePageContent(pageContentKey(page.slug), contentData);
       setPage(updated);
+      setSavedMsg('Modifications enregistrées');
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } else {
@@ -511,6 +515,9 @@ export default function AdminPageEditor() {
           localStorage.removeItem(`page_content_${oldSlug}`);
         }
         // parent_id references use page IDs, not slugs — no update needed
+        setSavedMsg('URL mise à jour');
+      } else {
+        setSavedMsg('Modifications enregistrées');
       }
 
       savePage(updated);
@@ -520,7 +527,7 @@ export default function AdminPageEditor() {
       window.dispatchEvent(new Event('admin_pages_updated'));
 
       setSaved(true);
-      setTimeout(() => { setSaved(false); navigate('/admin/pages'); }, 1000);
+      setTimeout(() => { setSaved(false); navigate('/admin/pages'); }, 1500);
     }
   };
 
@@ -576,17 +583,29 @@ export default function AdminPageEditor() {
                   <div className="flex items-center gap-1">
                     <span className="text-gray-400 text-sm">/</span>
                     <input
-                      className={`form-input flex-1 ${slugConflict ? 'border-red-400 focus:ring-red-400' : ''}`}
+                      className={`form-input flex-1 ${(slugConflict || slugFormatError) ? 'border-red-400 focus:ring-red-400' : ''}`}
                       value={page.slug}
-                      onChange={e => { setSlugEdited(true); set('slug', slugify(e.target.value)); }}
+                      onChange={e => {
+                        const raw = e.target.value;
+                        setSlugEdited(true);
+                        if (raw && !/^[a-z0-9-]+$/.test(raw)) {
+                          setSlugFormatError('Uniquement lettres minuscules, chiffres et tirets');
+                        } else {
+                          setSlugFormatError('');
+                        }
+                        set('slug', raw);
+                      }}
                       placeholder="ma-nouvelle-page"
                     />
                   </div>
-                  {slugConflict && (
-                    <p className="text-xs text-red-500 mt-1">⚠ Ce slug est déjà utilisé par une autre page.</p>
+                  {slugFormatError && (
+                    <p className="text-xs text-red-500 mt-1">⚠ {slugFormatError}</p>
                   )}
-                  {!slugConflict && originalSlugRef.current && page.slug !== originalSlugRef.current && (
-                    <p className="text-xs text-amber-600 mt-1">⚠ L'URL de la page va changer (/{originalSlugRef.current} → /{page.slug}). Les anciens liens ne fonctionneront plus.</p>
+                  {!slugFormatError && slugConflict && (
+                    <p className="text-xs text-red-500 mt-1">⚠ Ce slug existe déjà</p>
+                  )}
+                  {!slugFormatError && !slugConflict && originalSlugRef.current && page.slug !== originalSlugRef.current && (
+                    <p className="text-xs text-amber-600 mt-1">⚠ Attention : modifier l'URL cassera les anciens liens. (/{originalSlugRef.current} → /{page.slug})</p>
                   )}
                 </>
               )}
@@ -600,26 +619,48 @@ export default function AdminPageEditor() {
           </div>
 
           {!page.system && (
-            <div>
-              <label className="form-label">Page parente (sous-menu)</label>
-              {hasChildren ? (
-                <>
-                  <select className="form-input bg-gray-50 text-gray-400 cursor-not-allowed" disabled value="">
-                    <option value="">— Aucune (page de premier niveau) —</option>
+            <div className="space-y-2">
+              <label className="form-label">Niveau de navigation</label>
+              <div className="flex gap-6">
+                <label className="flex items-center gap-2 text-sm cursor-pointer">
+                  <input
+                    type="radio"
+                    name={`nav-level-${page.id}`}
+                    checked={!page.parent_id}
+                    onChange={() => set('parent_id', null)}
+                    className="accent-coral-500"
+                  />
+                  Page principale
+                </label>
+                <label className={`flex items-center gap-2 text-sm ${hasChildren ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}>
+                  <input
+                    type="radio"
+                    name={`nav-level-${page.id}`}
+                    checked={!!page.parent_id}
+                    onChange={() => { if (!hasChildren) set('parent_id', parentOptions[0]?.id ?? ''); }}
+                    disabled={hasChildren}
+                    className="accent-coral-500"
+                  />
+                  Sous-page d'une autre page
+                </label>
+              </div>
+              {hasChildren && (
+                <p className="text-xs text-amber-600">⚠ Cette page a des sous-pages — elle ne peut pas être une sous-page elle-même.</p>
+              )}
+              {!!page.parent_id && !hasChildren && (
+                <div className="mt-1">
+                  <label className="form-label">Page parente</label>
+                  <select
+                    className="form-input"
+                    value={page.parent_id ?? ''}
+                    onChange={e => set('parent_id', (e.target.value || null) as AdminPage['parent_id'])}
+                  >
+                    <option value="">— Choisir une page parente —</option>
+                    {parentOptions.map(p => (
+                      <option key={p.id} value={p.id}>{p.title}</option>
+                    ))}
                   </select>
-                  <p className="text-xs text-amber-600 mt-1">⚠ Cette page a des sous-pages — elle ne peut pas être elle-même une sous-page.</p>
-                </>
-              ) : (
-                <select
-                  className="form-input"
-                  value={page.parent_id ?? ''}
-                  onChange={e => set('parent_id', (e.target.value || null) as AdminPage['parent_id'])}
-                >
-                  <option value="">— Aucune (page de premier niveau) —</option>
-                  {parentOptions.map(p => (
-                    <option key={p.id} value={p.id}>{p.title}</option>
-                  ))}
-                </select>
+                </div>
               )}
             </div>
           )}
@@ -728,7 +769,7 @@ export default function AdminPageEditor() {
           </button>
           <button onClick={() => handleSave('published')}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors ${saved ? 'bg-green-500' : 'bg-coral-500 hover:bg-coral-600'}`}>
-            <Eye size={16} />{saved ? 'Modifications enregistrées ✓' : (page.system ? 'Sauvegarder' : 'Publier')}
+            <Eye size={16} />{saved ? `${savedMsg} ✓` : (page.system ? 'Sauvegarder' : 'Publier')}
           </button>
           {!page.system && (
             <a href={`/${page.slug}`} target="_blank" rel="noopener noreferrer"

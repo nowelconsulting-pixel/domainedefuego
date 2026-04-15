@@ -4,7 +4,7 @@ import { Star, ChevronDown, ChevronRight } from 'lucide-react';
 import { useAdminPages } from '../hooks/useAdminData';
 import type { AdminPage, Block } from '../types/admin';
 import FormContact from '../components/FormContact';
-import { detectVideoType, getYoutubeEmbedUrl } from '../utils/image';
+import { detectVideoType, getYoutubeEmbedUrl, resolveImageUrl } from '../utils/image';
 
 // ─── FAQ accordion ────────────────────────────────────────────────────────────
 function FaqBlock({ block }: { block: Block }) {
@@ -73,12 +73,13 @@ function renderBlock(block: Block) {
         />
       );
 
-    case 'image':
+    case 'image': {
+      const imgSrc = resolveImageUrl((block.data.url as string) || '');
       return (
         <figure key={block.id} className="my-6">
-          {block.data.url && (
+          {imgSrc && (
             <img
-              src={block.data.url as string}
+              src={imgSrc}
               alt={(block.data.caption as string) || ''}
               className="w-full rounded-2xl object-cover max-h-96"
               loading="lazy"
@@ -91,6 +92,7 @@ function renderBlock(block: Block) {
           )}
         </figure>
       );
+    }
 
     case 'card':
       return (
@@ -201,16 +203,17 @@ function renderBlock(block: Block) {
         </div>
       );
 
-    case 'hero_banner':
+    case 'hero_banner': {
+      const bgUrl = resolveImageUrl((block.data.bg_url as string) || '');
       return (
         <div
           key={block.id}
           className="relative rounded-2xl overflow-hidden my-6 min-h-[320px] flex items-center bg-gray-900"
         >
-          {block.data.bg_url && (
+          {bgUrl && (
             <div
               className="absolute inset-0 bg-cover bg-center opacity-40"
-              style={{ backgroundImage: `url(${block.data.bg_url as string})` }}
+              style={{ backgroundImage: `url(${bgUrl})` }}
             />
           )}
           <div className="relative z-10 px-8 py-12 max-w-2xl">
@@ -228,6 +231,7 @@ function renderBlock(block: Block) {
           </div>
         </div>
       );
+    }
 
     case 'stat': {
       const colorCls = STAT_COLORS[(block.data.color as string) || 'coral'] ?? STAT_COLORS.coral;
@@ -250,6 +254,59 @@ function renderBlock(block: Block) {
           dangerouslySetInnerHTML={{ __html: (block.data.code as string) || '' }}
         />
       );
+
+    case 'featured-article': {
+      let articles: { id: string; title: string; slug: string; excerpt: string; cover_url: string; author: string; published_at: string; published: boolean }[] = [];
+      try {
+        const stored = localStorage.getItem('articles');
+        if (stored) articles = JSON.parse(stored);
+      } catch { /**/ }
+      const published = articles.filter(a => a.published);
+      const isAuto = (block.data.auto as string) !== 'false';
+      const articleId = block.data.article_id as string;
+      const article = isAuto
+        ? published.sort((a, b) => b.published_at.localeCompare(a.published_at))[0]
+        : published.find(a => a.id === articleId);
+      const sectionTitle = (block.data.section_title as string) || 'Dernière actualité';
+      const ctaText = (block.data.cta_text as string) || "Lire l'article";
+      const fallbackUrl = (block.data.fallback_url as string) || '/blog';
+
+      if (!article) {
+        return (
+          <div key={block.id} className="my-8 text-center">
+            <p className="text-gray-400 italic">Aucun article publié à afficher.</p>
+            <Link to={fallbackUrl} className="text-coral-500 text-sm hover:underline mt-2 inline-block">Voir le blog →</Link>
+          </div>
+        );
+      }
+      return (
+        <div key={block.id} className="my-8">
+          {sectionTitle && <h2 className="text-2xl font-bold text-gray-900 mb-6">{sectionTitle}</h2>}
+          <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col md:flex-row">
+            {article.cover_url && (
+              <div className="md:w-2/5 flex-shrink-0">
+                <img src={article.cover_url} alt={article.title} className="w-full h-56 md:h-full object-cover" loading="lazy" />
+              </div>
+            )}
+            <div className="p-6 flex flex-col justify-between flex-1">
+              <div>
+                {article.published_at && (
+                  <p className="text-xs text-gray-400 mb-2">
+                    {new Date(article.published_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    {article.author && <> · {article.author}</>}
+                  </p>
+                )}
+                <h3 className="text-xl font-bold text-gray-900 mb-3">{article.title}</h3>
+                {article.excerpt && <p className="text-gray-600 leading-relaxed line-clamp-3">{article.excerpt}</p>}
+              </div>
+              <div className="mt-4">
+                <Link to={`/blog/${article.slug}`} className="btn-primary inline-flex">{ctaText}</Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
 
     default:
       return null;

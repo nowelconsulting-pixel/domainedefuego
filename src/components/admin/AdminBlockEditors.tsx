@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus, Trash2, GripVertical, X } from 'lucide-react';
 import RichTextEditor from './RichTextEditor';
+import ImageInput from './ImageInput';
 import type { Block, BlockType } from '../../types/admin';
 import { detectVideoType, getYoutubeThumbnail } from '../../utils/image';
 
@@ -19,7 +20,8 @@ export const BLOCK_TYPES: { type: BlockType; label: string; emoji: string }[] = 
   { type: 'hero_banner',  label: 'Bannière hero',         emoji: '🏔️' },
   { type: 'stat',         label: 'Chiffre mis en avant',  emoji: '📊' },
   { type: 'team',         label: "Liste d'équipe",        emoji: '👥' },
-  { type: 'embed',        label: 'Embed HTML',            emoji: '🔧' },
+  { type: 'embed',            label: 'Embed HTML',            emoji: '🔧' },
+  { type: 'featured-article', label: 'Article mis en avant',  emoji: '📰' },
 ];
 
 export function newBlock(type: BlockType): Block {
@@ -138,6 +140,55 @@ function TeamBlockEditor({ block, onChange }: { block: Block; onChange: (b: Bloc
   );
 }
 
+// ─── Featured article block editor ───────────────────────────────────────────
+
+function FeaturedArticleBlockEditor({ block, onChange }: { block: Block; onChange: (b: Block) => void }) {
+  const setData = (k: string, v: string) => onChange({ ...block, data: { ...block.data, [k]: v } });
+  const isAuto = (block.data.auto as string) !== 'false';
+
+  let articles: { id: string; title: string }[] = [];
+  try {
+    const stored = localStorage.getItem('articles');
+    if (stored) articles = (JSON.parse(stored) as { id: string; title: string; published: boolean }[]).filter(a => a.published);
+  } catch { /**/ }
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => setData('auto', isAuto ? 'false' : 'true')}
+          className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 focus:outline-none ${isAuto ? 'bg-green-500' : 'bg-gray-300'}`}
+        >
+          <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-200 ${isAuto ? 'translate-x-6' : 'translate-x-1'}`} />
+        </button>
+        <span className="text-sm text-gray-700">Sélection automatique (dernier article publié)</span>
+      </div>
+      {!isAuto && (
+        <div>
+          <label className="form-label">Article à mettre en avant</label>
+          <select className="form-input" value={(block.data.article_id as string) || ''} onChange={e => setData('article_id', e.target.value)}>
+            <option value="">— Choisir un article —</option>
+            {articles.map(a => <option key={a.id} value={a.id}>{a.title}</option>)}
+          </select>
+        </div>
+      )}
+      <div>
+        <label className="form-label">Titre de la section</label>
+        <input className="form-input" value={(block.data.section_title as string) || ''} onChange={e => setData('section_title', e.target.value)} placeholder="Notre dernière actualité" />
+      </div>
+      <div>
+        <label className="form-label">Texte du bouton</label>
+        <input className="form-input" value={(block.data.cta_text as string) || ''} onChange={e => setData('cta_text', e.target.value)} placeholder="Lire l'article" />
+      </div>
+      <div>
+        <label className="form-label">Lien de secours (si aucun article)</label>
+        <input className="form-input" value={(block.data.fallback_url as string) || ''} onChange={e => setData('fallback_url', e.target.value)} placeholder="/blog" />
+      </div>
+    </div>
+  );
+}
+
 // ─── Main BlockEditor ────────────────────────────────────────────────────────
 
 export function BlockEditor({ block, onChange, onDelete, onMove, isFirst, isLast }: {
@@ -176,17 +227,15 @@ export function BlockEditor({ block, onChange, onDelete, onMove, isFirst, isLast
 
         {block.type === 'image' && (
           <>
-            <div>
-              <label className="form-label">URL de l'image</label>
-              <input className="form-input" value={(block.data.url as string) || ''} onChange={e => setData('url', e.target.value)} placeholder="https://..." />
-            </div>
+            <ImageInput
+              label="Image"
+              value={(block.data.url as string) || ''}
+              onChange={v => setData('url', v)}
+            />
             <div>
               <label className="form-label">Légende</label>
               <input className="form-input" value={(block.data.caption as string) || ''} onChange={e => setData('caption', e.target.value)} />
             </div>
-            {block.data.url && (
-              <img src={block.data.url as string} alt="" className="max-h-40 rounded-lg object-cover" />
-            )}
           </>
         )}
 
@@ -309,10 +358,11 @@ export function BlockEditor({ block, onChange, onDelete, onMove, isFirst, isLast
 
         {block.type === 'hero_banner' && (
           <>
-            <div>
-              <label className="form-label">Image de fond (URL)</label>
-              <input className="form-input" value={(block.data.bg_url as string) || ''} onChange={e => setData('bg_url', e.target.value)} placeholder="https://..." />
-            </div>
+            <ImageInput
+              label="Image de fond"
+              value={(block.data.bg_url as string) || ''}
+              onChange={v => setData('bg_url', v)}
+            />
             <div>
               <label className="form-label">Titre</label>
               <input className="form-input" value={(block.data.title as string) || ''} onChange={e => setData('title', e.target.value)} />
@@ -378,6 +428,10 @@ export function BlockEditor({ block, onChange, onDelete, onMove, isFirst, isLast
               ⚠️ N'intégrez que du code de confiance. Le HTML est rendu tel quel dans le navigateur.
             </p>
           </>
+        )}
+
+        {block.type === 'featured-article' && (
+          <FeaturedArticleBlockEditor block={block} onChange={onChange} />
         )}
       </div>
     </div>

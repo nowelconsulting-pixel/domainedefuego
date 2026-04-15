@@ -21,7 +21,7 @@ export interface AdminSession {
 export type BlockType =
   | 'text' | 'image' | 'card' | 'cta' | 'gallery' | 'contact_form'
   | 'faq' | 'testimonial' | 'video' | 'separator' | 'columns2'
-  | 'hero_banner' | 'stat' | 'team' | 'embed';
+  | 'hero_banner' | 'stat' | 'team' | 'embed' | 'featured-article';
 
 export interface Block {
   id: string;

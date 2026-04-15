@@ -64,3 +64,17 @@ export function getYoutubeEmbedUrl(url: string): string | null {
   const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
   return match ? `https://www.youtube.com/embed/${match[1]}` : null;
 }
+
+/**
+ * Resolve a CMS image URL.
+ * URLs of the form "local:<key>" are stored as base64 in localStorage.
+ * All other URLs are returned as-is.
+ */
+export function resolveImageUrl(url: string): string {
+  if (!url) return '';
+  if (url.startsWith('local:')) {
+    const key = url.slice('local:'.length);
+    return localStorage.getItem(key) ?? '';
+  }
+  return url;
+}

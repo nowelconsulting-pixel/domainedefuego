@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, Eye } from 'lucide-react';
 import RichTextEditor from '../../components/admin/RichTextEditor';
+import ImageInput from '../../components/admin/ImageInput';
 import { useArticles, saveArticle } from '../../hooks/useArticles';
 import type { Article } from '../../hooks/useArticles';
 
@@ -137,20 +138,13 @@ export default function AdminArticleEditor() {
         </div>
 
         {/* Cover image */}
-        <div className="bg-white rounded-xl shadow-sm p-6 space-y-3">
-          <h2 className="font-semibold text-gray-900">Image de couverture</h2>
-          <div>
-            <label className="form-label">URL de l'image</label>
-            <input
-              className="form-input"
-              value={article.cover_url}
-              onChange={e => set('cover_url', e.target.value)}
-              placeholder="https://..."
-            />
-          </div>
-          {article.cover_url && (
-            <img src={article.cover_url} alt="Aperçu" className="w-full max-h-60 object-cover rounded-xl" />
-          )}
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <h2 className="font-semibold text-gray-900 mb-3">Image de couverture</h2>
+          <ImageInput
+            value={article.cover_url}
+            onChange={v => set('cover_url', v)}
+            placeholder="https://..."
+          />
         </div>
 
         {/* Excerpt */}

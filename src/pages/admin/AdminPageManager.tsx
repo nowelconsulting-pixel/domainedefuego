@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Plus, Edit2, Trash2, Eye, EyeOff, ChevronUp, ChevronDown, X, Save } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Plus, Edit2, Trash2, Eye, EyeOff, ChevronUp, ChevronDown, X, Save, Copy } from 'lucide-react';
 import { useAdminPages } from '../../hooks/useAdminData';
 import type { AdminPage } from '../../types/admin';
 import { SYSTEM_PAGES } from '../../types/admin';
@@ -33,7 +33,8 @@ function buildHierarchy(allPages: AdminPage[]): AdminPage[] {
 }
 
 export default function AdminPageManager() {
-  const { pages, save, deletePage } = useAdminPages();
+  const { pages, save, savePage, deletePage } = useAdminPages();
+  const navigate = useNavigate();
   const [confirm, setConfirm] = useState<string | null>(null);
   const [systemOrders, setSystemOrders] = useState<Record<string, number>>(loadSystemOrders);
   const [editingOrderId, setEditingOrderId] = useState<string | null>(null);
@@ -106,6 +107,45 @@ export default function AdminPageManager() {
   const handleDelete = (id: string) => {
     deletePage(id);
     setConfirm(null);
+  };
+
+  const handleDuplicate = (page: AdminPage) => {
+    // Find a unique slug: [slug]-copie, [slug]-copie-2, [slug]-copie-3 …
+    const baseSlug = `${page.slug || 'page'}-copie`;
+    const existingSlugs = new Set([
+      ...SYSTEM_PAGES.map(sp => sp.slug),
+      ...pages.map(p => p.slug),
+    ]);
+    let candidateSlug = baseSlug;
+    let counter = 2;
+    while (existingSlugs.has(candidateSlug)) {
+      candidateSlug = `${baseSlug}-${counter}`;
+      counter++;
+    }
+
+    const newId = `page-${Date.now()}`;
+    const copy: AdminPage = {
+      ...page,
+      id: newId,
+      title: `${page.title} (copie)`,
+      slug: candidateSlug,
+      status: 'draft',
+      system: false,
+      parent_id: page.parent_id,
+      menu_order: page.menu_order + 0.5,
+      updatedAt: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+    };
+
+    // Deep-copy page content from old slug to new slug
+    const srcKey = `page_content_${page.slug || 'accueil'}`;
+    const srcContent = localStorage.getItem(srcKey);
+    if (srcContent) {
+      localStorage.setItem(`page_content_${candidateSlug}`, srcContent);
+    }
+
+    savePage(copy);
+    navigate(`/admin/pages/edit/${newId}`, { state: { newPage: copy } });
   };
 
   const newPage = (): AdminPage => ({
@@ -237,7 +277,25 @@ export default function AdminPageManager() {
                       >
                         <Edit2 size={15} />
                       </Link>
-                      {/* Toggle status — custom only */}
+                      {/* View link */}
+                      <a
+                        href={page.slug ? `/${page.slug}` : '/'}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Voir la page"
+                        className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-500"
+                      >
+                        <Eye size={15} />
+                      </a>
+                      {/* Duplicate — all pages */}
+                      <button
+                        onClick={() => handleDuplicate(page)}
+                        title="Dupliquer"
+                        className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700"
+                      >
+                        <Copy size={15} />
+                      </button>
+                      {/* Toggle status + delete — custom only */}
                       {!page.system && (
                         <>
                           <button
@@ -263,16 +321,6 @@ export default function AdminPageManager() {
                           )}
                         </>
                       )}
-                      {/* View link */}
-                      <a
-                        href={page.slug ? `/${page.slug}` : '/'}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title="Voir la page"
-                        className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-blue-500"
-                      >
-                        <Eye size={15} />
-                      </a>
                     </div>
                   </td>
                 </tr>

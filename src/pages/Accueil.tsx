@@ -39,14 +39,14 @@ export default function Accueil() {
   const etapes   = (pc.etapes as Array<{ num: string; titre: string; desc: string }>) || [];
   const temoignages = (pc.temoignages as Array<{ texte: string; auteur: string; lieu: string; photo_url?: string; animal?: string }>) || [];
 
-  const heroCta1Label = (pc.hero_cta1_label as string) || 'Voir les animaux';
-  const heroCta1Url   = (pc.hero_cta1_url   as string) ?? '/animaux';
-  const heroCta2Label = (pc.hero_cta2_label as string) || 'Faire un don';
-  const heroCta2Url   = (pc.hero_cta2_url   as string) ?? '/faire-un-don';
+  const heroCta1Label = (pc.hero_cta_primary_text   as string) || 'Voir les animaux';
+  const heroCta1Url   = (pc.hero_cta_primary_url    as string) ?? '/animaux';
+  const heroCta2Label = (pc.hero_cta_secondary_text as string) || 'Faire un don';
+  const heroCta2Url   = (pc.hero_cta_secondary_url  as string) ?? '/faire-un-don';
   const howCtaLabel   = (pc.how_cta_label as string) || 'Déposer une candidature';
   const howCtaUrl     = (pc.how_cta_url   as string) ?? '/adopter';
-  const ctaBtn1Label  = (pc.cta_btn1_label as string) || 'Adopter un animal';
-  const ctaBtn1Url    = (pc.cta_btn1_url   as string) ?? '/animaux';
+  const ctaBtn1Label  = (pc.footer_cta_label as string) || 'Adopter un animal';
+  const ctaBtn1Url    = (pc.footer_cta_url   as string) ?? '/animaux';
   const ctaBtn2Label  = (pc.cta_btn2_label as string) || "Devenir famille d'accueil";
   const ctaBtn2Url    = (pc.cta_btn2_url   as string) ?? '/famille-accueil';
 
@@ -114,13 +114,13 @@ export default function Accueil() {
       })()}
 
       {/* ── NOS ANIMAUX À L'ADOPTION ──────────────────────────────────────── */}
-      {(pc.show_derniers !== false) && derniers.length > 0 && (
+      {(pc.show_latest_animals !== false) && derniers.length > 0 && (
         <section className="py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-14">
               <div>
-                <h2 className="section-title">{(pc.derniers_title as string) || 'Nos animaux à l\'adoption'}</h2>
-                <p className="section-subtitle mt-2">{(pc.derniers_subtitle as string) || 'Ces animaux attendent leur famille idéale'}</p>
+                <h2 className="section-title">{(pc.section_title as string) || 'Nos animaux à l\'adoption'}</h2>
+                <p className="section-subtitle mt-2">{(pc.section_subtitle as string) || 'Ces animaux attendent leur famille idéale'}</p>
               </div>
               <Link to="/animaux" className="flex items-center gap-2 text-coral-500 font-semibold hover:text-coral-600 whitespace-nowrap text-sm">
                 Voir tous les animaux <ArrowRight size={16} />
@@ -136,32 +136,34 @@ export default function Accueil() {
       )}
 
       {/* ── COMMENT ADOPTER ───────────────────────────────────────────────── */}
-      <section className="py-24" style={{ backgroundColor: '#FFF8F6' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="section-title">{(pc.how_title as string) || 'Comment adopter ?'}</h2>
-            <p className="section-subtitle mt-2">{(pc.how_subtitle as string) || 'Un processus simple et bienveillant en 3 étapes'}</p>
-          </div>
-          <div className="space-y-12 max-w-4xl mx-auto">
-            {etapes.map((e, i) => (
-              <div key={e.num} className={`flex flex-col sm:flex-row gap-8 items-center ${i % 2 === 1 ? 'sm:flex-row-reverse' : ''}`}>
-                <div className="w-20 h-20 bg-coral-500 text-white rounded-2xl flex items-center justify-center text-3xl font-bold flex-shrink-0 shadow-lg shadow-coral-500/30">
-                  {e.num}
+      {(pc.show_how_it_works !== false) && (
+        <section className="py-24" style={{ backgroundColor: '#FFF8F6' }}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="section-title">{(pc.how_title as string) || 'Comment adopter ?'}</h2>
+              <p className="section-subtitle mt-2">{(pc.how_subtitle as string) || 'Un processus simple et bienveillant en 3 étapes'}</p>
+            </div>
+            <div className="space-y-12 max-w-4xl mx-auto">
+              {etapes.map((e, i) => (
+                <div key={e.num} className={`flex flex-col sm:flex-row gap-8 items-center ${i % 2 === 1 ? 'sm:flex-row-reverse' : ''}`}>
+                  <div className="w-20 h-20 bg-coral-500 text-white rounded-2xl flex items-center justify-center text-3xl font-bold flex-shrink-0 shadow-lg shadow-coral-500/30">
+                    {e.num}
+                  </div>
+                  <div className={`flex-1 ${i % 2 === 1 ? 'sm:text-right' : ''}`}>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-3">{e.titre}</h3>
+                    <p className="text-gray-600 leading-relaxed">{e.desc}</p>
+                  </div>
                 </div>
-                <div className={`flex-1 ${i % 2 === 1 ? 'sm:text-right' : ''}`}>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">{e.titre}</h3>
-                  <p className="text-gray-600 leading-relaxed">{e.desc}</p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            <div className="text-center mt-14">
+              <Cta label={howCtaLabel} url={howCtaUrl} className="btn-primary px-8 py-4">
+                <ChevronRight size={20} />
+              </Cta>
+            </div>
           </div>
-          <div className="text-center mt-14">
-            <Cta label={howCtaLabel} url={howCtaUrl} className="btn-primary px-8 py-4">
-              <ChevronRight size={20} />
-            </Cta>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── DERNIÈRE ACTUALITÉ ────────────────────────────────────────────── */}
       {(pc.show_latest_blog !== false) && latestArticle && (
@@ -237,10 +239,10 @@ export default function Accueil() {
       <section className="bg-coral-500 py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            {(pc.cta_title as string) || 'Vous ne pouvez pas adopter ?'}
+            {(pc.footer_cta_title as string) || 'Prêt à changer une vie ?'}
           </h2>
           <p className="text-coral-100 text-lg mb-10 leading-relaxed">
-            {(pc.cta_subtitle as string) || "Devenez famille d'accueil — offrez un foyer temporaire à un animal en attente. Tous les frais sont pris en charge par l'association."}
+            {(pc.footer_cta_text as string) || "Devenez adoptant ou famille d'accueil — chaque geste compte pour nos animaux."}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Cta label={ctaBtn1Label} url={ctaBtn1Url} className="bg-white text-coral-600 hover:bg-coral-50 font-semibold px-8 py-4 rounded-xl transition-colors">

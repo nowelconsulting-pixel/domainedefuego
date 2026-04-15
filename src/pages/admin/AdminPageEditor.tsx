@@ -13,6 +13,11 @@ function slugify(s: string) {
   return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
+// Home page slug is '' but content is keyed under 'accueil' everywhere
+function pageContentKey(slug: string): string {
+  return slug === '' ? 'accueil' : slug;
+}
+
 function loadSystemPageData(): Record<string, Partial<AdminPage>> {
   try { return JSON.parse(localStorage.getItem('system_page_data') || '{}'); }
   catch { return {}; }
@@ -35,11 +40,15 @@ const PAGE_CONTENT_SCHEMA: Record<string, FieldDef[]> = {
     { type: 'text',    key: 'hero_subtitle', label: 'Sous-titre' },
     { type: 'text',    key: 'hero_badge',    label: "Badge d'accroche" },
     { type: 'text',    key: 'hero_bg_url',   label: 'Photo de fond (URL complète)' },
-    { type: 'text',    key: 'hero_cta1_label', label: 'Bouton principal — libellé' },
-    { type: 'text',    key: 'hero_cta1_url',   label: 'Bouton principal — lien' },
-    { type: 'text',    key: 'hero_cta2_label', label: 'Bouton secondaire — libellé' },
-    { type: 'text',    key: 'hero_cta2_url',   label: 'Bouton secondaire — lien' },
-    { type: 'section', label: 'Section "Comment ça marche"' },
+    { type: 'text',    key: 'hero_cta_primary_text',  label: 'Bouton principal — libellé' },
+    { type: 'text',    key: 'hero_cta_primary_url',   label: 'Bouton principal — lien' },
+    { type: 'text',    key: 'hero_cta_primary_color', label: 'Bouton principal — couleur (coral | white | dark)' },
+    { type: 'text',    key: 'hero_cta_secondary_text', label: 'Bouton secondaire — libellé' },
+    { type: 'text',    key: 'hero_cta_secondary_url',  label: 'Bouton secondaire — lien' },
+    { type: 'section', label: 'Chiffres clés' },
+    { type: 'boolean', key: 'show_stats', label: 'Afficher les chiffres clés' },
+    { type: 'section', label: 'Section "Comment adopter"' },
+    { type: 'boolean', key: 'show_how_it_works', label: 'Afficher la section' },
     { type: 'text',    key: 'how_title',     label: 'Titre' },
     { type: 'text',    key: 'how_subtitle',  label: 'Sous-titre' },
     { type: 'text',    key: 'how_cta_label', label: 'Bouton — libellé' },
@@ -47,29 +56,25 @@ const PAGE_CONTENT_SCHEMA: Record<string, FieldDef[]> = {
     { type: 'array',   key: 'etapes',        label: 'Étapes',
       itemFields: [{ key: 'num', label: 'N°' }, { key: 'titre', label: 'Titre' }, { key: 'desc', label: 'Description', multiline: true }] },
     { type: 'section', label: 'Section "Derniers arrivants"' },
-    { type: 'boolean', key: 'show_derniers',    label: 'Afficher la section' },
-    { type: 'text',    key: 'derniers_title',   label: 'Titre' },
-    { type: 'text',    key: 'derniers_subtitle', label: 'Sous-titre' },
+    { type: 'boolean', key: 'show_latest_animals', label: 'Afficher la section' },
+    { type: 'text',    key: 'section_title',    label: 'Titre' },
+    { type: 'text',    key: 'section_subtitle', label: 'Sous-titre' },
     { type: 'section', label: 'Dernière actualité (Blog)' },
-    { type: 'boolean', key: 'show_latest_blog',   label: 'Afficher la section' },
-    { type: 'text',    key: 'latest_blog_title',  label: 'Titre de section' },
+    { type: 'boolean', key: 'show_latest_blog',  label: 'Afficher la section' },
+    { type: 'text',    key: 'latest_blog_title', label: 'Titre de section' },
     { type: 'section', label: 'Témoignages' },
-    { type: 'boolean', key: 'show_temoignages',       label: 'Afficher la section' },
+    { type: 'boolean', key: 'show_temoignages',     label: 'Afficher la section' },
     { type: 'text',    key: 'temoignages_title',    label: 'Titre' },
     { type: 'text',    key: 'temoignages_subtitle', label: 'Sous-titre' },
     { type: 'array',   key: 'temoignages',          label: 'Témoignages',
-      itemFields: [{ key: 'auteur', label: 'Auteur' }, { key: 'lieu', label: 'Lieu' }, { key: 'animal', label: 'Animal adopté' }, { key: 'photo_url', label: 'Photo (URL)' }, { key: 'texte', label: 'Témoignage', multiline: true }] },
-    { type: 'section', label: 'Chiffres clés' },
-    { type: 'boolean', key: 'show_stats', label: 'Afficher les chiffres clés' },
+      itemFields: [{ key: 'auteur', label: 'Nom' }, { key: 'lieu', label: 'Lieu' }, { key: 'animal', label: 'Animal adopté' }, { key: 'photo_url', label: 'Photo (URL)' }, { key: 'texte', label: 'Témoignage', multiline: true }] },
     { type: 'section', label: "Appel à l'action final" },
-    { type: 'text',    key: 'cta_title',    label: 'Titre' },
-    { type: 'text',    key: 'cta_subtitle', label: 'Sous-titre' },
-    { type: 'text',    key: 'cta_btn1_label', label: 'Bouton 1 — libellé' },
-    { type: 'text',    key: 'cta_btn1_url',   label: 'Bouton 1 — lien' },
-    { type: 'text',    key: 'cta_btn2_label', label: 'Bouton 2 — libellé' },
-    { type: 'text',    key: 'cta_btn2_url',   label: 'Bouton 2 — lien' },
-    { type: 'text',    key: 'cta_btn3_label', label: 'Bouton 3 — libellé' },
-    { type: 'text',    key: 'cta_btn3_url',   label: 'Bouton 3 — lien' },
+    { type: 'text',    key: 'footer_cta_title',  label: 'Titre' },
+    { type: 'text',    key: 'footer_cta_text',   label: 'Sous-titre' },
+    { type: 'text',    key: 'footer_cta_label',  label: 'Bouton principal — libellé' },
+    { type: 'text',    key: 'footer_cta_url',    label: 'Bouton principal — lien' },
+    { type: 'text',    key: 'cta_btn2_label',    label: 'Bouton secondaire — libellé' },
+    { type: 'text',    key: 'cta_btn2_url',      label: 'Bouton secondaire — lien' },
   ],
   presentation: [
     { type: 'section', label: 'Héro' },
@@ -380,11 +385,13 @@ export default function AdminPageEditor() {
         createdAt: '',
       });
       // Load full page content from localStorage, fall back to defaults
+      // Use pageContentKey so home page (slug='') maps to 'accueil'
+      const ck = pageContentKey(sysMeta.slug);
       try {
-        const pcRaw = localStorage.getItem(`page_content_${sysMeta.slug}`);
-        setContentData(pcRaw ? JSON.parse(pcRaw) : (pageDefaults[sysMeta.slug] ?? {}));
+        const pcRaw = localStorage.getItem(`page_content_${ck}`);
+        setContentData(pcRaw ? JSON.parse(pcRaw) : (pageDefaults[ck] ?? {}));
       } catch {
-        setContentData(pageDefaults[sysMeta.slug] ?? {});
+        setContentData(pageDefaults[ck] ?? {});
       }
       initializedRef.current = true;
       return;
@@ -457,7 +464,7 @@ export default function AdminPageEditor() {
     const updated: AdminPage = { ...page, status: status ?? page.status, updatedAt: new Date().toISOString() };
     if (page.system) {
       saveSystemPageData({ ...loadSystemPageData(), [page.id]: updated });
-      savePageContent(page.slug, contentData);
+      savePageContent(pageContentKey(page.slug), contentData);
       setPage(updated);
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
@@ -483,7 +490,7 @@ export default function AdminPageEditor() {
     ...pages.filter(p => !p.system && p.id !== page.id && !p.parent_id).map(p => ({ id: p.id, title: p.title })),
   ];
 
-  const contentSchema = page.system ? (PAGE_CONTENT_SCHEMA[page.slug] ?? []) : [];
+  const contentSchema = page.system ? (PAGE_CONTENT_SCHEMA[pageContentKey(page.slug)] ?? []) : [];
   const slugConflict = !page.system && !!page.slug && pages.some(p => p.slug === page.slug && p.id !== page.id);
   const hasChildren = pages.some(p => p.parent_id === page.id);
 

@@ -7,12 +7,16 @@ const pageDefaults: Record<string, Record<string, unknown>> = {
     hero_subtitle: "Domaine de Fuego accompagne chiens, chats et autres animaux vers l'adoption responsable depuis 2016.",
     hero_badge: 'Association loi 1901 · Ardèche & Vaucluse',
     hero_bg_url: 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=1920&q=80',
-    hero_cta1_label: 'Voir les animaux',
-    hero_cta1_url: '/animaux',
-    hero_cta2_label: 'Faire un don',
-    hero_cta2_url: '/faire-un-don',
-    // Section "Comment ça marche"
-    how_title: 'Comment ça marche ?',
+    hero_cta_primary_text: 'Voir les animaux',
+    hero_cta_primary_url: '/animaux',
+    hero_cta_primary_color: 'coral',
+    hero_cta_secondary_text: 'Faire un don',
+    hero_cta_secondary_url: '/faire-un-don',
+    // Chiffres clés
+    show_stats: true,
+    // Section "Comment adopter"
+    show_how_it_works: true,
+    how_title: 'Comment adopter ?',
     how_subtitle: 'Un processus simple et bienveillant en 3 étapes',
     how_cta_label: 'Déposer une candidature',
     how_cta_url: '/adopter',
@@ -22,9 +26,9 @@ const pageDefaults: Record<string, Record<string, unknown>> = {
       { num: '03', titre: 'Adoption',    desc: "Signature du contrat d'adoption, versement de la participation aux frais, et votre nouveau compagnon rentre à la maison !" },
     ],
     // Section "Derniers arrivants"
-    show_derniers: true,
-    derniers_title: 'Derniers arrivants',
-    derniers_subtitle: 'Ces animaux attendent leur famille idéale',
+    show_latest_animals: true,
+    section_title: 'Derniers arrivants',
+    section_subtitle: 'Ces animaux attendent leur famille idéale',
     // Section "Blog"
     show_latest_blog: true,
     latest_blog_title: 'Dernière actualité',
@@ -37,17 +41,13 @@ const pageDefaults: Record<string, Record<string, unknown>> = {
       { texte: "Lola a rejoint notre famille et elle s'est intégrée en quelques jours seulement. Merci à l'association pour leur suivi post-adoption, c'est vraiment rassurant.", auteur: 'Pascal', lieu: 'Montpellier (34)', photo_url: '', animal: 'Lola' },
       { texte: "J'avais des craintes avec mes jeunes enfants mais l'association a très bien évalué la compatibilité. Mia adore nos enfants, c'est magique !", auteur: 'Sandrine', lieu: 'Paris (75)', photo_url: '', animal: 'Mia' },
     ],
-    // Chiffres clés
-    show_stats: true,
     // Appel à l'action final
-    cta_title: 'Prêt à changer une vie ?',
-    cta_subtitle: "Devenez adoptant ou famille d'accueil — chaque geste compte pour nos animaux.",
-    cta_btn1_label: 'Adopter un animal',
-    cta_btn1_url: '/animaux',
+    footer_cta_title: 'Prêt à changer une vie ?',
+    footer_cta_text: "Devenez adoptant ou famille d'accueil — chaque geste compte pour nos animaux.",
+    footer_cta_label: 'Adopter un animal',
+    footer_cta_url: '/animaux',
     cta_btn2_label: "Devenir famille d'accueil",
     cta_btn2_url: '/famille-accueil',
-    cta_btn3_label: 'Faire un don',
-    cta_btn3_url: '/faire-un-don',
   },
 
   presentation: {

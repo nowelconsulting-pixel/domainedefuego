@@ -69,6 +69,13 @@ export default function Navbar() {
 
   useEffect(() => { setNavItems(buildNavItems()); }, []);
 
+  // Rebuild nav items when any admin page is saved (slug changes, publishes, etc.)
+  useEffect(() => {
+    const handler = () => setNavItems(buildNavItems());
+    window.addEventListener('admin_pages_updated', handler);
+    return () => window.removeEventListener('admin_pages_updated', handler);
+  }, []);
+
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

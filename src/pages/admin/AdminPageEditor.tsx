@@ -500,7 +500,25 @@ export default function AdminPageEditor() {
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } else {
+      const oldSlug = originalSlugRef.current;
+      const newSlug = updated.slug;
+
+      // Migrate page content to new key when slug changed
+      if (oldSlug && oldSlug !== newSlug) {
+        const prevContent = localStorage.getItem(`page_content_${oldSlug}`);
+        if (prevContent) {
+          localStorage.setItem(`page_content_${newSlug}`, prevContent);
+          localStorage.removeItem(`page_content_${oldSlug}`);
+        }
+        // parent_id references use page IDs, not slugs — no update needed
+      }
+
       savePage(updated);
+      originalSlugRef.current = newSlug; // keep ref in sync for subsequent saves
+
+      // Notify Navbar to rebuild its items from updated localStorage
+      window.dispatchEvent(new Event('admin_pages_updated'));
+
       setSaved(true);
       setTimeout(() => { setSaved(false); navigate('/admin/pages'); }, 1000);
     }
@@ -568,7 +586,7 @@ export default function AdminPageEditor() {
                     <p className="text-xs text-red-500 mt-1">⚠ Ce slug est déjà utilisé par une autre page.</p>
                   )}
                   {!slugConflict && originalSlugRef.current && page.slug !== originalSlugRef.current && (
-                    <p className="text-xs text-amber-600 mt-1">⚠ Attention : modifier le slug change l'URL de la page. Les anciens liens ne fonctionneront plus.</p>
+                    <p className="text-xs text-amber-600 mt-1">⚠ L'URL de la page va changer (/{originalSlugRef.current} → /{page.slug}). Les anciens liens ne fonctionneront plus.</p>
                   )}
                 </>
               )}

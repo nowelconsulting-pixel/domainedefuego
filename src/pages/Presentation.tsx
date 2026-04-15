@@ -1,6 +1,7 @@
 import { Heart, Eye, Handshake, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { usePageContent } from '../hooks/usePageContent';
+import { resolveImageUrl } from '../utils/image';
 
 const valeurIcons = [Heart, Eye, Handshake];
 
@@ -69,7 +70,7 @@ export default function Presentation() {
                 <div key={i} className="text-center">
                   <div className="w-32 h-32 bg-gray-100 rounded-full mx-auto mb-4 overflow-hidden">
                     {membre.photo ? (
-                      <img src={membre.photo} alt={membre.nom} className="w-full h-full object-cover" />
+                      <img src={resolveImageUrl(membre.photo)} alt={membre.nom} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-4xl text-gray-400">👤</div>
                     )}

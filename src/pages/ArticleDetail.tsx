@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Calendar, User } from 'lucide-react';
 import { useArticles } from '../hooks/useArticles';
+import { resolveImageUrl } from '../utils/image';
 
 function formatDate(dateStr: string): string {
   try {
@@ -35,7 +36,7 @@ export default function ArticleDetail() {
       {article.cover_url && (
         <div className="w-full max-h-96 overflow-hidden">
           <img
-            src={article.cover_url}
+            src={resolveImageUrl(article.cover_url)}
             alt={article.title}
             className="w-full h-96 object-cover"
             loading="lazy"

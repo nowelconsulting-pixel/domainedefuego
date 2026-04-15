@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Calendar } from 'lucide-react';
 import { useArticles } from '../hooks/useArticles';
 import { usePageContent } from '../hooks/usePageContent';
+import { resolveImageUrl } from '../utils/image';
 
 function formatDate(dateStr: string): string {
   try {
@@ -50,7 +51,7 @@ export default function Blog() {
               >
                 {article.cover_url && (
                   <img
-                    src={article.cover_url}
+                    src={resolveImageUrl(article.cover_url)}
                     alt={article.title}
                     className="aspect-video object-cover w-full rounded-t-2xl"
                   />

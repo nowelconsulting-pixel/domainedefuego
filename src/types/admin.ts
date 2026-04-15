@@ -91,4 +91,5 @@ export const SYSTEM_PAGES: Pick<AdminPage, 'id' | 'title' | 'slug' | 'menu_order
   { id: 'sys-fa',           title: "Famille d'accueil", slug: 'famille-accueil', menu_order: 30, system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
   { id: 'sys-don',          title: 'Faire un don',      slug: 'faire-un-don',    menu_order: 40, system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
   { id: 'sys-contact',      title: 'Contact',           slug: 'contact',         menu_order: 50, system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
+  { id: 'sys-blog',         title: 'Blog',              slug: 'blog',            menu_order: 45, system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
 ];

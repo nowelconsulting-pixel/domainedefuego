@@ -158,6 +158,12 @@ const pageDefaults: Record<string, Record<string, unknown>> = {
     hero_title: 'Mentions légales',
     hero_subtitle: '',
   },
+
+  blog: {
+    hero_title: 'Blog',
+    hero_subtitle: "Actualités, témoignages et conseils de l'association.",
+    subtitle: "Actualités, témoignages et conseils de l'association.",
+  },
 };
 
 export default pageDefaults;

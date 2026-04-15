@@ -10,6 +10,8 @@ import FaireUnDon from './pages/FaireUnDon';
 import Contact from './pages/Contact';
 import Presentation from './pages/Presentation';
 import MentionsLegales from './pages/MentionsLegales';
+import Blog from './pages/Blog';
+import ArticleDetail from './pages/ArticleDetail';
 import CustomPage from './pages/CustomPage';
 
 import AdminLogin from './pages/admin/AdminLogin';
@@ -18,6 +20,8 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminAnimaux from './pages/admin/AdminAnimaux';
 import AdminPageManager from './pages/admin/AdminPageManager';
 import AdminPageEditor from './pages/admin/AdminPageEditor';
+import AdminBlog from './pages/admin/AdminBlog';
+import AdminArticleEditor from './pages/admin/AdminArticleEditor';
 import AdminConfig from './pages/admin/AdminConfig';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminRoles from './pages/admin/AdminRoles';
@@ -28,8 +32,6 @@ const isMaintenance = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
 const hasPreviewAccess = localStorage.getItem('preview_access') === 'true';
 
 function App() {
-  // Maintenance gate: synchronous check using window.location, no router hook needed.
-  // /admin is always accessible; preview_access cookie bypasses maintenance.
   if (isMaintenance && !hasPreviewAccess && !window.location.pathname.startsWith('/admin')) {
     return <MaintenancePage />;
   }
@@ -48,21 +50,25 @@ function App() {
           <Route path="/faire-un-don"       element={<FaireUnDon />} />
           <Route path="/contact"            element={<Contact />} />
           <Route path="/mentions-legales"   element={<MentionsLegales />} />
+          <Route path="/blog"               element={<Blog />} />
+          <Route path="/blog/:slug"         element={<ArticleDetail />} />
           <Route path="/:slug"              element={<CustomPage />} />
         </Route>
 
         {/* Admin — always accessible */}
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminLayout />}>
-          <Route path="dashboard"       element={<AdminDashboard />} />
-          <Route path="animaux"         element={<AdminAnimaux />} />
-          <Route path="animaux/:action" element={<AdminAnimaux />} />
-          <Route path="pages"           element={<AdminPageManager />} />
-          <Route path="pages/edit/:id"  element={<AdminPageEditor />} />
-          <Route path="config"          element={<AdminConfig />} />
-          <Route path="users"           element={<AdminUsers />} />
-          <Route path="roles"           element={<AdminRoles />} />
-          <Route path="candidatures"    element={<AdminCandidatures />} />
+          <Route path="dashboard"              element={<AdminDashboard />} />
+          <Route path="animaux"                element={<AdminAnimaux />} />
+          <Route path="animaux/:action"        element={<AdminAnimaux />} />
+          <Route path="pages"                  element={<AdminPageManager />} />
+          <Route path="pages/edit/:id"         element={<AdminPageEditor />} />
+          <Route path="blog"                   element={<AdminBlog />} />
+          <Route path="blog/edit/:id"          element={<AdminArticleEditor />} />
+          <Route path="config"                 element={<AdminConfig />} />
+          <Route path="users"                  element={<AdminUsers />} />
+          <Route path="roles"                  element={<AdminRoles />} />
+          <Route path="candidatures"           element={<AdminCandidatures />} />
         </Route>
       </Routes>
     </BrowserRouter>

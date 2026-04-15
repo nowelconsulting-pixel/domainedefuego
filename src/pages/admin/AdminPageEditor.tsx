@@ -163,6 +163,11 @@ const PAGE_CONTENT_SCHEMA: Record<string, FieldDef[]> = {
     { type: 'text', key: 'hero_title',    label: 'Titre principal' },
     { type: 'text', key: 'hero_subtitle', label: 'Sous-titre' },
   ],
+  blog: [
+    { type: 'text', key: 'hero_title',    label: 'Titre principal' },
+    { type: 'text', key: 'hero_subtitle', label: 'Sous-titre' },
+    { type: 'text', key: 'subtitle',      label: 'Sous-titre affiché sous la liste' },
+  ],
 };
 
 // ─── Dynamic content editor ───────────────────────────────────────────────────

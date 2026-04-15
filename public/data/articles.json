@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1",
+    "title": "Bienvenue sur notre blog",
+    "slug": "bienvenue-sur-notre-blog",
+    "excerpt": "Découvrez les actualités de l'association Domaine de Fuego : adoptions réussies, événements et conseils pour vos animaux.",
+    "content": "<p>Bienvenue sur le blog de l'association Domaine de Fuego ! Nous sommes ravis de vous accueillir dans cet espace dédié à nos actualités, témoignages et conseils.</p><p>Restez connectés pour suivre nos belles histoires d'adoption et nos événements à venir.</p>",
+    "cover_url": "https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=800&q=80",
+    "author": "Équipe Domaine de Fuego",
+    "published": true,
+    "published_at": "2024-01-15",
+    "featured": true
+  }
+]

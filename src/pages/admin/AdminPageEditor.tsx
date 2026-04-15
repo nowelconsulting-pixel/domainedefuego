@@ -345,6 +345,7 @@ export default function AdminPageEditor() {
   const [showBlockPicker, setShowBlockPicker] = useState(false);
   const [contentData, setContentData] = useState<Record<string, unknown>>({});
   const initializedRef = useRef(false);
+  const originalSlugRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (initializedRef.current) return;
@@ -394,6 +395,7 @@ export default function AdminPageEditor() {
     const found = pages.find(p => p.id === id);
     if (found) {
       setPage(found);
+      originalSlugRef.current = found.slug;  // remember original slug to warn on change
       initializedRef.current = true;
       return;
     }
@@ -407,6 +409,7 @@ export default function AdminPageEditor() {
       show_in_nav: true, show_in_footer: false,
       updatedAt: new Date().toISOString(), createdAt: new Date().toISOString(),
     });
+    originalSlugRef.current = null;  // new page — no warning needed
     initializedRef.current = true;
   }, [id, pages, location.state]);
 
@@ -524,6 +527,9 @@ export default function AdminPageEditor() {
                   </div>
                   {slugConflict && (
                     <p className="text-xs text-red-500 mt-1">⚠ Ce slug est déjà utilisé par une autre page.</p>
+                  )}
+                  {!slugConflict && originalSlugRef.current && page.slug !== originalSlugRef.current && (
+                    <p className="text-xs text-amber-600 mt-1">⚠ Attention : modifier le slug change l'URL de la page. Les anciens liens ne fonctionneront plus.</p>
                   )}
                 </>
               )}

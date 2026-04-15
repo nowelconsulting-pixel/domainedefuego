@@ -28,10 +28,11 @@ function saveSystemPageData(data: Record<string, Partial<AdminPage>>): void {
 
 // ─── Content schema ───────────────────────────────────────────────────────────
 
-type SectionDivider = { type: 'section'; label: string };
-type ScalarField    = { type: 'text' | 'textarea' | 'boolean'; key: string; label: string };
-type ArrayField     = { type: 'array'; key: string; label: string; itemFields: Array<{ key: string; label: string; multiline?: boolean }> };
-type FieldDef       = SectionDivider | ScalarField | ArrayField;
+type SectionDivider   = { type: 'section'; label: string };
+type ScalarField      = { type: 'text' | 'textarea' | 'boolean'; key: string; label: string };
+type ArrayField       = { type: 'array'; key: string; label: string; itemFields: Array<{ key: string; label: string; multiline?: boolean }> };
+type ArticleSelectField = { type: 'article_select'; key: string; label: string };
+type FieldDef         = SectionDivider | ScalarField | ArrayField | ArticleSelectField;
 
 const PAGE_CONTENT_SCHEMA: Record<string, FieldDef[]> = {
   accueil: [
@@ -60,8 +61,9 @@ const PAGE_CONTENT_SCHEMA: Record<string, FieldDef[]> = {
     { type: 'text',    key: 'section_title',    label: 'Titre' },
     { type: 'text',    key: 'section_subtitle', label: 'Sous-titre' },
     { type: 'section', label: 'Dernière actualité (Blog)' },
-    { type: 'boolean', key: 'show_latest_blog',  label: 'Afficher la section' },
-    { type: 'text',    key: 'latest_blog_title', label: 'Titre de section' },
+    { type: 'boolean',        key: 'show_latest_blog',     label: 'Afficher la section' },
+    { type: 'text',           key: 'latest_blog_title',    label: 'Titre de section' },
+    { type: 'article_select', key: 'featured_article_id',  label: 'Article à mettre en avant' },
     { type: 'section', label: 'Témoignages' },
     { type: 'boolean', key: 'show_temoignages',     label: 'Afficher la section' },
     { type: 'text',    key: 'temoignages_title',    label: 'Titre' },
@@ -270,6 +272,35 @@ function ContentEditor({ schema, data, onChange }: ContentEditorProps) {
                 value={(data[field.key] as string) || ''}
                 onChange={e => set(field.key, e.target.value)}
               />
+            </div>
+          );
+        }
+
+        if (field.type === 'article_select') {
+          let articles: { id: string; title: string }[] = [];
+          try {
+            const stored = localStorage.getItem('articles');
+            if (stored) {
+              articles = (JSON.parse(stored) as Array<{ id: string; title: string; published: boolean }>)
+                .filter(a => a.published);
+            }
+          } catch { /* ignore */ }
+          return (
+            <div key={field.key}>
+              <label className="form-label">{field.label}</label>
+              <select
+                className="form-input"
+                value={(data[field.key] as string) || ''}
+                onChange={e => set(field.key, e.target.value)}
+              >
+                <option value="">Automatique (dernier article publié)</option>
+                {articles.map(a => (
+                  <option key={a.id} value={a.id}>{a.title}</option>
+                ))}
+              </select>
+              {articles.length === 0 && (
+                <p className="text-xs text-gray-400 mt-1">Aucun article publié pour l'instant.</p>
+              )}
             </div>
           );
         }

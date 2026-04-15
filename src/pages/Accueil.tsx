@@ -20,11 +20,15 @@ interface Article {
   published_at: string; featured: boolean;
 }
 
-function useLatestArticle(): Article | null {
+function useLatestArticle(featuredId?: string): Article | null {
   try {
     const stored = localStorage.getItem('articles');
     const list: Article[] = stored ? JSON.parse(stored) : [];
     const pub = list.filter(a => a.published);
+    if (featuredId) {
+      const pinned = pub.find(a => a.id === featuredId);
+      if (pinned) return pinned;
+    }
     return pub.find(a => a.featured) ?? pub.sort((a, b) => b.published_at.localeCompare(a.published_at))[0] ?? null;
   } catch { return null; }
 }
@@ -33,7 +37,7 @@ export default function Accueil() {
   const { data: animaux } = useAnimaux();
   const { data: config }  = useConfig();
   const pc = usePageContent('accueil');
-  const latestArticle = useLatestArticle();
+  const latestArticle = useLatestArticle((pc.featured_article_id as string) || undefined);
 
   const derniers = animaux?.filter(a => a.statut === 'Disponible').slice(0, 3) ?? [];
   const etapes   = (pc.etapes as Array<{ num: string; titre: string; desc: string }>) || [];

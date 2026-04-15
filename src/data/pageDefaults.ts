@@ -32,6 +32,7 @@ const pageDefaults: Record<string, Record<string, unknown>> = {
     // Section "Blog"
     show_latest_blog: true,
     latest_blog_title: 'Dernière actualité',
+    featured_article_id: '',
     // Témoignages
     show_temoignages: true,
     temoignages_title: 'Ils ont adopté',

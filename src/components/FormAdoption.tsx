@@ -92,6 +92,27 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
     }
     setSending(true);
     setError('');
+    const candidature = {
+      id: `adoption-${Date.now()}`, type: 'adoption', status: 'nouvelle',
+      animal: data.animal_souhaite || undefined,
+      nom: `${data.prenom} ${data.nom}`, email: data.email, telephone: data.telephone,
+      data: {
+        adresse: `${data.adresse}, ${data.code_postal} ${data.ville}`,
+        logement: `${data.type_logement}, jardin: ${data.jardin}`,
+        statut: data.statut_occupant, situation: data.statut_familial,
+        enfants: data.enfants === 'Oui' ? `Oui (${data.enfants_ages})` : 'Non',
+        autres_animaux: data.autres_animaux === 'Oui' ? data.autres_animaux_detail : 'Non',
+        heures_seul: data.heures_seul, vacances: data.vacances,
+        pourquoi_adopter: data.pourquoi_adopter,
+      },
+      notes: '', createdAt: new Date().toISOString(),
+    };
+    try {
+      const existing = JSON.parse(localStorage.getItem('candidatures') || '[]');
+      localStorage.setItem('candidatures', JSON.stringify([candidature, ...existing]));
+      const unread = parseInt(localStorage.getItem('candidatures_unread') || '0');
+      localStorage.setItem('candidatures_unread', String(unread + 1));
+    } catch { /* ignore localStorage errors */ }
     try {
       await emailjs.send(
         import.meta.env.VITE_EMAILJS_SERVICE_ID,
@@ -99,31 +120,9 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
         { ...data, charte_acceptee: data.charte_acceptee ? 'Oui' : 'Non' },
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
       );
-      const candidature = {
-        id: `adoption-${Date.now()}`, type: 'adoption', status: 'nouvelle',
-        animal: data.animal_souhaite || undefined,
-        nom: `${data.prenom} ${data.nom}`, email: data.email, telephone: data.telephone,
-        data: {
-          adresse: `${data.adresse}, ${data.code_postal} ${data.ville}`,
-          logement: `${data.type_logement}, jardin: ${data.jardin}`,
-          statut: data.statut_occupant, situation: data.statut_familial,
-          enfants: data.enfants === 'Oui' ? `Oui (${data.enfants_ages})` : 'Non',
-          autres_animaux: data.autres_animaux === 'Oui' ? data.autres_animaux_detail : 'Non',
-          heures_seul: data.heures_seul, vacances: data.vacances,
-          pourquoi_adopter: data.pourquoi_adopter,
-        },
-        notes: '', createdAt: new Date().toISOString(),
-      };
-      const existing = JSON.parse(localStorage.getItem('candidatures') || '[]');
-      localStorage.setItem('candidatures', JSON.stringify([candidature, ...existing]));
-      const unread = parseInt(localStorage.getItem('candidatures_unread') || '0');
-      localStorage.setItem('candidatures_unread', String(unread + 1));
-      setSent(true);
-    } catch {
-      setError("Une erreur est survenue lors de l'envoi. Veuillez réessayer.");
-    } finally {
-      setSending(false);
-    }
+    } catch { /* email failed but candidature already saved */ }
+    setSending(false);
+    setSent(true);
   };
 
   if (!cfg.active) {

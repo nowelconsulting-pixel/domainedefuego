@@ -1,7 +1,17 @@
 import { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown, Dog, ClipboardList, Home, Heart, Mail, Users, Newspaper } from 'lucide-react';
 import Logo from './Logo';
+
+const SLUG_ICONS: Record<string, React.ElementType> = {
+  'animaux':         Dog,
+  'adopter':         ClipboardList,
+  'famille-accueil': Home,
+  'faire-un-don':    Heart,
+  'contact':         Mail,
+  'presentation':    Users,
+  'blog':            Newspaper,
+};
 import type { AdminPage } from '../types/admin';
 import { SYSTEM_PAGES } from '../types/admin';
 
@@ -127,6 +137,7 @@ export default function Navbar() {
                 </div>
               ) : (
                 <NavLink key={item.id} to={item.to} end={item.to === '/'} className={linkCls}>
+                  {(() => { const Icon = SLUG_ICONS[item.to.replace('/', '')]; return Icon ? <Icon size={14} className="opacity-70" /> : null; })()}
                   {item.label}
                 </NavLink>
               )

@@ -50,6 +50,8 @@ function App() {
           <Route path="/faire-un-don"       element={<FaireUnDon />} />
           <Route path="/contact"            element={<Contact />} />
           <Route path="/mentions-legales"   element={<MentionsLegales />} />
+          <Route path="/actualites"         element={<Blog />} />
+          <Route path="/actualites/:slug"   element={<ArticleDetail />} />
           <Route path="/blog"               element={<Blog />} />
           <Route path="/blog/:slug"         element={<ArticleDetail />} />
           <Route path="/:slug"              element={<CustomPage />} />

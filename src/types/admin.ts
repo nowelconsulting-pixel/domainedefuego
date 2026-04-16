@@ -83,13 +83,14 @@ export function canEditConfig(role: Role) { return role === 'superadmin' || role
 export function canEditPages(role: Role) { return role !== 'benevole'; }
 export function canEditAnimaux(_role: Role) { return true; }
 
-export const SYSTEM_PAGES: Pick<AdminPage, 'id' | 'title' | 'slug' | 'menu_order' | 'system' | 'status' | 'show_in_nav' | 'show_in_footer'>[] = [
-  { id: 'sys-accueil',      title: 'Accueil',           slug: '',                menu_order: 0,  system: true, status: 'published', show_in_nav: true,  show_in_footer: false },
-  { id: 'sys-presentation', title: "L'association",     slug: 'presentation',    menu_order: 5,  system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
-  { id: 'sys-animaux',      title: 'Nos animaux',       slug: 'animaux',         menu_order: 10, system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
-  { id: 'sys-adopter',      title: 'Adopter',           slug: 'adopter',         menu_order: 20, system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
-  { id: 'sys-fa',           title: "Famille d'accueil", slug: 'famille-accueil', menu_order: 30, system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
-  { id: 'sys-don',          title: 'Faire un don',      slug: 'faire-un-don',    menu_order: 40, system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
-  { id: 'sys-contact',      title: 'Contact',           slug: 'contact',         menu_order: 50, system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
-  { id: 'sys-blog',         title: 'Blog',              slug: 'blog',            menu_order: 45, system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
+export const SYSTEM_PAGES: Pick<AdminPage, 'id' | 'title' | 'slug' | 'menu_order' | 'parent_id' | 'system' | 'status' | 'show_in_nav' | 'show_in_footer'>[] = [
+  { id: 'sys-accueil',        title: 'Accueil',            slug: '',                menu_order: 0,  parent_id: null,              system: true, status: 'published', show_in_nav: true,  show_in_footer: false },
+  { id: 'sys-presentation',   title: "L'association",      slug: 'presentation',    menu_order: 5,  parent_id: null,              system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
+  { id: 'sys-actualites',     title: 'Actualités',         slug: 'actualites',      menu_order: 6,  parent_id: 'sys-presentation', system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
+  { id: 'sys-devenir-membre', title: 'Devenir membre',     slug: 'devenir-membre',  menu_order: 7,  parent_id: 'sys-presentation', system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
+  { id: 'sys-don',            title: 'Faire un don',       slug: 'faire-un-don',    menu_order: 8,  parent_id: 'sys-presentation', system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
+  { id: 'sys-animaux',        title: 'Nos animaux',        slug: 'animaux',         menu_order: 10, parent_id: null,              system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
+  { id: 'sys-adopter',        title: 'Adopter',            slug: 'adopter',         menu_order: 20, parent_id: null,              system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
+  { id: 'sys-fa',             title: "Famille d'accueil",  slug: 'famille-accueil', menu_order: 30, parent_id: null,              system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
+  { id: 'sys-contact',        title: 'Contact',            slug: 'contact',         menu_order: 50, parent_id: null,              system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
 ];

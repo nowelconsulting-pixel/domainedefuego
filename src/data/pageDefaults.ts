@@ -38,7 +38,7 @@ const pageDefaults: Record<string, Record<string, unknown>> = {
           auto: 'true',
           section_title: 'Dernière actualité',
           cta_text: "Lire l'article",
-          fallback_url: '/blog',
+          fallback_url: '/actualites',
         },
       },
     ],

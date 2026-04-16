@@ -269,7 +269,7 @@ function renderBlock(block: Block) {
         : published.find(a => a.id === articleId);
       const sectionTitle = (block.data.section_title as string) || 'Dernière actualité';
       const ctaText = (block.data.cta_text as string) || "Lire l'article";
-      const fallbackUrl = (block.data.fallback_url as string) || '/blog';
+      const fallbackUrl = (block.data.fallback_url as string) || '/actualites';
 
       if (!article) {
         return (
@@ -300,7 +300,7 @@ function renderBlock(block: Block) {
                 {article.excerpt && <p className="text-gray-600 leading-relaxed line-clamp-3">{article.excerpt}</p>}
               </div>
               <div className="mt-4">
-                <Link to={`/blog/${article.slug}`} className="btn-primary inline-flex">{ctaText}</Link>
+                <Link to={`/actualites/${article.slug}`} className="btn-primary inline-flex">{ctaText}</Link>
               </div>
             </div>
           </div>

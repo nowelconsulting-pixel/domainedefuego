@@ -204,7 +204,7 @@ export default function AdminArticleEditor() {
           </button>
           {article.published && article.slug && (
             <a
-              href={`/blog/${article.slug}`}
+              href={`/actualites/${article.slug}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100 border border-gray-200"

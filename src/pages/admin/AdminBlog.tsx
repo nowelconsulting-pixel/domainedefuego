@@ -140,7 +140,7 @@ export default function AdminBlog() {
                     )}
                     {article.published && article.slug && (
                       <a
-                        href={`/blog/${article.slug}`}
+                        href={`/actualites/${article.slug}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         title="Voir l'article"

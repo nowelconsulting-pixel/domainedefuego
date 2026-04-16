@@ -10,7 +10,8 @@ const SLUG_ICONS: Record<string, React.ElementType> = {
   'faire-un-don':    Heart,
   'contact':         Mail,
   'presentation':    Users,
-  'blog':            Newspaper,
+  'actualites':      Newspaper,
+  'devenir-membre':  Users,
 };
 import type { AdminPage } from '../types/admin';
 import { SYSTEM_PAGES } from '../types/admin';
@@ -33,13 +34,15 @@ function buildNavItems(): NavItem[] {
     catch { return {}; }
   })();
 
-  const topItems: NavItem[] = SYSTEM_PAGES
+  // Build all system page items (top-level and children)
+  const allSystemItems = SYSTEM_PAGES
     .filter(p => p.status === 'published' && (systemData[p.id]?.show_in_nav ?? p.show_in_nav))
     .map(p => ({
       id: p.id,
       to: p.slug ? `/${p.slug}` : '/',
       label: systemData[p.id]?.title ?? p.title,
       order: overrides[p.id] ?? (systemData[p.id]?.menu_order ?? p.menu_order),
+      parent_id: p.parent_id ?? null,
     }));
 
   let stored: AdminPage[] = [];
@@ -50,17 +53,24 @@ function buildNavItems(): NavItem[] {
 
   const published = stored.filter(p => p.status === 'published' && !p.system && p.slug && (p.show_in_nav ?? true));
 
-  published.filter(p => !p.parent_id).forEach(p =>
-    topItems.push({ id: p.id, to: `/${p.slug}`, label: p.title, order: p.menu_order })
-  );
-
+  // Build child map from both system children and custom pages
   const childMap: Record<string, NavItem[]> = {};
+
+  allSystemItems.filter(p => p.parent_id).forEach(p => {
+    if (!childMap[p.parent_id!]) childMap[p.parent_id!] = [];
+    childMap[p.parent_id!].push({ id: p.id, to: p.to, label: p.label, order: p.order });
+  });
+
+  published.filter(p => !p.parent_id).forEach(p =>
+    allSystemItems.push({ id: p.id, to: `/${p.slug}`, label: p.title, order: p.menu_order, parent_id: null })
+  );
   published.filter(p => p.parent_id).forEach(p => {
     if (!childMap[p.parent_id!]) childMap[p.parent_id!] = [];
     childMap[p.parent_id!].push({ id: p.id, to: `/${p.slug}`, label: p.title, order: p.menu_order });
   });
 
-  return topItems
+  return allSystemItems
+    .filter(p => !p.parent_id)
     .sort((a, b) => a.order - b.order)
     .map(item => ({
       ...item,

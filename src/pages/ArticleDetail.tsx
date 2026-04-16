@@ -25,7 +25,7 @@ export default function ArticleDetail() {
         <div className="text-6xl">📰</div>
         <h1 className="text-2xl font-bold text-gray-900">Article introuvable</h1>
         <p className="text-gray-500">Cet article n'existe pas ou n'est pas publié.</p>
-        <Link to="/blog" className="btn-primary">Retour au blog</Link>
+        <Link to="/actualites" className="btn-primary">Retour aux actualités</Link>
       </div>
     );
   }
@@ -45,8 +45,8 @@ export default function ArticleDetail() {
       )}
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <Link to="/blog" className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-8 text-sm">
-          <ArrowLeft size={16} /> Retour au blog
+        <Link to="/actualites" className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-8 text-sm">
+          <ArrowLeft size={16} /> Retour aux actualités
         </Link>
 
         <h1 className="text-4xl font-bold text-gray-900 mb-4 leading-tight">{article.title}</h1>
@@ -72,8 +72,8 @@ export default function ArticleDetail() {
         />
 
         <div className="mt-12 pt-8 border-t border-gray-100">
-          <Link to="/blog" className="btn-primary">
-            <ArrowLeft size={16} /> Retour au blog
+          <Link to="/actualites" className="btn-primary">
+            <ArrowLeft size={16} /> Retour aux actualités
           </Link>
         </div>
       </div>

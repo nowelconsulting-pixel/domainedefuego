@@ -89,7 +89,7 @@ export default function Accueil() {
         ];
         if (!items.length) return null;
         return (
-          <section className="bg-[#FAFAF7] py-14">
+          <section className="bg-[#2d3a35] py-14">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-wrap justify-center gap-x-20 gap-y-8 text-center text-white">
                 {items.map((item, i) => (

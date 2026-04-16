@@ -1,18 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { Menu, X, ChevronDown, Dog, ClipboardList, Home, Heart, Mail, Users, Newspaper } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
 import Logo from './Logo';
-
-const SLUG_ICONS: Record<string, React.ElementType> = {
-  'animaux':         Dog,
-  'adopter':         ClipboardList,
-  'famille-accueil': Home,
-  'faire-un-don':    Heart,
-  'contact':         Mail,
-  'presentation':    Users,
-  'actualites':      Newspaper,
-  'devenir-membre':  Users,
-};
 import type { AdminPage } from '../types/admin';
 import { SYSTEM_PAGES } from '../types/admin';
 
@@ -111,7 +100,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop nav */}
-          <div className="hidden lg:flex items-center gap-1 flex-1">
+          <div className="hidden lg:flex flex-1 justify-center items-center gap-2">
             {navItems.map(item =>
               item.children?.length ? (
                 <div key={item.id} className="relative group">
@@ -147,7 +136,6 @@ export default function Navbar() {
                 </div>
               ) : (
                 <NavLink key={item.id} to={item.to} end={item.to === '/'} className={linkCls}>
-                  {(() => { const Icon = SLUG_ICONS[item.to.replace('/', '')]; return Icon ? <Icon size={14} className="opacity-70" /> : null; })()}
                   {item.label}
                 </NavLink>
               )

@@ -59,7 +59,7 @@ export default function Accueil() {
 
       {/* DERNIERS ARRIVANTS */}
       {derniers.length > 0 && (
-        <section className="bg-page py-24">
+        <section className="bg-[#FAFAF7] py-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mb-14">
               <p className="text-nv-teal text-[11px] font-extrabold uppercase tracking-widest mb-3">Ils attendent</p>
@@ -89,7 +89,7 @@ export default function Accueil() {
         ];
         if (!items.length) return null;
         return (
-          <section className="bg-nv-green py-14">
+          <section className="bg-[#FAFAF7] py-14">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-wrap justify-center gap-x-20 gap-y-8 text-center text-white">
                 {items.map((item, i) => (
@@ -117,7 +117,7 @@ export default function Accueil() {
           : published.find(a => a.id === d.article_id);
         if (!article) return null;
         return (
-          <section className="bg-surface py-24">
+          <section className="bg-[#FAFAF7] py-24">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12">
                 <div>
@@ -155,7 +155,7 @@ export default function Accueil() {
       })()}
 
       {/* DEVENIR MEMBRE */}
-      <section className="bg-forest py-28">
+      <section className="bg-[#FAFAF7] py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
@@ -187,7 +187,7 @@ export default function Accueil() {
                     'Suivi des animaux pris en charge',
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-3 text-white/75 text-sm">
-                      <div className="w-5 h-5 rounded-full bg-nv-green/30 flex items-center justify-center flex-shrink-0">
+                      <div className="w-5 h-5 rounded-full bg-[#1B6B4A]/30 flex items-center justify-center flex-shrink-0">
                         <Check size={11} className="text-nv-teal" />
                       </div>
                       {item}
@@ -204,7 +204,7 @@ export default function Accueil() {
       </section>
 
       {/* FOOTER CTA */}
-      <section className="bg-nv-green py-16">
+      <section className="bg-[#FAFAF7] py-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <h2 className="text-3xl font-black mb-3">
             {(pc.footer_cta_title as string) || "Prêt à changer une vie ?"}

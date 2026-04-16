@@ -202,6 +202,22 @@ export default function Accueil() {
           </div>
         </div>
       </section>
+
+      {/* FOOTER CTA */}
+      <section className="bg-[#FAFAF7] py-16">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+          <h2 className="text-3xl font-black mb-3">
+            {(pc.footer_cta_title as string) || "Prêt à changer une vie ?"}
+          </h2>
+          <p className="text-white/75 text-lg mb-8 leading-relaxed">
+            {(pc.footer_cta_text as string) || "Adoptez, devenez famille d'accueil, ou rejoignez-nous comme membre."}
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link to="/animaux" className="btn-secondary"><Heart size={18} />Adopter un animal</Link>
+            <Link to="/devenir-membre" className="btn-ghost"><Users size={18} />Devenir membre</Link>
+          </div>
+        </div>
+      </section>
     </>
   );
 }

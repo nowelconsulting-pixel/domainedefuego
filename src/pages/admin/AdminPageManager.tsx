@@ -54,7 +54,7 @@ export default function AdminPageManager() {
       blocks: systemData[sp.id]?.blocks ?? [],
       seo_description: systemData[sp.id]?.seo_description ?? '',
       menu_icon: '',
-      parent_id: null,
+      parent_id: sp.parent_id ?? null,
       updatedAt: systemData[sp.id]?.updatedAt ?? '',
       createdAt: '',
     } as AdminPage)),

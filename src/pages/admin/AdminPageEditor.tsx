@@ -182,10 +182,18 @@ const PAGE_CONTENT_SCHEMA: Record<string, FieldDef[]> = {
     { type: 'text', key: 'hero_title',    label: 'Titre principal' },
     { type: 'text', key: 'hero_subtitle', label: 'Sous-titre' },
   ],
+  actualites: [
+    { type: 'text', key: 'title',    label: 'Titre principal' },
+    { type: 'text', key: 'subtitle', label: 'Sous-titre affiché sous la liste' },
+  ],
   blog: [
+    { type: 'text', key: 'title',    label: 'Titre principal' },
+    { type: 'text', key: 'subtitle', label: 'Sous-titre affiché sous la liste' },
+  ],
+  'devenir-membre': [
+    { type: 'section', label: 'Héro' },
     { type: 'text', key: 'hero_title',    label: 'Titre principal' },
     { type: 'text', key: 'hero_subtitle', label: 'Sous-titre' },
-    { type: 'text', key: 'subtitle',      label: 'Sous-titre affiché sous la liste' },
   ],
 };
 
@@ -406,7 +414,7 @@ export default function AdminPageEditor() {
         seo_description: ov.seo_description ?? '',
         menu_icon: '',
         menu_order: ov.menu_order ?? sysMeta.menu_order,
-        parent_id: null,
+        parent_id: sysMeta.parent_id ?? null,
         status: sysMeta.status,
         system: true,
         show_in_nav: ov.show_in_nav ?? sysMeta.show_in_nav,

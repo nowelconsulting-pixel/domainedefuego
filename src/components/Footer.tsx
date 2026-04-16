@@ -36,25 +36,32 @@ export default function Footer() {
   const { data: config } = useConfig();
   const footerLinks = buildFooterLinks();
 
+  const headingCls = 'text-gold text-[11px] font-extrabold uppercase tracking-widest mb-5';
+  const linkCls    = 'text-white/45 hover:text-white/85 transition-colors text-sm leading-relaxed';
+
   return (
-    <footer className="bg-gray-900 text-gray-300 mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          {/* Brand */}
+    <footer className="mt-auto" style={{ backgroundColor: '#1E2822' }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+
+          {/* Col 1 — Brand */}
           <div>
-            <Logo className="brightness-0 invert" size={36} />
-            <p className="mt-4 text-sm text-gray-400 leading-relaxed">
+            <Logo className="brightness-0 invert" size={44} />
+            <p className="mt-4 text-sm leading-relaxed italic" style={{ color: 'rgba(255,255,255,0.35)' }}>
+              Parce que chaque animal mérite une histoire.
+            </p>
+            <p className="mt-3 text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.25)' }}>
               Association loi 1901 dédiée à la protection animale et à l'adoption responsable.
             </p>
           </div>
 
-          {/* Links */}
+          {/* Col 2 — Navigation */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Navigation</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className={headingCls}>Navigation</h3>
+            <ul className="space-y-2.5">
               {footerLinks.map(link => (
                 <li key={link.to}>
-                  <Link to={link.to} className="hover:text-coral-400 transition-colors">
+                  <Link to={link.to} className={linkCls}>
                     {link.label}
                   </Link>
                 </li>
@@ -62,68 +69,61 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
+          {/* Col 3 — Contact */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Contact</h3>
-            <ul className="space-y-3 text-sm">
+            <h3 className={headingCls}>Contact</h3>
+            <ul className="space-y-3">
               {config?.telephone && (
                 <li className="flex items-center gap-2">
-                  <Phone size={16} className="text-coral-400 flex-shrink-0" />
-                  <a href={`tel:${config.telephone}`} className="hover:text-coral-400 transition-colors">
+                  <Phone size={15} className="text-nv-teal flex-shrink-0" />
+                  <a href={`tel:${config.telephone}`} className={linkCls}>
                     {config.telephone}
                   </a>
                 </li>
               )}
               {config?.email_contact && (
                 <li className="flex items-center gap-2">
-                  <Mail size={16} className="text-coral-400 flex-shrink-0" />
-                  <a href={`mailto:${config.email_contact}`} className="hover:text-coral-400 transition-colors">
+                  <Mail size={15} className="text-nv-teal flex-shrink-0" />
+                  <a href={`mailto:${config.email_contact}`} className={linkCls}>
                     {config.email_contact}
                   </a>
                 </li>
               )}
-              <li className="flex items-center gap-3 pt-2">
+              <li className="flex items-center gap-2.5 pt-2">
                 {config?.facebook_url && (
-                  <a
-                    href={config.facebook_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 bg-gray-800 rounded-lg hover:bg-coral-500 transition-colors"
-                    aria-label="Facebook"
-                  >
-                    <FacebookIcon size={18} />
+                  <a href={config.facebook_url} target="_blank" rel="noopener noreferrer"
+                    className="p-2 rounded-lg bg-white/5 hover:bg-nv-green transition-colors text-white/50 hover:text-white"
+                    aria-label="Facebook">
+                    <FacebookIcon size={17} />
                   </a>
                 )}
                 {config?.instagram_url && (
-                  <a
-                    href={config.instagram_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 bg-gray-800 rounded-lg hover:bg-coral-500 transition-colors"
-                    aria-label="Instagram"
-                  >
-                    <InstagramIcon size={18} />
+                  <a href={config.instagram_url} target="_blank" rel="noopener noreferrer"
+                    className="p-2 rounded-lg bg-white/5 hover:bg-nv-green transition-colors text-white/50 hover:text-white"
+                    aria-label="Instagram">
+                    <InstagramIcon size={17} />
                   </a>
                 )}
                 {config?.linkedin_url && (
-                  <a
-                    href={config.linkedin_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 bg-gray-800 rounded-lg hover:bg-coral-500 transition-colors"
-                    aria-label="LinkedIn"
-                  >
-                    <LinkedInIcon size={18} />
+                  <a href={config.linkedin_url} target="_blank" rel="noopener noreferrer"
+                    className="p-2 rounded-lg bg-white/5 hover:bg-nv-green transition-colors text-white/50 hover:text-white"
+                    aria-label="LinkedIn">
+                    <LinkedInIcon size={17} />
                   </a>
                 )}
               </li>
             </ul>
           </div>
         </div>
+      </div>
 
-        <div className="border-t border-gray-800 mt-10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-          <p>© {new Date().getFullYear()} Domaine de Fuego. Tous droits réservés.</p>
-          <Link to="/mentions-legales" className="hover:text-gray-300">Mentions légales</Link>
+      {/* Bottom bar */}
+      <div style={{ backgroundColor: '#161D19' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs" style={{ color: 'rgba(255,255,255,0.30)' }}>
+          <p>© {new Date().getFullYear()} Domaine de Fuego · Association loi 1901</p>
+          <Link to="/mentions-legales" className="hover:text-white/60 transition-colors">
+            Mentions légales
+          </Link>
         </div>
       </div>
     </footer>

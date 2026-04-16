@@ -40,12 +40,10 @@ function buildNavItems(): NavItem[] {
 
   const published = stored.filter(p => p.status === 'published' && !p.system && p.slug && (p.show_in_nav ?? true));
 
-  // Top-level custom pages (no parent)
   published.filter(p => !p.parent_id).forEach(p =>
     topItems.push({ id: p.id, to: `/${p.slug}`, label: p.title, order: p.menu_order })
   );
 
-  // Build child map
   const childMap: Record<string, NavItem[]> = {};
   published.filter(p => p.parent_id).forEach(p => {
     if (!childMap[p.parent_id!]) childMap[p.parent_id!] = [];
@@ -63,29 +61,37 @@ function buildNavItems(): NavItem[] {
 }
 
 export default function Navbar() {
-  const [open, setOpen]         = useState(false);
-  const [navItems, setNavItems] = useState<NavItem[]>(buildNavItems);
+  const [open, setOpen]             = useState(false);
+  const [navItems, setNavItems]     = useState<NavItem[]>(buildNavItems);
   const [mobileOpen, setMobileOpen] = useState<string | null>(null);
 
   useEffect(() => { setNavItems(buildNavItems()); }, []);
 
-  // Rebuild nav items when any admin page is saved (slug changes, publishes, etc.)
   useEffect(() => {
     const handler = () => setNavItems(buildNavItems());
     window.addEventListener('admin_pages_updated', handler);
     return () => window.removeEventListener('admin_pages_updated', handler);
   }, []);
 
+  const linkCls = ({ isActive }: { isActive: boolean }) =>
+    `px-4 py-1.5 rounded-full text-sm font-semibold transition-colors duration-150 ${
+      isActive
+        ? 'bg-nv-green-light text-nv-green'
+        : 'text-muted hover:text-forest hover:bg-nv-green-light/50'
+    }`;
+
   return (
-    <nav className="bg-white shadow-sm sticky top-0 z-50">
+    <nav className="bg-surface border-b-2 border-site-border sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <Link to="/" onClick={() => setOpen(false)}>
-            <Logo size={36} />
+        <div className="flex items-center justify-between h-[70px] gap-6">
+
+          {/* Logo */}
+          <Link to="/" onClick={() => setOpen(false)} className="flex-shrink-0">
+            <Logo size={44} />
           </Link>
 
-          {/* Desktop */}
-          <div className="hidden lg:flex items-center gap-1">
+          {/* Desktop nav */}
+          <div className="hidden lg:flex items-center gap-1 flex-1">
             {navItems.map(item =>
               item.children?.length ? (
                 <div key={item.id} className="relative group">
@@ -93,27 +99,23 @@ export default function Navbar() {
                     to={item.to}
                     end={item.to === '/'}
                     className={({ isActive }) =>
-                      `flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ${
-                        isActive
-                          ? 'text-coral-500 bg-coral-50'
-                          : 'text-gray-700 hover:text-coral-500 hover:bg-gray-50'
+                      `flex items-center gap-1 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors duration-150 ${
+                        isActive ? 'bg-nv-green-light text-nv-green' : 'text-muted hover:text-forest hover:bg-nv-green-light/50'
                       }`
                     }
                   >
                     {item.label}
-                    <ChevronDown size={14} className="opacity-60 group-hover:rotate-180 transition-transform duration-150" />
+                    <ChevronDown size={13} className="opacity-60 group-hover:rotate-180 transition-transform duration-200" />
                   </NavLink>
-                  <div className="absolute top-full left-0 hidden group-hover:block pt-1 z-50">
-                    <div className="bg-white shadow-lg rounded-xl py-1.5 min-w-[200px] border border-gray-100">
+                  <div className="absolute top-full left-0 hidden group-hover:block pt-2 z-50">
+                    <div className="bg-surface shadow-xl rounded-xl py-1.5 min-w-[200px] border border-site-border">
                       {item.children.map(child => (
                         <NavLink
                           key={child.id}
                           to={child.to}
                           className={({ isActive }) =>
                             `block px-4 py-2.5 text-sm transition-colors ${
-                              isActive
-                                ? 'text-coral-500 bg-coral-50 font-medium'
-                                : 'text-gray-700 hover:text-coral-500 hover:bg-gray-50'
+                              isActive ? 'text-nv-green bg-nv-green-light font-semibold' : 'text-muted hover:text-forest hover:bg-nv-green-light/40'
                             }`
                           }
                         >
@@ -124,51 +126,48 @@ export default function Navbar() {
                   </div>
                 </div>
               ) : (
-                <NavLink
-                  key={item.id}
-                  to={item.to}
-                  end={item.to === '/'}
-                  className={({ isActive }) =>
-                    `px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ${
-                      isActive
-                        ? 'text-coral-500 bg-coral-50'
-                        : 'text-gray-700 hover:text-coral-500 hover:bg-gray-50'
-                    }`
-                  }
-                >
+                <NavLink key={item.id} to={item.to} end={item.to === '/'} className={linkCls}>
                   {item.label}
                 </NavLink>
               )
             )}
           </div>
 
+          {/* Desktop — divider + btn-don */}
+          <div className="hidden lg:flex items-center gap-4 flex-shrink-0">
+            <div className="w-px h-6 bg-site-border" />
+            <Link to="/faire-un-don" className="btn-don">
+              Faire un don ♥
+            </Link>
+          </div>
+
           {/* Mobile burger */}
           <button
-            className="lg:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100"
+            className="lg:hidden p-2 rounded-lg text-muted hover:bg-nv-green-light transition-colors"
             onClick={() => setOpen(!open)}
             aria-label="Menu"
           >
-            {open ? <X size={24} /> : <Menu size={24} />}
+            {open ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
       </div>
 
       {/* Mobile menu */}
       {open && (
-        <div className="lg:hidden border-t border-gray-100 bg-white">
-          <div className="px-4 py-3 space-y-1">
+        <div className="lg:hidden border-t-2 border-site-border bg-surface/95 backdrop-blur-md">
+          <div className="px-4 py-4 space-y-1">
             {navItems.map(item => (
               <div key={item.id}>
                 {item.children?.length ? (
                   <>
                     <button
                       onClick={() => setMobileOpen(mobileOpen === item.id ? null : item.id)}
-                      className="w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                      className="w-full flex items-center justify-between px-4 py-3 rounded-full text-sm font-semibold text-muted hover:bg-nv-green-light/50 transition-colors"
                     >
                       <span>{item.label}</span>
                       <ChevronDown
-                        size={16}
-                        className={`text-gray-400 transition-transform duration-150 ${mobileOpen === item.id ? 'rotate-180' : ''}`}
+                        size={15}
+                        className={`text-hint transition-transform duration-150 ${mobileOpen === item.id ? 'rotate-180' : ''}`}
                       />
                     </button>
                     {mobileOpen === item.id && (
@@ -178,8 +177,8 @@ export default function Navbar() {
                           end={item.to === '/'}
                           onClick={() => setOpen(false)}
                           className={({ isActive }) =>
-                            `block px-4 py-2.5 rounded-lg text-sm transition-colors ${
-                              isActive ? 'text-coral-500 bg-coral-50 font-medium' : 'text-gray-600 hover:bg-gray-50'
+                            `block px-4 py-2.5 rounded-full text-sm transition-colors ${
+                              isActive ? 'text-nv-green bg-nv-green-light font-semibold' : 'text-muted hover:bg-nv-green-light/40'
                             }`
                           }
                         >
@@ -191,8 +190,8 @@ export default function Navbar() {
                             to={child.to}
                             onClick={() => setOpen(false)}
                             className={({ isActive }) =>
-                              `block px-4 py-2.5 rounded-lg text-sm transition-colors ${
-                                isActive ? 'text-coral-500 bg-coral-50 font-medium' : 'text-gray-600 hover:bg-gray-50'
+                              `block px-4 py-2.5 rounded-full text-sm transition-colors ${
+                                isActive ? 'text-nv-green bg-nv-green-light font-semibold' : 'text-muted hover:bg-nv-green-light/40'
                               }`
                             }
                           >
@@ -208,8 +207,8 @@ export default function Navbar() {
                     end={item.to === '/'}
                     onClick={() => setOpen(false)}
                     className={({ isActive }) =>
-                      `block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                        isActive ? 'text-coral-500 bg-coral-50' : 'text-gray-700 hover:bg-gray-50'
+                      `block px-4 py-3 rounded-full text-sm font-semibold transition-colors ${
+                        isActive ? 'text-nv-green bg-nv-green-light' : 'text-muted hover:bg-nv-green-light/50'
                       }`
                     }
                   >
@@ -218,6 +217,13 @@ export default function Navbar() {
                 )}
               </div>
             ))}
+
+            {/* btn-don in mobile */}
+            <div className="pt-3 border-t border-site-border mt-3">
+              <Link to="/faire-un-don" onClick={() => setOpen(false)} className="btn-don w-full justify-center">
+                Faire un don ♥
+              </Link>
+            </div>
           </div>
         </div>
       )}

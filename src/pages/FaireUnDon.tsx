@@ -10,14 +10,14 @@ export default function FaireUnDon() {
   const utilisations = pc.utilisations as Array<{ titre: string; description: string; icone: string }> | undefined;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-page">
       {/* Hero */}
-      <div className="bg-coral-500 text-white py-20">
+      <div className="bg-nv-green text-white py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl font-bold mb-4">
+          <h1 className="text-5xl font-extrabold mb-4">
             {(pc.hero_title as string) || 'Faire un don'}
           </h1>
-          <p className="text-coral-100 text-xl leading-relaxed">
+          <p className="text-white/75 text-xl leading-relaxed">
             {(pc.hero_subtitle as string) || "Votre générosité permet à des centaines d'animaux de trouver une famille chaque année."}
           </p>
         </div>
@@ -26,12 +26,12 @@ export default function FaireUnDon() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
 
         {/* Texte + CTA */}
-        <section className="bg-white rounded-2xl p-8 md:p-12 shadow-sm text-center max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+        <section className="bg-surface rounded-[20px] p-8 md:p-12 border-2 border-site-border text-center max-w-3xl mx-auto">
+          <h2 className="text-2xl font-extrabold text-forest mb-6">
             {(pc.intro_title as string) || 'Soutenez notre action'}
           </h2>
           {((pc.intro_text as string) || '').split('\n\n').map((p, i) => (
-            <p key={i} className="text-gray-700 leading-relaxed mb-4 text-lg">{p}</p>
+            <p key={i} className="text-muted leading-relaxed mb-4 text-lg">{p}</p>
           ))}
           <div className="mt-8">
             <a
@@ -44,7 +44,7 @@ export default function FaireUnDon() {
               {(pc.helloasso_btn_label as string) || 'Faire un don via HelloAsso'}
               <ExternalLink size={18} />
             </a>
-            <p className="text-xs text-gray-400 mt-3">
+            <p className="text-xs text-hint mt-3">
               {(pc.helloasso_note as string) || 'HelloAsso est une plateforme sécurisée. 100% de votre don va à l\'association (aucune commission).'}
             </p>
           </div>
@@ -53,17 +53,17 @@ export default function FaireUnDon() {
         {/* Utilisations */}
         {utilisations && utilisations.length > 0 && (
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">À quoi sert votre don ?</h2>
+            <h2 className="text-2xl font-extrabold text-forest text-center mb-10">À quoi sert votre don ?</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {utilisations.map((u, i) => {
                 const Icon = iconMap[u.icone] ?? Heart;
                 return (
-                  <div key={i} className="bg-white rounded-2xl p-8 shadow-sm text-center">
-                    <div className="w-16 h-16 bg-coral-50 rounded-2xl flex items-center justify-center mx-auto mb-5">
-                      <Icon size={28} className="text-coral-500" />
+                  <div key={i} className="bg-surface rounded-[20px] p-8 border-2 border-site-border text-center">
+                    <div className="w-16 h-16 bg-nv-green-light rounded-2xl flex items-center justify-center mx-auto mb-5">
+                      <Icon size={28} className="text-nv-green" />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">{u.titre}</h3>
-                    <p className="text-gray-600 leading-relaxed text-sm">{u.description}</p>
+                    <h3 className="text-lg font-bold text-forest mb-3">{u.titre}</h3>
+                    <p className="text-muted leading-relaxed text-sm">{u.description}</p>
                   </div>
                 );
               })}
@@ -72,9 +72,9 @@ export default function FaireUnDon() {
         )}
 
         {/* Note fiscale */}
-        <section className="bg-gray-100 rounded-2xl p-8 text-center max-w-2xl mx-auto">
-          <h3 className="font-semibold text-gray-900 mb-3">Réduction fiscale</h3>
-          <p className="text-gray-600 text-sm leading-relaxed">
+        <section className="bg-surface rounded-[20px] p-8 border-2 border-site-border text-center max-w-2xl mx-auto">
+          <h3 className="font-bold text-forest mb-3">Réduction fiscale</h3>
+          <p className="text-muted text-sm leading-relaxed">
             En tant qu'association loi 1901 reconnue d'intérêt général, vos dons peuvent ouvrir droit à une réduction d'impôt de 66% dans la limite de 20% du revenu imposable. Un reçu fiscal vous sera envoyé par HelloAsso.
           </p>
         </section>

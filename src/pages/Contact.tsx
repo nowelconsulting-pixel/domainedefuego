@@ -10,13 +10,13 @@ export default function Contact() {
   const pc = usePageContent('contact');
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b border-gray-100">
+    <div className="min-h-screen bg-page">
+      <div className="bg-surface border-b-2 border-site-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+          <h1 className="text-4xl font-extrabold text-forest mb-3">
             {(pc.hero_title as string) || 'Contact'}
           </h1>
-          <p className="text-gray-600 text-lg">
+          <p className="text-muted text-lg">
             {(pc.hero_subtitle as string) || "Une question ? N'hésitez pas à nous écrire."}
           </p>
         </div>
@@ -27,38 +27,38 @@ export default function Contact() {
           {/* Info */}
           <div className="space-y-8">
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Nos coordonnées</h2>
+              <h2 className="text-xl font-bold text-forest mb-6">Nos coordonnées</h2>
               <div className="space-y-4">
                 {config?.telephone && (
-                  <a href={`tel:${config.telephone}`} className="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow group">
-                    <div className="w-12 h-12 bg-coral-50 rounded-xl flex items-center justify-center group-hover:bg-coral-100 transition-colors">
-                      <Phone size={22} className="text-coral-500" />
+                  <a href={`tel:${config.telephone}`} className="flex items-center gap-4 p-4 bg-surface rounded-xl border-2 border-site-border hover:border-nv-green transition-colors group">
+                    <div className="w-12 h-12 bg-nv-green-light rounded-xl flex items-center justify-center group-hover:bg-nv-green-light transition-colors">
+                      <Phone size={22} className="text-nv-green" />
                     </div>
                     <div>
-                      <div className="text-xs text-gray-500 mb-0.5">Téléphone</div>
-                      <div className="font-medium text-gray-900">{config.telephone}</div>
+                      <div className="text-xs text-hint mb-0.5">Téléphone</div>
+                      <div className="font-semibold text-forest">{config.telephone}</div>
                     </div>
                   </a>
                 )}
                 {config?.email_contact && (
-                  <a href={`mailto:${config.email_contact}`} className="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow group">
-                    <div className="w-12 h-12 bg-coral-50 rounded-xl flex items-center justify-center group-hover:bg-coral-100 transition-colors">
-                      <Mail size={22} className="text-coral-500" />
+                  <a href={`mailto:${config.email_contact}`} className="flex items-center gap-4 p-4 bg-surface rounded-xl border-2 border-site-border hover:border-nv-green transition-colors group">
+                    <div className="w-12 h-12 bg-nv-green-light rounded-xl flex items-center justify-center">
+                      <Mail size={22} className="text-nv-green" />
                     </div>
                     <div>
-                      <div className="text-xs text-gray-500 mb-0.5">Email</div>
-                      <div className="font-medium text-gray-900">{config.email_contact}</div>
+                      <div className="text-xs text-hint mb-0.5">Email</div>
+                      <div className="font-semibold text-forest">{config.email_contact}</div>
                     </div>
                   </a>
                 )}
                 {config?.adresse && (
-                  <div className="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm">
-                    <div className="w-12 h-12 bg-coral-50 rounded-xl flex items-center justify-center">
-                      <MapPin size={22} className="text-coral-500" />
+                  <div className="flex items-center gap-4 p-4 bg-surface rounded-xl border-2 border-site-border">
+                    <div className="w-12 h-12 bg-nv-green-light rounded-xl flex items-center justify-center">
+                      <MapPin size={22} className="text-nv-green" />
                     </div>
                     <div>
-                      <div className="text-xs text-gray-500 mb-0.5">Adresse</div>
-                      <div className="font-medium text-gray-900">{config.adresse}</div>
+                      <div className="text-xs text-hint mb-0.5">Adresse</div>
+                      <div className="font-semibold text-forest">{config.adresse}</div>
                     </div>
                   </div>
                 )}
@@ -67,14 +67,14 @@ export default function Contact() {
 
             {/* Réseaux */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Réseaux sociaux</h2>
+              <h2 className="text-xl font-bold text-forest mb-4">Réseaux sociaux</h2>
               <div className="flex gap-3">
                 {config?.facebook_url && (
                   <a
                     href={config.facebook_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 px-5 py-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow font-medium text-gray-800"
+                    className="flex items-center gap-3 px-5 py-3 bg-surface rounded-xl border-2 border-site-border hover:border-nv-green transition-colors font-medium text-forest"
                   >
                     <FacebookIcon size={20} className="text-blue-600" />
                     Facebook
@@ -85,7 +85,7 @@ export default function Contact() {
                     href={config.instagram_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 px-5 py-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow font-medium text-gray-800"
+                    className="flex items-center gap-3 px-5 py-3 bg-surface rounded-xl border-2 border-site-border hover:border-nv-green transition-colors font-medium text-forest"
                   >
                     <InstagramIcon size={20} className="text-pink-500" />
                     Instagram
@@ -96,7 +96,7 @@ export default function Contact() {
                     href={config.linkedin_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 px-5 py-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow font-medium text-gray-800"
+                    className="flex items-center gap-3 px-5 py-3 bg-surface rounded-xl border-2 border-site-border hover:border-nv-green transition-colors font-medium text-forest"
                   >
                     <LinkedInIcon size={20} className="text-blue-700" />
                     LinkedIn
@@ -107,8 +107,8 @@ export default function Contact() {
           </div>
 
           {/* Form */}
-          <div className="bg-white rounded-2xl p-8 shadow-sm">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Envoyer un message</h2>
+          <div className="bg-surface rounded-[20px] p-8 border-2 border-site-border">
+            <h2 className="text-xl font-bold text-forest mb-6">Envoyer un message</h2>
             <FormContact />
           </div>
         </div>
@@ -116,15 +116,15 @@ export default function Contact() {
 
       {/* Optional CTA button */}
       {(pc.cta_url as string) && (
-        <div className="bg-coral-500 py-14 text-center">
+        <div className="bg-nv-green py-14 text-center">
           {(pc.cta_url as string).startsWith('http') ? (
             <a href={pc.cta_url as string} target="_blank" rel="noopener noreferrer"
-              className="bg-white text-coral-600 hover:bg-coral-50 font-semibold px-10 py-4 rounded-xl inline-flex items-center gap-2 transition-colors">
+              className="bg-white text-nv-green hover:bg-nv-green-light font-semibold px-10 py-4 rounded-xl inline-flex items-center gap-2 transition-colors">
               {(pc.cta_label as string) || 'En savoir plus'} <ChevronRight size={20} />
             </a>
           ) : (
             <Link to={pc.cta_url as string}
-              className="bg-white text-coral-600 hover:bg-coral-50 font-semibold px-10 py-4 rounded-xl inline-flex items-center gap-2 transition-colors">
+              className="bg-white text-nv-green hover:bg-nv-green-light font-semibold px-10 py-4 rounded-xl inline-flex items-center gap-2 transition-colors">
               {(pc.cta_label as string) || 'En savoir plus'} <ChevronRight size={20} />
             </Link>
           )}

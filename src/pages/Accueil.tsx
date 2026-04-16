@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Heart, Users, ChevronRight, Star, ArrowRight } from 'lucide-react';
+import { Heart, Home, Shield, Users, ChevronRight, Star, ArrowRight } from 'lucide-react';
 import AnimalCard from '../components/AnimalCard';
 import { useAnimaux, useConfig } from '../hooks/useData';
 import { usePageContent } from '../hooks/usePageContent';
@@ -44,10 +44,6 @@ export default function Accueil() {
   const etapes   = (pc.etapes as Array<{ num: string; titre: string; desc: string }>) || [];
   const temoignages = (pc.temoignages as Array<{ texte: string; auteur: string; lieu: string; photo_url?: string; animal?: string }>) || [];
 
-  const heroCta1Label = (pc.hero_cta_primary_text   as string) || 'Voir les animaux';
-  const heroCta1Url   = (pc.hero_cta_primary_url    as string) ?? '/animaux';
-  const heroCta2Label = (pc.hero_cta_secondary_text as string) || 'Faire un don';
-  const heroCta2Url   = (pc.hero_cta_secondary_url  as string) ?? '/faire-un-don';
   const howCtaLabel   = (pc.how_cta_label as string) || 'Déposer une candidature';
   const howCtaUrl     = (pc.how_cta_url   as string) ?? '/adopter';
   const ctaBtn1Label  = (pc.footer_cta_label as string) || 'Adopter un animal';
@@ -58,38 +54,39 @@ export default function Accueil() {
   return (
     <>
       {/* ── HERO ──────────────────────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Background */}
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${resolveImageUrl((pc.hero_bg_url as string) || 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=1920&q=80')})` }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/70 via-gray-900/50 to-gray-900/80" />
+      <section className="bg-surface py-20 md:py-32">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left column */}
+            <div>
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-nv-green-light text-nv-green text-xs font-extrabold uppercase tracking-widest rounded-full mb-6">
+                🐾 Association de protection animale
+              </span>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-forest leading-[1.08] mb-6">
+                Trouver un foyer,<br />
+                c'est changer<br />
+                <span className="text-nv-green">une vie</span>
+              </h1>
+              <p className="text-muted text-lg leading-relaxed max-w-lg mb-10">
+                {(pc.hero_subtitle as string) || "Domaine de Fuego accompagne chiens, chats et autres animaux vers l'adoption responsable. Chaque animal mérite un foyer aimant."}
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <Link to="/animaux" className="btn-primary">
+                  Voir nos animaux <ChevronRight size={18} />
+                </Link>
+                <Link to="/faire-un-don" className="btn-don">
+                  Soutenir le projet ♥
+                </Link>
+              </div>
+            </div>
 
-        {/* Content — centred */}
-        <div className="relative z-10 text-center px-4 sm:px-8 max-w-3xl mx-auto py-32">
-          <span className="inline-block bg-coral-500/20 text-coral-300 border border-coral-500/40 px-4 py-1.5 rounded-full text-sm font-medium mb-8 backdrop-blur-sm">
-            {(pc.hero_badge as string) || 'Association loi 1901 · Ardèche & Vaucluse'}
-          </span>
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-white leading-tight mb-6 drop-shadow-lg">
-            {(pc.hero_title as string) || 'Chaque animal mérite un foyer'}
-          </h1>
-          <p className="text-xl text-gray-200 mb-12 leading-relaxed max-w-2xl mx-auto">
-            {(pc.hero_subtitle as string) || "Domaine de Fuego accompagne chiens, chats et autres animaux vers l'adoption responsable depuis 2016."}
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Cta label={heroCta1Label} url={heroCta1Url} className="btn-primary text-base px-8 py-4 shadow-lg shadow-coral-500/30">
-              <ChevronRight size={20} />
-            </Cta>
-            <Cta label={heroCta2Label} url={heroCta2Url} className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 text-white text-base px-8 py-4 rounded-xl font-semibold transition-colors">
-              <Heart size={20} />
-            </Cta>
+            {/* Right column — decorative */}
+            <div className="relative hidden lg:block">
+              <div className="w-full aspect-square rounded-[40px] bg-gradient-to-br from-nv-green-light via-nv-teal/20 to-page flex items-center justify-center text-8xl">
+                🐾
+              </div>
+            </div>
           </div>
-        </div>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50">
-          <div className="w-px h-12 bg-gradient-to-b from-white/0 to-white/40" />
         </div>
       </section>
 
@@ -103,7 +100,7 @@ export default function Accueil() {
         ];
         if (items.length === 0) return null;
         return (
-          <section className="bg-coral-500">
+          <section className="bg-nv-green">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
               <div className="flex flex-wrap justify-center gap-x-16 gap-y-6 text-center text-white">
                 {items.map((item, i) => (
@@ -118,16 +115,39 @@ export default function Accueil() {
         );
       })()}
 
+      {/* ── BANDE PROMESSE ────────────────────────────────────────────────── */}
+      <section className="bg-forest-dark py-14">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
+            <div className="flex flex-col items-center">
+              <Heart className="text-nv-amber mb-4" size={32} />
+              <h3 className="text-white font-bold text-lg mb-2">Adoption suivie</h3>
+              <p className="text-white/60 text-sm leading-relaxed">Un accompagnement bienveillant de A à Z pour chaque animal.</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <Home className="text-nv-amber mb-4" size={32} />
+              <h3 className="text-white font-bold text-lg mb-2">Familles d'accueil</h3>
+              <p className="text-white/60 text-sm leading-relaxed">Des foyers temporaires chaleureux en attendant l'adoption définitive.</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <Shield className="text-nv-amber mb-4" size={32} />
+              <h3 className="text-white font-bold text-lg mb-2">Bien-être animal</h3>
+              <p className="text-white/60 text-sm leading-relaxed">Soins vétérinaires, comportement, socialisation : tout est pris en charge.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── NOS ANIMAUX À L'ADOPTION ──────────────────────────────────────── */}
       {(pc.show_latest_animals !== false) && derniers.length > 0 && (
-        <section className="py-24 bg-white">
+        <section className="bg-page py-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-14">
               <div>
-                <h2 className="section-title">{(pc.section_title as string) || 'Nos animaux à l\'adoption'}</h2>
+                <h2 className="section-title">{(pc.section_title as string) || "Nos animaux à l'adoption"}</h2>
                 <p className="section-subtitle mt-2">{(pc.section_subtitle as string) || 'Ces animaux attendent leur famille idéale'}</p>
               </div>
-              <Link to="/animaux" className="flex items-center gap-2 text-coral-500 font-semibold hover:text-coral-600 whitespace-nowrap text-sm">
+              <Link to="/animaux" className="flex items-center gap-2 text-nv-green font-semibold hover:text-nv-green-mid whitespace-nowrap text-sm">
                 Voir tous les animaux <ArrowRight size={16} />
               </Link>
             </div>
@@ -142,7 +162,7 @@ export default function Accueil() {
 
       {/* ── COMMENT ADOPTER ───────────────────────────────────────────────── */}
       {(pc.show_how_it_works !== false) && (
-        <section className="py-24" style={{ backgroundColor: '#FFF8F6' }}>
+        <section className="bg-surface py-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="section-title">{(pc.how_title as string) || 'Comment adopter ?'}</h2>
@@ -151,12 +171,12 @@ export default function Accueil() {
             <div className="space-y-12 max-w-4xl mx-auto">
               {etapes.map((e, i) => (
                 <div key={e.num} className={`flex flex-col sm:flex-row gap-8 items-center ${i % 2 === 1 ? 'sm:flex-row-reverse' : ''}`}>
-                  <div className="w-20 h-20 bg-coral-500 text-white rounded-2xl flex items-center justify-center text-3xl font-bold flex-shrink-0 shadow-lg shadow-coral-500/30">
+                  <div className="w-20 h-20 bg-nv-green text-white rounded-2xl flex items-center justify-center text-3xl font-bold flex-shrink-0 shadow-lg shadow-nv-green/30">
                     {e.num}
                   </div>
                   <div className={`flex-1 ${i % 2 === 1 ? 'sm:text-right' : ''}`}>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3">{e.titre}</h3>
-                    <p className="text-gray-600 leading-relaxed">{e.desc}</p>
+                    <h3 className="text-xl font-semibold text-forest mb-3">{e.titre}</h3>
+                    <p className="text-muted leading-relaxed">{e.desc}</p>
                   </div>
                 </div>
               ))}
@@ -169,6 +189,48 @@ export default function Accueil() {
           </div>
         </section>
       )}
+
+      {/* ── MISSION SECTION — ÉMOTIONNELLE ────────────────────────────────── */}
+      <section className="bg-forest py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left — text */}
+            <div>
+              <p className="text-nv-teal text-xs font-extrabold uppercase tracking-widest mb-4">Notre histoire</p>
+              <h2 className="text-white font-black text-3xl md:text-4xl leading-tight mb-6">
+                Un refuge construit avec amour, pour ceux qui ont attendu trop longtemps.
+              </h2>
+              <p className="text-white/65 leading-relaxed mb-8">
+                Domaine de Fuego porte le nom de Fuego, un Grand Bouvier Suisse parti trop tôt. Ce projet est son hommage. Et une promesse faite à tous ceux qui attendent encore.
+              </p>
+              <Link to="/faire-un-don" className="btn-don">
+                Faire un don ♥
+              </Link>
+              <p className="text-white/40 text-xs mt-3">Association loi 1901 · Don déductible fiscalement</p>
+            </div>
+
+            {/* Right — 2x2 stat grid */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="rounded-2xl p-6 text-center bg-white/[0.06]">
+                <div className="text-3xl font-black text-white">12+</div>
+                <div className="text-white/50 text-sm mt-1">animaux suivis</div>
+              </div>
+              <div className="rounded-2xl p-6 text-center bg-white/[0.06]">
+                <div className="text-3xl font-black text-white">4</div>
+                <div className="text-white/50 text-sm mt-1">familles d'accueil</div>
+              </div>
+              <div className="rounded-2xl p-6 text-center bg-white/[0.06]">
+                <div className="text-3xl font-black text-white">100%</div>
+                <div className="text-white/50 text-sm mt-1">suivi post-adoption</div>
+              </div>
+              <div className="rounded-2xl p-6 text-center bg-white/[0.06]">
+                <div className="text-3xl font-black text-white">Loi 1901</div>
+                <div className="text-white/50 text-sm mt-1">association reconnue</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ── DERNIÈRE ACTUALITÉ (bloc featured-article) ───────────────────── */}
       {(() => {
@@ -192,10 +254,10 @@ export default function Accueil() {
         const ctaText = d.cta_text || "Lire l'article";
 
         return (
-          <section className="py-24 bg-white">
+          <section className="bg-surface py-24">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <h2 className="section-title mb-12">{sectionTitle}</h2>
-              <div className="bg-gray-50 rounded-3xl overflow-hidden flex flex-col md:flex-row shadow-sm max-w-4xl">
+              <div className="bg-page rounded-3xl overflow-hidden flex flex-col md:flex-row shadow-sm max-w-4xl border border-site-border">
                 {article.cover_url && (
                   <div className="md:w-80 flex-shrink-0">
                     <img
@@ -208,13 +270,13 @@ export default function Accueil() {
                 )}
                 <div className="p-8 flex flex-col justify-center gap-4">
                   {article.published_at && (
-                    <div className="text-xs text-gray-400 uppercase tracking-wider">
+                    <div className="text-xs text-hint uppercase tracking-wider">
                       {new Date(article.published_at).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}
                       {article.author && <span className="ml-2">· {article.author}</span>}
                     </div>
                   )}
-                  <h3 className="text-2xl font-bold text-gray-900">{article.title}</h3>
-                  {article.excerpt && <p className="text-gray-600 leading-relaxed">{article.excerpt}</p>}
+                  <h3 className="text-2xl font-bold text-forest">{article.title}</h3>
+                  {article.excerpt && <p className="text-muted leading-relaxed">{article.excerpt}</p>}
                   <Link to={`/blog/${article.slug}`} className="btn-primary self-start mt-2">
                     {ctaText} <ArrowRight size={16} />
                   </Link>
@@ -227,7 +289,7 @@ export default function Accueil() {
 
       {/* ── TÉMOIGNAGES ───────────────────────────────────────────────────── */}
       {(pc.show_temoignages !== false) && temoignages.length > 0 && (
-        <section className="py-24 bg-gray-50">
+        <section className="bg-page py-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-14">
               <h2 className="section-title">{(pc.temoignages_title as string) || 'Ils ont adopté'}</h2>
@@ -235,21 +297,21 @@ export default function Accueil() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {temoignages.map((t, i) => (
-                <div key={i} className="bg-white rounded-2xl p-8 shadow-sm flex flex-col">
+                <div key={i} className="bg-surface border border-site-border rounded-2xl shadow-sm p-8 flex flex-col">
                   <div className="flex gap-1 mb-5">
                     {[...Array(5)].map((_, j) => (
-                      <Star key={j} size={16} className="fill-coral-400 text-coral-400" />
+                      <Star key={j} size={16} className="fill-nv-amber text-nv-amber" />
                     ))}
                   </div>
-                  <p className="text-gray-700 leading-relaxed mb-6 italic flex-1">"{t.texte}"</p>
-                  <div className="border-t border-gray-100 pt-4 flex items-center gap-3">
+                  <p className="text-muted leading-relaxed mb-6 italic flex-1">"{t.texte}"</p>
+                  <div className="border-t border-site-border pt-4 flex items-center gap-3">
                     {t.photo_url && (
                       <img src={resolveImageUrl(t.photo_url)} alt={t.auteur} className="w-10 h-10 rounded-full object-cover flex-shrink-0" />
                     )}
                     <div>
-                      <div className="font-semibold text-gray-900">{t.auteur}</div>
-                      <div className="text-sm text-gray-400">
-                        {t.animal && <span className="text-coral-500 font-medium">{t.animal}</span>}
+                      <div className="font-semibold text-forest">{t.auteur}</div>
+                      <div className="text-sm text-hint">
+                        {t.animal && <span className="text-nv-green font-medium">{t.animal}</span>}
                         {t.animal && t.lieu && ' · '}
                         {t.lieu}
                       </div>
@@ -262,20 +324,32 @@ export default function Accueil() {
         </section>
       )}
 
+      {/* ── DONATION BAND ─────────────────────────────────────────────────── */}
+      <section className="bg-forest-dark py-20 text-center">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-white font-black text-3xl mb-3">Votre don construit le refuge</h2>
+          <p className="text-white/60 mb-8">Chaque euro contribue directement au bien-être des animaux</p>
+          <Link to="/faire-un-don" className="btn-don text-base px-10 py-4">
+            Faire un don maintenant
+          </Link>
+          <p className="text-white/35 text-xs mt-4">Association loi 1901 · Don déductible fiscalement</p>
+        </div>
+      </section>
+
       {/* ── FOOTER CTA BAND ───────────────────────────────────────────────── */}
-      <section className="bg-coral-500 py-20">
+      <section className="bg-nv-green py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             {(pc.footer_cta_title as string) || 'Prêt à changer une vie ?'}
           </h2>
-          <p className="text-coral-100 text-lg mb-10 leading-relaxed">
+          <p className="text-white/80 text-lg mb-10 leading-relaxed">
             {(pc.footer_cta_text as string) || "Devenez adoptant ou famille d'accueil — chaque geste compte pour nos animaux."}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Cta label={ctaBtn1Label} url={ctaBtn1Url} className="bg-white text-coral-600 hover:bg-coral-50 font-semibold px-8 py-4 rounded-xl transition-colors">
+            <Cta label={ctaBtn1Label} url={ctaBtn1Url} className="btn-secondary">
               <Heart size={20} />
             </Cta>
-            <Cta label={ctaBtn2Label} url={ctaBtn2Url} className="bg-coral-600 hover:bg-coral-700 text-white font-semibold px-8 py-4 rounded-xl border border-coral-400 transition-colors">
+            <Cta label={ctaBtn2Label} url={ctaBtn2Url} className="btn-ghost">
               <Users size={20} />
             </Cta>
           </div>

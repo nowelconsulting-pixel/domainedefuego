@@ -36,7 +36,7 @@ export default function Accueil() {
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 md:pb-28">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-6 text-[11px] font-extrabold uppercase tracking-widest" style={{ background: 'rgba(226,169,79,0.18)', color: '#E2A94F' }}>
-              🐾 Association de protection animale
+              🐾 Association de protection animale - Val d'Oise
             </div>
             <h1 className="font-black text-white leading-[1.02] mb-5 whitespace-pre-line" style={{ fontSize: 'clamp(3rem, 7vw, 5.5rem)' }}>
               {(pc.hero_title as string) || "ILS N'ATTENDENT\nQUE VOUS"}

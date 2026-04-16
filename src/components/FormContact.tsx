@@ -6,10 +6,25 @@ interface ContactData {
   nom: string; email: string; sujet: string; message: string;
 }
 
-const sujets = [
-  'Question sur un animal', 'Candidature adoption', 'Famille d\'accueil',
+const DEFAULT_SUBJECTS = [
+  'Question sur un animal', "Candidature adoption", "Famille d'accueil",
   'Don / financement', 'Partenariat', 'Autre',
 ];
+
+function loadContactConfig() {
+  try {
+    const raw = localStorage.getItem('form_config');
+    if (raw) {
+      const cfg = JSON.parse(raw)?.contact ?? {};
+      return {
+        active: cfg.active !== false,
+        intro: (cfg.intro as string) || '',
+        subjects: Array.isArray(cfg.subjects) && cfg.subjects.length > 0 ? cfg.subjects as string[] : DEFAULT_SUBJECTS,
+      };
+    }
+  } catch { /* ignore */ }
+  return { active: true, intro: '', subjects: DEFAULT_SUBJECTS };
+}
 
 function Err({ msg }: { msg?: string }) {
   if (!msg) return null;
@@ -17,11 +32,21 @@ function Err({ msg }: { msg?: string }) {
 }
 
 export default function FormContact() {
+  const [cfg]    = useState(loadContactConfig);
   const [data, setData] = useState<ContactData>({ nom: '', email: '', sujet: '', message: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
+
+  if (!cfg.active) {
+    return (
+      <div className="bg-gray-50 rounded-2xl p-10 text-center text-gray-500">
+        <p className="text-lg font-semibold mb-2">Formulaire temporairement indisponible</p>
+        <p className="text-sm">Veuillez nous contacter directement par email.</p>
+      </div>
+    );
+  }
 
   const set = (k: keyof ContactData, v: string) => {
     setData(p => ({ ...p, [k]: v }));
@@ -70,6 +95,7 @@ export default function FormContact() {
 
   return (
     <form onSubmit={send} noValidate className="space-y-5">
+      {cfg.intro && <p className="text-muted text-sm leading-relaxed">{cfg.intro}</p>}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
           <label className="form-label">Nom complet *</label>
@@ -101,7 +127,7 @@ export default function FormContact() {
           onChange={e => set('sujet', e.target.value)}
         >
           <option value="">Choisir un sujet...</option>
-          {sujets.map(s => <option key={s} value={s}>{s}</option>)}
+          {cfg.subjects.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
         <Err msg={errors.sujet} />
       </div>

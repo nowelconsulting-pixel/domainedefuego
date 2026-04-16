@@ -4,6 +4,30 @@ import { ChevronRight, ChevronLeft, CheckCircle2, AlertCircle } from 'lucide-rea
 
 const STEPS = ['Identité', 'Logement', 'Situation', 'Disponibilités'];
 
+const DEFAULT_TYPES  = ['Chien', 'Chat', 'Lapin', 'Autre'];
+const DEFAULT_DUREES = [
+  'Court terme (quelques jours)',
+  'Moyen terme (quelques semaines)',
+  'Long terme (plusieurs mois)',
+  'Flexible selon les besoins',
+];
+
+function loadFaConfig() {
+  try {
+    const raw = localStorage.getItem('form_config');
+    if (raw) {
+      const cfg = JSON.parse(raw)?.fa ?? {};
+      return {
+        active:        cfg.active !== false,
+        intro:         (cfg.intro as string) || '',
+        types_animaux: Array.isArray(cfg.types_animaux) && cfg.types_animaux.length > 0 ? cfg.types_animaux as string[] : DEFAULT_TYPES,
+        durees:        Array.isArray(cfg.durees)        && cfg.durees.length        > 0 ? cfg.durees        as string[] : DEFAULT_DUREES,
+      };
+    }
+  } catch { /* ignore */ }
+  return { active: true, intro: '', types_animaux: DEFAULT_TYPES, durees: DEFAULT_DUREES };
+}
+
 interface FormData {
   prenom: string; nom: string; email: string; telephone: string;
   adresse: string; code_postal: string; ville: string;
@@ -21,8 +45,6 @@ const initialData: FormData = {
   duree_disponible: '', types_acceptes: [], urgences: '', experience: '',
 };
 
-const typesAnimaux = ['Chien', 'Chat', 'Lapin', 'Autre'];
-
 // required string fields per step
 const REQUIRED: Record<number, (keyof FormData)[]> = {
   0: ['prenom', 'nom', 'email', 'telephone', 'adresse', 'code_postal', 'ville'],
@@ -37,6 +59,7 @@ function Err({ msg }: { msg?: string }) {
 }
 
 export default function FormFamilleAccueil() {
+  const [cfg]   = useState(loadFaConfig);
   const [step, setStep] = useState(0);
   const [data, setData] = useState<FormData>(initialData);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -114,6 +137,15 @@ export default function FormFamilleAccueil() {
     }
   };
 
+  if (!cfg.active) {
+    return (
+      <div className="bg-gray-50 rounded-2xl p-10 text-center text-gray-500">
+        <p className="text-lg font-semibold mb-2">Formulaire temporairement indisponible</p>
+        <p className="text-sm">Les candidatures famille d'accueil sont momentanément suspendues. Revenez bientôt.</p>
+      </div>
+    );
+  }
+
   if (sent) {
     return (
       <div className="bg-green-50 rounded-2xl p-10 text-center">
@@ -128,6 +160,11 @@ export default function FormFamilleAccueil() {
 
   return (
     <div className="bg-white rounded-2xl shadow-md overflow-hidden">
+      {cfg.intro && (
+        <div className="px-6 pt-5 pb-0">
+          <p className="text-sm text-gray-600 leading-relaxed">{cfg.intro}</p>
+        </div>
+      )}
       {/* Progress */}
       <div className="bg-gray-50 px-6 py-4 border-b border-gray-100">
         <div className="flex items-center justify-between mb-3">
@@ -280,17 +317,14 @@ export default function FormFamilleAccueil() {
               <label className="form-label">Durée disponible *</label>
               <select className={`form-input ${errors.duree_disponible ? 'border-red-400' : ''}`} value={data.duree_disponible} onChange={e => set('duree_disponible', e.target.value)}>
                 <option value="">Choisir...</option>
-                <option>Court terme (quelques jours)</option>
-                <option>Moyen terme (quelques semaines)</option>
-                <option>Long terme (plusieurs mois)</option>
-                <option>Flexible selon les besoins</option>
+                {cfg.durees.map(d => <option key={d}>{d}</option>)}
               </select>
               <Err msg={errors.duree_disponible} />
             </div>
             <div>
               <label className="form-label">Types d'animaux acceptés *</label>
               <div className="flex flex-wrap gap-3 mt-2">
-                {typesAnimaux.map(t => (
+                {cfg.types_animaux.map(t => (
                   <label key={t} className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"

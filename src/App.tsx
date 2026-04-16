@@ -26,6 +26,7 @@ import AdminConfig from './pages/admin/AdminConfig';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminRoles from './pages/admin/AdminRoles';
 import AdminCandidatures from './pages/admin/AdminCandidatures';
+import AdminFormulaires from './pages/admin/AdminFormulaires';
 
 // Evaluated once at module load — no hook, no Router needed
 const isMaintenance = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
@@ -71,6 +72,7 @@ function App() {
           <Route path="users"                  element={<AdminUsers />} />
           <Route path="roles"                  element={<AdminRoles />} />
           <Route path="candidatures"           element={<AdminCandidatures />} />
+          <Route path="formulaires"            element={<AdminFormulaires />} />
         </Route>
       </Routes>
     </BrowserRouter>

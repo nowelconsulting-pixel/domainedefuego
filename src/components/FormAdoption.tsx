@@ -5,6 +5,23 @@ import { useAnimaux } from '../hooks/useData';
 
 const STEPS = ['Identité', 'Logement', 'Situation', 'Projet'];
 
+const DEFAULT_CHARTE = "J'ai lu et j'accepte la charte d'adoption de Domaine de Fuego. Je m'engage à adopter l'animal en toute responsabilité, pour toute sa vie.";
+
+function loadAdoptionConfig() {
+  try {
+    const raw = localStorage.getItem('form_config');
+    if (raw) {
+      const cfg = JSON.parse(raw)?.adoption ?? {};
+      return {
+        active: cfg.active !== false,
+        intro: (cfg.intro as string) || '',
+        charte_text: (cfg.charte_text as string) || DEFAULT_CHARTE,
+      };
+    }
+  } catch { /* ignore */ }
+  return { active: true, intro: '', charte_text: DEFAULT_CHARTE };
+}
+
 interface FormData {
   prenom: string; nom: string; email: string; telephone: string;
   adresse: string; code_postal: string; ville: string;
@@ -37,6 +54,7 @@ function Err({ msg }: { msg?: string }) {
 }
 
 export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: string }) {
+  const [cfg]   = useState(loadAdoptionConfig);
   const [step, setStep] = useState(0);
   const [data, setData] = useState<FormData>({ ...initialData, animal_souhaite: defaultAnimal });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -108,6 +126,15 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
     }
   };
 
+  if (!cfg.active) {
+    return (
+      <div className="bg-gray-50 rounded-2xl p-10 text-center text-gray-500">
+        <p className="text-lg font-semibold mb-2">Formulaire temporairement indisponible</p>
+        <p className="text-sm">Les candidatures sont momentanément suspendues. Revenez bientôt.</p>
+      </div>
+    );
+  }
+
   if (sent) {
     return (
       <div className="bg-green-50 rounded-2xl p-10 text-center">
@@ -123,6 +150,11 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
 
   return (
     <div className="bg-white rounded-2xl shadow-md overflow-hidden">
+      {cfg.intro && (
+        <div className="px-6 pt-5 pb-0">
+          <p className="text-sm text-gray-600 leading-relaxed">{cfg.intro}</p>
+        </div>
+      )}
       {/* Progress */}
       <div className="bg-gray-50 px-6 py-4 border-b border-gray-100">
         <div className="flex items-center justify-between mb-3">
@@ -323,7 +355,7 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
                   onChange={e => set('charte_acceptee', e.target.checked)}
                 />
                 <span className="text-sm text-gray-700">
-                  J'ai lu et j'accepte la charte d'adoption de Domaine de Fuego. Je m'engage à adopter l'animal en toute responsabilité, pour toute sa vie. *
+                  {cfg.charte_text} *
                 </span>
               </label>
               <Err msg={errors.charte_acceptee} />

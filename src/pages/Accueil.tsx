@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Heart, Users, ArrowRight, ChevronDown, Newspaper, Check } from 'lucide-react';
+import { ArrowRight, ChevronDown, Newspaper, Check, Star } from 'lucide-react';
 import AnimalCard from '../components/AnimalCard';
 import { useAnimaux, useConfig } from '../hooks/useData';
 import { usePageContent } from '../hooks/usePageContent';
@@ -24,8 +24,9 @@ export default function Accueil() {
   const { data: config }  = useConfig();
   const pc = usePageContent('accueil');
 
-  const derniers = animaux?.filter(a => a.statut === 'Disponible').slice(0, 3) ?? [];
-  const heroBg = resolveImageUrl((pc.hero_bg_url as string) || '') || '/Adoption.png';
+  const derniers    = animaux?.filter(a => a.statut === 'Disponible').slice(0, 3) ?? [];
+  const temoignages = (pc.temoignages as Array<{ texte: string; auteur: string; lieu: string; photo_url?: string; animal?: string }>) || [];
+  const heroBg      = resolveImageUrl((pc.hero_bg_url as string) || '') || '/adoption.png';
 
   return (
     <>
@@ -104,6 +105,39 @@ export default function Accueil() {
         );
       })()}
 
+      {/* TÉMOIGNAGES — ILS ONT ADOPTÉ */}
+      {(pc.show_temoignages !== false) && temoignages.length > 0 && (
+        <section className="bg-page py-24">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mb-14">
+              <p className="text-nv-teal text-[11px] font-extrabold uppercase tracking-widest mb-3">Témoignages</p>
+              <h2 className="text-4xl font-black text-forest">
+                {(pc.temoignages_title as string) || 'Ils ont adopté'}
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {temoignages.map((t, i) => (
+                <div key={i} className="bg-surface border-2 border-site-border rounded-[20px] p-8 flex flex-col">
+                  <div className="flex gap-1 mb-4">{[...Array(5)].map((_, j) => <Star key={j} size={14} className="fill-nv-amber text-nv-amber" />)}</div>
+                  <div className="text-5xl text-nv-teal/20 font-serif leading-none -mt-2 mb-2">"</div>
+                  <p className="text-forest leading-relaxed mb-6 flex-1 text-[15px]">{t.texte}</p>
+                  <div className="border-t-2 border-site-border pt-4 flex items-center gap-3">
+                    {t.photo_url
+                      ? <img src={resolveImageUrl(t.photo_url)} alt={t.auteur} className="w-10 h-10 rounded-full object-cover flex-shrink-0 border-2 border-site-border" />
+                      : <div className="w-10 h-10 rounded-full bg-nv-green-light flex items-center justify-center flex-shrink-0 text-nv-green font-bold text-sm">{t.auteur?.[0] ?? '?'}</div>
+                    }
+                    <div>
+                      <div className="font-bold text-forest text-sm">{t.auteur}</div>
+                      <div className="text-xs text-hint">{t.animal && <span className="text-nv-green font-semibold">{t.animal}</span>}{t.animal && t.lieu && ' · '}{t.lieu}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* DERNIÈRES ACTUALITÉS */}
       {(() => {
         const block = loadFeaturedArticleBlock();
@@ -117,7 +151,7 @@ export default function Accueil() {
           : published.find(a => a.id === d.article_id);
         if (!article) return null;
         return (
-          <section className="bg-surface py-24">
+          <section className="bg-page py-24">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12">
                 <div>
@@ -154,67 +188,49 @@ export default function Accueil() {
         );
       })()}
 
-      {/* DEVENIR MEMBRE */}
-      <section className="bg-forest py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <p className="text-nv-amber text-[11px] font-extrabold uppercase tracking-widest mb-6">Rejoignez-nous</p>
-              <h2 className="text-white font-black text-4xl md:text-5xl leading-tight mb-6">
+      {/* DEVENIR MEMBRE — fond unifié, panel interne */}
+      <section className="bg-page py-24">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="rounded-3xl overflow-hidden grid lg:grid-cols-2 border-2 border-site-border">
+            {/* Left — dark pitch */}
+            <div className="bg-forest p-10 flex flex-col justify-center">
+              <p className="text-nv-amber text-[11px] font-extrabold uppercase tracking-widest mb-5">Rejoignez-nous</p>
+              <h2 className="text-white font-black text-3xl leading-tight mb-5">
                 Devenez membre<br />de l'association
               </h2>
-              <p className="text-white/60 text-lg leading-relaxed mb-8">
-                En devenant membre, vous participez activement aux actions de Domaine de Fuego — sauvetages, soins, familles d'accueil et adoptions. Une adhésion simple, un impact réel.
+              <p className="text-white/60 leading-relaxed mb-8 text-sm">
+                En devenant membre, vous participez activement aux actions de Domaine de Fuego — sauvetages, soins, familles d'accueil et adoptions.
               </p>
-              <Link to="/devenir-membre" className="btn-don">Je rejoins l'association ♥</Link>
-              <p className="text-white/30 text-xs mt-3">Association loi 1901 · Adhésion déductible à 66%</p>
+              <Link to="/devenir-membre" className="btn-don self-start">Je rejoins l'association ♥</Link>
+              <p className="text-white/30 text-xs mt-3">Association loi 1901 · Déductible à 66%</p>
             </div>
-            <div className="flex justify-center lg:justify-end">
-              <div className="w-full max-w-sm rounded-3xl p-8 border" style={{ background: 'rgba(255,255,255,0.07)', borderColor: 'rgba(255,255,255,0.12)' }}>
-                <div className="text-center mb-6">
-                  <div className="inline-flex items-baseline gap-1">
-                    <span className="text-6xl font-black text-white">100</span>
-                    <span className="text-2xl font-bold text-white/50">€</span>
-                  </div>
-                  <div className="text-nv-amber text-sm font-extrabold uppercase tracking-widest mt-1">par an</div>
-                </div>
-                <div className="space-y-3 mb-8">
-                  {[
-                    'Participation aux actions de terrain',
-                    'Vote lors des assemblées générales',
-                    'Newsletter membres exclusifs',
-                    'Réduction fiscale (66% du montant)',
-                    'Suivi des animaux pris en charge',
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-3 text-white/75 text-sm">
-                      <div className="w-5 h-5 rounded-full bg-nv-green/30 flex items-center justify-center flex-shrink-0">
-                        <Check size={11} className="text-nv-teal" />
-                      </div>
-                      {item}
-                    </div>
-                  ))}
-                </div>
-                <Link to="/devenir-membre" className="btn-primary w-full justify-center">
-                  Adhérer maintenant <ArrowRight size={16} />
-                </Link>
+            {/* Right — membership card */}
+            <div className="bg-surface p-10 flex flex-col justify-center">
+              <div className="flex items-baseline gap-1 mb-1">
+                <span className="text-5xl font-black text-forest">100</span>
+                <span className="text-xl font-bold text-muted">€</span>
               </div>
+              <div className="text-nv-teal text-xs font-extrabold uppercase tracking-widest mb-6">par an</div>
+              <div className="space-y-3">
+                {[
+                  'Participation aux actions de terrain',
+                  'Vote lors des assemblées générales',
+                  'Newsletter membres exclusifs',
+                  'Réduction fiscale (66% du montant)',
+                  'Suivi des animaux pris en charge',
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3 text-forest text-sm">
+                    <div className="w-5 h-5 rounded-full bg-nv-green-light flex items-center justify-center flex-shrink-0">
+                      <Check size={11} className="text-nv-green" />
+                    </div>
+                    {item}
+                  </div>
+                ))}
+              </div>
+              <Link to="/devenir-membre" className="btn-primary mt-8 self-start">
+                Adhérer maintenant <ArrowRight size={15} />
+              </Link>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FOOTER CTA */}
-      <section className="bg-nv-green py-16">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-          <h2 className="text-3xl font-black mb-3">
-            {(pc.footer_cta_title as string) || "Prêt à changer une vie ?"}
-          </h2>
-          <p className="text-white/75 text-lg mb-8 leading-relaxed">
-            {(pc.footer_cta_text as string) || "Adoptez, devenez famille d'accueil, ou rejoignez-nous comme membre."}
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link to="/animaux" className="btn-secondary"><Heart size={18} />Adopter un animal</Link>
-            <Link to="/devenir-membre" className="btn-ghost"><Users size={18} />Devenir membre</Link>
           </div>
         </div>
       </section>

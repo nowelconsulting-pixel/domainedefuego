@@ -203,7 +203,7 @@ export default function Accueil() {
         </div>
       </section>
 
-      {/* FOOTER CTA */}
+      {/* FOOTER CTA
       <section className="bg-[#FAFAF7] py-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <h2 className="text-3xl font-black mb-3">
@@ -217,7 +217,7 @@ export default function Accueil() {
             <Link to="/devenir-membre" className="btn-ghost"><Users size={18} />Devenir membre</Link>
           </div>
         </div>
-      </section>
+      </section> */}
     </>
   );
 }

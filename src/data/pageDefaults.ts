@@ -1,12 +1,14 @@
 // Canonical default content for all system pages.
 // usePageContent(slug) falls back to these when no localStorage override exists.
+import adoptionImg from '../assets/adoption.png';
+
 const pageDefaults: Record<string, Record<string, unknown>> = {
   accueil: {
     // Héro
     hero_title: 'Chaque animal mérite un foyer',
     hero_subtitle: "Domaine de Fuego accompagne chiens, chats et autres animaux vers l'adoption responsable depuis 2016.",
     hero_badge: 'Association loi 1901 · Ardèche & Vaucluse',
-    hero_bg_url: '/adoption.png',
+    hero_bg_url: adoptionImg,
     hero_cta_primary_text: 'Voir les animaux',
     hero_cta_primary_url: '/animaux',
     hero_cta_primary_color: 'coral',

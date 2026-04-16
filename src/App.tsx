@@ -73,7 +73,6 @@ function App() {
           <Route path="roles"                  element={<AdminRoles />} />
           <Route path="candidatures"           element={<AdminCandidatures />} />
           <Route path="formulaires"            element={<AdminFormulaires />} />
-          <Route path="/test-formulaires" element={<AdminFormulaires />} />
         </Route>
       </Routes>
     </BrowserRouter>

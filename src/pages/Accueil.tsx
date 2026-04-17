@@ -170,11 +170,11 @@ export default function Accueil() {
                 </Link>
               </div>
               <div className="grid lg:grid-cols-2 gap-10 items-center max-w-5xl">
-                {article.cover_url && (
-                  <div className="rounded-[20px] overflow-hidden aspect-[4/3] border-2 border-site-border">
+                <div className="rounded-[20px] overflow-hidden aspect-[4/3] border-2 border-site-border bg-gray-100">
+                  {article.cover_url && (
                     <img src={resolveImageUrl(article.cover_url)} alt={article.title} className="w-full h-full object-cover" loading="lazy" />
-                  </div>
-                )}
+                  )}
+                </div>
                 <div>
                   {article.published_at && (
                     <div className="flex items-center gap-2 text-xs text-hint mb-3">

@@ -1,8 +1,23 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Edit2, Star, Trash2, Eye, EyeOff } from 'lucide-react';
+import { Plus, Edit2, Star, Trash2, Eye, EyeOff, Download } from 'lucide-react';
 import { useArticles, saveArticle, deleteArticle } from '../../hooks/useArticles';
 import type { Article } from '../../hooks/useArticles';
+
+function resolveLocal(url: string): string {
+  if (!url.startsWith('local:')) return url;
+  return localStorage.getItem(url.slice('local:'.length)) ?? '';
+}
+
+function exportArticlesJson(articles: Article[]) {
+  const resolved = articles.map(a => ({ ...a, cover_url: resolveLocal(a.cover_url) }));
+  const blob = new Blob([JSON.stringify(resolved, null, 2)], { type: 'application/json' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'articles.json';
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
 
 function formatDate(dateStr: string): string {
   if (!dateStr) return '—';
@@ -44,12 +59,21 @@ export default function AdminBlog() {
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Blog / Actualités</h1>
-        <Link
-          to={`/admin/blog/edit/${newId}`}
-          className="btn-primary text-sm"
-        >
-          <Plus size={16} /> Nouvel article
-        </Link>
+        <div className="flex gap-2">
+          <button
+            onClick={() => exportArticlesJson(articles)}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50"
+            title="Télécharger articles.json pour déploiement"
+          >
+            <Download size={15} /> Exporter JSON
+          </button>
+          <Link
+            to={`/admin/blog/edit/${newId}`}
+            className="btn-primary text-sm"
+          >
+            <Plus size={16} /> Nouvel article
+          </Link>
+        </div>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">

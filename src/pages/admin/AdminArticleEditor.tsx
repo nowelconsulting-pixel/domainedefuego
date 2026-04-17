@@ -73,8 +73,13 @@ export default function AdminArticleEditor() {
 
   const handleSave = (publish?: boolean) => {
     if (!article.title.trim()) { alert('Le titre est obligatoire.'); return; }
+    let cover_url = article.cover_url;
+    if (cover_url.startsWith('local:')) {
+      cover_url = localStorage.getItem(cover_url.slice('local:'.length)) ?? '';
+    }
     const updated: Article = {
       ...article,
+      cover_url,
       published: publish !== undefined ? publish : article.published,
       published_at: (publish || article.published) && !article.published_at
         ? new Date().toISOString().slice(0, 10)

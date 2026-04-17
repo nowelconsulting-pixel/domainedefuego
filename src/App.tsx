@@ -34,10 +34,14 @@ import AdminFormulaires from './pages/admin/AdminFormulaires';
 
 // ── Migration localStorage ─────────────────────────────────────────────────
 // Incrémenter SCHEMA_V à chaque déploiement qui change les defaults de page.
-// Cela force tous les navigateurs à utiliser les nouveaux defaults au prochain chargement.
-const SCHEMA_V = '3';
+// Efface toutes les clés page_content_* pour forcer les nouveaux defaults sur
+// tous les navigateurs (Samsung, Chrome mobile, etc.).
+// NB : animaux / config / articles / candidatures sont préservés.
+const SCHEMA_V = '4';
 if (typeof localStorage !== 'undefined' && localStorage.getItem('_schema_v') !== SCHEMA_V) {
-  localStorage.removeItem('page_content_accueil');
+  Object.keys(localStorage)
+    .filter(k => k.startsWith('page_content_'))
+    .forEach(k => localStorage.removeItem(k));
   localStorage.setItem('_schema_v', SCHEMA_V);
 }
 // ──────────────────────────────────────────────────────────────────────────

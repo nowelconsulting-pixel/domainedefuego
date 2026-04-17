@@ -7,7 +7,7 @@ export default function Logo({ className = '', size = 44 }: LogoProps) {
   return (
     <div className={`flex items-center ${className}`}>
       <img
-        src="/logo.png"
+        src="/logo_transparent.png"
         alt="Domaine de Fuego"
         style={{ height: size, width: 'auto' }}
       />

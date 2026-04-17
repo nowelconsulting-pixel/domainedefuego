@@ -58,21 +58,23 @@ function App() {
           <Route path="/:slug"              element={<CustomPage />} />
         </Route>
 
-        {/* Admin — always accessible */}
-        <Route path="/admin" element={<AdminLogin />} />
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route path="dashboard"              element={<AdminDashboard />} />
-          <Route path="animaux"                element={<AdminAnimaux />} />
-          <Route path="animaux/:action"        element={<AdminAnimaux />} />
-          <Route path="pages"                  element={<AdminPageManager />} />
-          <Route path="pages/edit/:id"         element={<AdminPageEditor />} />
-          <Route path="blog"                   element={<AdminBlog />} />
-          <Route path="blog/edit/:id"          element={<AdminArticleEditor />} />
-          <Route path="config"                 element={<AdminConfig />} />
-          <Route path="users"                  element={<AdminUsers />} />
-          <Route path="roles"                  element={<AdminRoles />} />
-          <Route path="candidatures"           element={<AdminCandidatures />} />
-          <Route path="formulaires"            element={<AdminFormulaires />} />
+        {/* Admin */}
+        <Route path="/admin">
+          <Route index element={<AdminLogin />} />
+          <Route element={<AdminLayout />}>
+            <Route path="dashboard"              element={<AdminDashboard />} />
+            <Route path="animaux"                element={<AdminAnimaux />} />
+            <Route path="animaux/:action"        element={<AdminAnimaux />} />
+            <Route path="pages"                  element={<AdminPageManager />} />
+            <Route path="pages/edit/:id"         element={<AdminPageEditor />} />
+            <Route path="blog"                   element={<AdminBlog />} />
+            <Route path="blog/edit/:id"          element={<AdminArticleEditor />} />
+            <Route path="config"                 element={<AdminConfig />} />
+            <Route path="users"                  element={<AdminUsers />} />
+            <Route path="roles"                  element={<AdminRoles />} />
+            <Route path="candidatures"           element={<AdminCandidatures />} />
+            <Route path="formulaires"            element={<AdminFormulaires />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>

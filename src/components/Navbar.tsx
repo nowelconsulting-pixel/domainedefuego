@@ -92,15 +92,19 @@ export default function Navbar() {
   return (
     <nav className="bg-white/95 backdrop-blur-xl border-b border-gray-200/60 sticky top-0 z-50" style={{ boxShadow: '0 1px 24px rgba(0,0,0,0.07)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-[80px] gap-6">
+        <div className="relative flex items-center h-[80px]">
 
-          {/* Logo */}
-          <Link to="/" onClick={() => setOpen(false)} className="flex-shrink-0">
+          {/* Logo — centré en absolu sur mobile, statique à gauche sur desktop */}
+          <Link
+            to="/"
+            onClick={() => setOpen(false)}
+            className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0 lg:flex-shrink-0 z-10"
+          >
             <Logo size={54} />
           </Link>
 
           {/* Desktop nav */}
-          <div className="hidden lg:flex flex-1 justify-center items-center gap-2">
+          <div className="hidden lg:flex flex-1 justify-center items-center gap-2 ml-6">
             {navItems.map(item =>
               item.children?.length ? (
                 <div key={item.id} className="relative group">
@@ -150,9 +154,9 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Mobile burger */}
+          {/* Mobile burger — ml-auto pour coller à droite */}
           <button
-            className="lg:hidden p-2 rounded-lg text-muted hover:bg-nv-green-light transition-colors"
+            className="lg:hidden ml-auto p-2 rounded-lg text-muted hover:bg-nv-green-light transition-colors"
             onClick={() => setOpen(!open)}
             aria-label="Menu"
           >

@@ -6,7 +6,7 @@ const pageDefaults: Record<string, Record<string, unknown>> = {
     hero_title: 'Chaque animal mérite un foyer',
     hero_subtitle: "Domaine de Fuego accompagne chiens, chats et autres animaux vers l'adoption responsable depuis 2016.",
     hero_badge: 'Association loi 1901 · Ardèche & Vaucluse',
-    hero_bg_url: 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=1920&q=80',
+    hero_bg_url: '/adoption.png',
     hero_cta_primary_text: 'Voir les animaux',
     hero_cta_primary_url: '/animaux',
     hero_cta_primary_color: 'coral',

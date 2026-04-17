@@ -26,7 +26,7 @@ export default function Accueil() {
   const pc = usePageContent('accueil');
 
   const derniers = animaux?.filter(a => a.statut === 'Disponible').slice(0, 3) ?? [];
-  const heroBg = resolveImageUrl((pc.hero_bg_url as string) || '') || '/Adoption.png';
+  const heroBg = resolveImageUrl((pc.hero_bg_url as string) || '') || '/adoption.png';
 
   return (
     <>

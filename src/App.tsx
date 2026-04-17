@@ -32,6 +32,16 @@ import AdminRoles from './pages/admin/AdminRoles';
 import AdminCandidatures from './pages/admin/AdminCandidatures';
 import AdminFormulaires from './pages/admin/AdminFormulaires';
 
+// ── Migration localStorage ─────────────────────────────────────────────────
+// Incrémenter SCHEMA_V à chaque déploiement qui change les defaults de page.
+// Cela force tous les navigateurs à utiliser les nouveaux defaults au prochain chargement.
+const SCHEMA_V = '3';
+if (typeof localStorage !== 'undefined' && localStorage.getItem('_schema_v') !== SCHEMA_V) {
+  localStorage.removeItem('page_content_accueil');
+  localStorage.setItem('_schema_v', SCHEMA_V);
+}
+// ──────────────────────────────────────────────────────────────────────────
+
 function readMaintenance() {
   const stored = localStorage.getItem('site_maintenance');
   return stored !== null

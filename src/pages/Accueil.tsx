@@ -120,12 +120,18 @@ export default function Accueil() {
           <section className="bg-[#2d3a35] py-14">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-wrap justify-center gap-x-10 sm:gap-x-20 gap-y-8 text-center text-white">
-                {items.map((item, i) => (
-                  <div key={i} className="min-w-[120px]">
-                    <div className="text-5xl font-black tracking-tighter mb-1">{item.value}</div>
-                    <div className="text-sm font-semibold text-white/65 uppercase tracking-widest">{item.label}</div>
-                  </div>
-                ))}
+                {items.map((item, i) => {
+                  const formatted = new Intl.NumberFormat('fr-FR').format(item.value);
+                  const isAmount  = item.label.toLowerCase().includes('don');
+                  return (
+                    <div key={i} className="min-w-[120px]">
+                      <div className="text-5xl font-black tracking-tighter mb-1">
+                        {isAmount ? `${formatted}\u00a0€` : formatted}
+                      </div>
+                      <div className="text-sm font-semibold text-white/65 uppercase tracking-widest">{item.label}</div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </section>

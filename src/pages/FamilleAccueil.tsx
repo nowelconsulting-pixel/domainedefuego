@@ -12,11 +12,13 @@ export default function FamilleAccueil() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const pc = usePageContent('famille-accueil');
   const pcAvantages = (pc.avantages as Array<{ titre: string; desc: string }>) || [];
-  const avantages = AVANTAGE_ICONS.map((icon, i) => ({
-    icon,
-    titre: pcAvantages[i]?.titre ?? '',
-    desc:  pcAvantages[i]?.desc  ?? '',
-  }));
+  const avantages = AVANTAGE_ICONS
+    .map((icon, i) => ({
+      icon,
+      titre: pcAvantages[i]?.titre ?? '',
+      desc:  pcAvantages[i]?.desc  ?? '',
+    }))
+    .filter(a => a.titre || a.desc);
   const faqs = (pc.faq as Array<{ q: string; r: string }>) || [];
 
   return (

@@ -32,25 +32,58 @@ export default function Accueil() {
     <>
       {/* HERO */}
       <section className="relative min-h-screen flex items-end overflow-hidden">
-        <div className="absolute inset-0" style={{ backgroundImage: `url(${heroBg})`, backgroundSize: 'cover', backgroundPosition: 'center 30%' }} />
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(15,20,17,0.93) 0%, rgba(15,20,17,0.60) 50%, rgba(15,20,17,0.15) 100%)' }} />
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 md:pb-28">
-          <div className="max-w-2xl mx-auto text-center">
-            <h1 className="font-black text-white leading-[1.02] mb-5 whitespace-pre-line" style={{ fontSize: 'clamp(3rem, 7vw, 5.5rem)' }}>
+        {/* Photo de fond */}
+        <div className="absolute inset-0" style={{ backgroundImage: `url(${heroBg})`, backgroundSize: 'cover', backgroundPosition: 'center 25%' }} />
+        {/* Gradient principal — lisibilité du texte */}
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(8,12,10,0.98) 0%, rgba(8,12,10,0.80) 32%, rgba(8,12,10,0.30) 62%, transparent 100%)' }} />
+        {/* Vignette périmétrique — effet cinématique */}
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 140% 90% at 50% 110%, transparent 35%, rgba(0,0,0,0.20) 100%)' }} />
+
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-28 md:pb-36">
+          <div className="max-w-3xl mx-auto text-center">
+
+            {/* Accent décoratif */}
+            <div className="w-14 h-[3px] rounded-full bg-nv-amber mx-auto mb-8" />
+
+            <h1
+              className="font-black text-white whitespace-pre-line mb-7"
+              style={{
+                fontSize: 'clamp(3rem, 7vw, 6rem)',
+                lineHeight: 0.96,
+                letterSpacing: '-0.025em',
+                textShadow: '0 2px 32px rgba(0,0,0,0.50)',
+              }}
+            >
               {(pc.hero_title as string) || "ILS N'ATTENDENT\nQUE VOUS"}
             </h1>
-            <p className="text-white/65 text-lg leading-relaxed mb-8 max-w-lg mx-auto">
+
+            <p
+              className="leading-relaxed mb-10 max-w-xl mx-auto"
+              style={{
+                fontSize: '1.2rem',
+                color: 'rgba(255,255,255,0.82)',
+                textShadow: '0 1px 12px rgba(0,0,0,0.70)',
+                letterSpacing: '0.008em',
+              }}
+            >
               {(pc.hero_subtitle as string) || "Chaque animal abrite une histoire. Certains attendent depuis trop longtemps. Il est temps d'écrire la suite."}
             </p>
+
             <div className="flex flex-wrap gap-4 justify-center">
               <Link to="/animaux" className="btn-primary">Voir nos animaux <ArrowRight size={18} /></Link>
-              <Link to="/famille-accueil" className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm text-white border-2 hover:bg-white/10 transition-colors" style={{ borderColor: 'rgba(255,255,255,0.30)' }}>
+              <Link
+                to="/famille-accueil"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-bold text-sm text-white border-2 hover:bg-white/10 hover:border-white/60 transition-all duration-200"
+                style={{ borderColor: 'rgba(255,255,255,0.42)' }}
+              >
                 Devenir famille d'accueil
               </Link>
             </div>
           </div>
         </div>
-        <div className="absolute bottom-8 right-8 z-10 hidden md:block text-white/35">
+
+        {/* Indicateur de scroll — centré */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 text-white/40">
           <ChevronDown size={22} className="animate-bounce" />
         </div>
       </section>

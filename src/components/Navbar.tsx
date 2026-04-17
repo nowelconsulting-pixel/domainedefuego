@@ -83,14 +83,14 @@ export default function Navbar() {
   }, []);
 
   const linkCls = ({ isActive }: { isActive: boolean }) =>
-    `px-4 py-2 rounded-full text-base font-semibold transition-colors duration-150 ${
+    `px-4 py-2 rounded-full text-base font-semibold transition-all duration-200 ${
       isActive
-        ? 'bg-nv-green-light text-nv-green'
-        : 'text-muted hover:text-forest hover:bg-nv-green-light/50'
+        ? 'bg-nv-green text-white shadow-sm'
+        : 'text-gray-600 hover:text-forest hover:bg-nv-green-light'
     }`;
 
   return (
-    <nav className="bg-surface border-b-2 border-site-border sticky top-0 z-50">
+    <nav className="bg-white/95 backdrop-blur-xl border-b border-gray-200/60 sticky top-0 z-50" style={{ boxShadow: '0 1px 24px rgba(0,0,0,0.07)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-[80px] gap-6">
 
@@ -108,8 +108,8 @@ export default function Navbar() {
                     to={item.to}
                     end={item.to === '/'}
                     className={({ isActive }) =>
-                      `flex items-center gap-1 px-4 py-2 rounded-full text-base font-semibold transition-colors duration-150 ${
-                        isActive ? 'bg-nv-green-light text-nv-green' : 'text-muted hover:text-forest hover:bg-nv-green-light/50'
+                      `flex items-center gap-1 px-4 py-2 rounded-full text-base font-semibold transition-all duration-200 ${
+                        isActive ? 'bg-nv-green text-white shadow-sm' : 'text-gray-600 hover:text-forest hover:bg-nv-green-light'
                       }`
                     }
                   >
@@ -117,14 +117,14 @@ export default function Navbar() {
                     <ChevronDown size={13} className="opacity-60 group-hover:rotate-180 transition-transform duration-200" />
                   </NavLink>
                   <div className="absolute top-full left-0 hidden group-hover:block pt-2 z-50">
-                    <div className="bg-surface shadow-xl rounded-xl py-1.5 min-w-[200px] border border-site-border">
+                    <div className="bg-white/98 backdrop-blur-xl shadow-2xl rounded-2xl py-2 min-w-[210px] border border-gray-100" style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.12)' }}>
                       {item.children.map(child => (
                         <NavLink
                           key={child.id}
                           to={child.to}
                           className={({ isActive }) =>
-                            `block px-4 py-2.5 text-base transition-colors ${
-                              isActive ? 'text-nv-green bg-nv-green-light font-semibold' : 'text-muted hover:text-forest hover:bg-nv-green-light/40'
+                            `block px-5 py-2.5 text-[15px] font-medium transition-all duration-150 ${
+                              isActive ? 'text-nv-green bg-nv-green-light font-semibold' : 'text-gray-600 hover:text-forest hover:bg-gray-50'
                             }`
                           }
                         >

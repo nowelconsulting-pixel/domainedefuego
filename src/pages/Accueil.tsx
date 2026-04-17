@@ -86,7 +86,7 @@ export default function Accueil() {
       </section>
 
       {/* DERNIERS ARRIVANTS */}
-      {derniers.length > 0 && (
+      {(pc.show_latest_animals !== false) && (
         <section className="bg-[#FAFAF7] py-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mb-14">
@@ -100,9 +100,17 @@ export default function Accueil() {
                 </Link>
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {derniers.map(animal => <AnimalCard key={animal.id} animal={animal} />)}
-            </div>
+            {derniers.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {derniers.map(animal => <AnimalCard key={animal.id} animal={animal} />)}
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <div className="text-5xl mb-4">🐾</div>
+                <p className="text-2xl font-bold text-forest">0 animal à l'adoption</p>
+                <p className="text-muted mt-2">Revenez prochainement, de nouveaux arrivants sont régulièrement ajoutés.</p>
+              </div>
+            )}
           </div>
         </section>
       )}

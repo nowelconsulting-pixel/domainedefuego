@@ -214,7 +214,7 @@ export default function FormFamilleAccueil() {
               <input className={`form-input ${errors.adresse ? 'border-red-400' : ''}`} value={data.adresse} onChange={e => set('adresse', e.target.value)} placeholder="12 rue des Fleurs" />
               <Err msg={errors.adresse} />
             </div>
-            <div className="grid grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
                 <label className="form-label">Code postal *</label>
                 <input className={`form-input ${errors.code_postal ? 'border-red-400' : ''}`} value={data.code_postal} onChange={e => set('code_postal', e.target.value)} placeholder="07200" />

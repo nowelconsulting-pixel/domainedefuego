@@ -163,7 +163,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="lg:hidden border-t-2 border-site-border bg-surface/95 backdrop-blur-md">
+        <div className="lg:hidden border-t-2 border-site-border bg-surface/95 backdrop-blur-md max-h-[calc(100vh-70px)] overflow-y-auto">
           <div className="px-4 py-4 space-y-1">
             {navItems.map(item => (
               <div key={item.id}>

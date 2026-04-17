@@ -68,7 +68,7 @@ export default function Contact() {
             {/* Réseaux */}
             <div>
               <h2 className="text-xl font-bold text-forest mb-4">Réseaux sociaux</h2>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-3">
                 {config?.facebook_url && (
                   <a
                     href={config.facebook_url}

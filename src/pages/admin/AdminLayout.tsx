@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Outlet, NavLink, useNavigate, Link } from 'react-router-dom';
 import {
   PawPrint, FileText, Settings, LogOut, Home,
-  LayoutDashboard, Users, Inbox, Shield, Newspaper, ClipboardList
+  LayoutDashboard, Users, Inbox, Shield, Newspaper, ClipboardList, Menu, X
 } from 'lucide-react';
 import { getSession, clearSession } from '../../utils/auth';
 import type { AdminSession } from '../../types/admin';
@@ -13,6 +13,7 @@ import { useCandidatures } from '../../hooks/useAdminData';
 export default function AdminLayout() {
   const navigate = useNavigate();
   const [session, setSession] = useState<AdminSession | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { data: animaux } = useAnimaux();
   const { unread } = useCandidatures();
@@ -30,10 +31,13 @@ export default function AdminLayout() {
 
   const disponibles = animaux?.filter(a => a.statut === 'Disponible').length ?? 0;
 
+  const closeSidebar = () => setSidebarOpen(false);
+
   const navItem = (to: string, Icon: React.ElementType, label: string, badge?: number) => (
     <NavLink
       key={to}
       to={to}
+      onClick={closeSidebar}
       className={({ isActive }) =>
         `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
           isActive ? 'bg-coral-500 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800'
@@ -52,11 +56,24 @@ export default function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-20 lg:hidden"
+          onClick={closeSidebar}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-60 bg-gray-900 text-white flex flex-col flex-shrink-0 fixed top-0 left-0 bottom-0 z-20">
-        <div className="p-4 border-b border-gray-800">
-          <div className="text-white font-bold">Administration</div>
-          <div className="text-gray-400 text-xs mt-0.5">Domaine de Fuego</div>
+      <aside className={`w-60 bg-gray-900 text-white flex flex-col flex-shrink-0 fixed top-0 left-0 bottom-0 z-30 transition-transform duration-200 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+        <div className="p-4 border-b border-gray-800 flex items-center justify-between">
+          <div>
+            <div className="text-white font-bold">Administration</div>
+            <div className="text-gray-400 text-xs mt-0.5">Domaine de Fuego</div>
+          </div>
+          <button onClick={closeSidebar} className="lg:hidden text-gray-400 hover:text-white">
+            <X size={18} />
+          </button>
         </div>
 
         {session && (
@@ -99,7 +116,17 @@ export default function AdminLayout() {
       </aside>
 
       {/* Main */}
-      <main className="flex-1 ml-60 overflow-auto min-h-screen">
+      <main className="flex-1 lg:ml-60 overflow-auto min-h-screen">
+        {/* Mobile top bar */}
+        <div className="lg:hidden sticky top-0 z-10 bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="text-gray-600 hover:text-gray-900"
+          >
+            <Menu size={22} />
+          </button>
+          <span className="font-semibold text-gray-800 text-sm">Administration</span>
+        </div>
         <Outlet />
       </main>
     </div>

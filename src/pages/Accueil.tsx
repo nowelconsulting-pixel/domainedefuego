@@ -34,17 +34,17 @@ export default function Accueil() {
         <div className="absolute inset-0" style={{ backgroundImage: `url(${heroBg})`, backgroundSize: 'cover', backgroundPosition: 'center 30%' }} />
         <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(15,20,17,0.93) 0%, rgba(15,20,17,0.60) 50%, rgba(15,20,17,0.15) 100%)' }} />
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 md:pb-28">
-          <div className="max-w-2xl">
+          <div className="max-w-2xl ml-auto text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-6 text-[11px] font-extrabold uppercase tracking-widest" style={{ background: 'rgba(226,169,79,0.18)', color: '#E2A94F' }}>
               🤍 Association de protection animale - Val d'Oise
             </div>
             <h1 className="font-black text-white leading-[1.02] mb-5 whitespace-pre-line" style={{ fontSize: 'clamp(3rem, 7vw, 5.5rem)' }}>
               {(pc.hero_title as string) || "ILS N'ATTENDENT\nQUE VOUS"}
             </h1>
-            <p className="text-white/65 text-lg leading-relaxed mb-8 max-w-lg">
+            <p className="text-white/65 text-lg leading-relaxed mb-8 max-w-lg mx-auto">
               {(pc.hero_subtitle as string) || "Chaque animal abrite une histoire. Certains attendent depuis trop longtemps. Il est temps d'écrire la suite."}
             </p>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-4 justify-center">
               <Link to="/animaux" className="btn-primary">Voir nos animaux <ArrowRight size={18} /></Link>
               <Link to="/famille-accueil" className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm text-white border-2 hover:bg-white/10 transition-colors" style={{ borderColor: 'rgba(255,255,255,0.30)' }}>
                 Devenir famille d'accueil

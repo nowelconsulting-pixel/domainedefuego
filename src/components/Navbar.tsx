@@ -23,7 +23,6 @@ function buildNavItems(): NavItem[] {
     catch { return {}; }
   })();
 
-  // Build all system page items (top-level and children)
   const allSystemItems = SYSTEM_PAGES
     .filter(p => p.status === 'published' && (systemData[p.id]?.show_in_nav ?? p.show_in_nav))
     .map(p => ({
@@ -42,14 +41,11 @@ function buildNavItems(): NavItem[] {
 
   const published = stored.filter(p => p.status === 'published' && !p.system && p.slug && (p.show_in_nav ?? true));
 
-  // Build child map from both system children and custom pages
   const childMap: Record<string, NavItem[]> = {};
-
   allSystemItems.filter(p => p.parent_id).forEach(p => {
     if (!childMap[p.parent_id!]) childMap[p.parent_id!] = [];
     childMap[p.parent_id!].push({ id: p.id, to: p.to, label: p.label, order: p.order });
   });
-
   published.filter(p => !p.parent_id).forEach(p =>
     allSystemItems.push({ id: p.id, to: `/${p.slug}`, label: p.title, order: p.menu_order, parent_id: null })
   );
@@ -75,7 +71,6 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState<string | null>(null);
 
   useEffect(() => { setNavItems(buildNavItems()); }, []);
-
   useEffect(() => {
     const handler = () => setNavItems(buildNavItems());
     window.addEventListener('admin_pages_updated', handler);
@@ -92,20 +87,36 @@ export default function Navbar() {
   return (
     <nav className="bg-white/95 backdrop-blur-xl border-b border-gray-200/60 sticky top-0 z-50" style={{ boxShadow: '0 1px 24px rgba(0,0,0,0.07)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative flex items-center h-[80px]">
 
-          {/* Logo — centré en absolu sur mobile, statique à gauche sur desktop */}
-          <Link
-            to="/"
-            onClick={() => setOpen(false)}
-            className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0 lg:flex-shrink-0 pointer-events-auto"
-            style={{ zIndex: 1 }}
+        {/* ── MOBILE header : 3 colonnes symétriques ── */}
+        <div className="flex lg:hidden items-center h-[64px]">
+          {/* Colonne gauche : spacer = même largeur que le burger */}
+          <div className="w-10 flex-shrink-0" />
+          {/* Colonne centre : logo centré */}
+          <div className="flex-1 flex justify-center">
+            <Link to="/" onClick={() => setOpen(false)}>
+              <Logo />
+            </Link>
+          </div>
+          {/* Colonne droite : burger */}
+          <button
+            className="w-10 flex-shrink-0 flex items-center justify-center rounded-lg text-muted hover:bg-nv-green-light transition-colors"
+            onClick={() => setOpen(!open)}
+            aria-label="Menu"
           >
+            {open ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
+
+        {/* ── DESKTOP header ── */}
+        <div className="hidden lg:flex items-center justify-between h-[80px] gap-6">
+
+          <Link to="/" onClick={() => setOpen(false)} className="flex-shrink-0">
             <Logo />
           </Link>
 
           {/* Desktop nav */}
-          <div className="hidden lg:flex flex-1 justify-center items-center gap-2 ml-6">
+          <div className="flex flex-1 justify-center items-center gap-2">
             {navItems.map(item =>
               item.children?.length ? (
                 <div key={item.id} className="relative group">
@@ -122,7 +133,7 @@ export default function Navbar() {
                     <ChevronDown size={13} className="opacity-60 group-hover:rotate-180 transition-transform duration-200" />
                   </NavLink>
                   <div className="absolute top-full left-0 hidden group-hover:block pt-2 z-50">
-                    <div className="bg-white/98 backdrop-blur-xl shadow-2xl rounded-2xl py-2 min-w-[210px] border border-gray-100" style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.12)' }}>
+                    <div className="bg-white shadow-2xl rounded-2xl py-2 min-w-[210px] border border-gray-100" style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.12)' }}>
                       {item.children.map(child => (
                         <NavLink
                           key={child.id}
@@ -148,28 +159,18 @@ export default function Navbar() {
           </div>
 
           {/* Desktop — divider + btn-don */}
-          <div className="hidden lg:flex items-center gap-4 flex-shrink-0">
+          <div className="flex items-center gap-4 flex-shrink-0">
             <div className="w-px h-6 bg-site-border" />
             <Link to="/faire-un-don" className="btn-don">
               Faire un don ♥
             </Link>
           </div>
-
-          {/* Mobile burger — ml-auto pour coller à droite, z-index au-dessus du logo */}
-          <button
-            className="lg:hidden ml-auto p-2 rounded-lg text-muted hover:bg-nv-green-light transition-colors relative"
-            style={{ zIndex: 2 }}
-            onClick={() => setOpen(!open)}
-            aria-label="Menu"
-          >
-            {open ? <X size={22} /> : <Menu size={22} />}
-          </button>
         </div>
       </div>
 
-      {/* Mobile menu */}
+      {/* ── Mobile menu déroulant ── */}
       {open && (
-        <div className="lg:hidden border-t-2 border-site-border bg-surface/95 backdrop-blur-md max-h-[calc(100vh-80px)] overflow-y-auto">
+        <div className="lg:hidden border-t border-gray-200/60 bg-white max-h-[calc(100vh-64px)] overflow-y-auto">
           <div className="px-4 py-4 space-y-1">
             {navItems.map(item => (
               <div key={item.id}>
@@ -177,12 +178,12 @@ export default function Navbar() {
                   <>
                     <button
                       onClick={() => setMobileOpen(mobileOpen === item.id ? null : item.id)}
-                      className="w-full flex items-center justify-between px-4 py-3 rounded-full text-sm font-semibold text-muted hover:bg-nv-green-light/50 transition-colors"
+                      className="w-full flex items-center justify-between px-4 py-3 rounded-full text-sm font-semibold text-gray-600 hover:bg-nv-green-light/50 transition-colors"
                     >
                       <span>{item.label}</span>
                       <ChevronDown
                         size={15}
-                        className={`text-hint transition-transform duration-150 ${mobileOpen === item.id ? 'rotate-180' : ''}`}
+                        className={`text-gray-400 transition-transform duration-150 ${mobileOpen === item.id ? 'rotate-180' : ''}`}
                       />
                     </button>
                     {mobileOpen === item.id && (
@@ -193,7 +194,7 @@ export default function Navbar() {
                           onClick={() => setOpen(false)}
                           className={({ isActive }) =>
                             `block px-4 py-2.5 rounded-full text-sm transition-colors ${
-                              isActive ? 'text-nv-green bg-nv-green-light font-semibold' : 'text-muted hover:bg-nv-green-light/40'
+                              isActive ? 'text-nv-green bg-nv-green-light font-semibold' : 'text-gray-600 hover:bg-nv-green-light/40'
                             }`
                           }
                         >
@@ -206,7 +207,7 @@ export default function Navbar() {
                             onClick={() => setOpen(false)}
                             className={({ isActive }) =>
                               `block px-4 py-2.5 rounded-full text-sm transition-colors ${
-                                isActive ? 'text-nv-green bg-nv-green-light font-semibold' : 'text-muted hover:bg-nv-green-light/40'
+                                isActive ? 'text-nv-green bg-nv-green-light font-semibold' : 'text-gray-600 hover:bg-nv-green-light/40'
                               }`
                             }
                           >
@@ -223,7 +224,7 @@ export default function Navbar() {
                     onClick={() => setOpen(false)}
                     className={({ isActive }) =>
                       `block px-4 py-3 rounded-full text-sm font-semibold transition-colors ${
-                        isActive ? 'text-nv-green bg-nv-green-light' : 'text-muted hover:bg-nv-green-light/50'
+                        isActive ? 'text-nv-green bg-nv-green-light' : 'text-gray-600 hover:bg-nv-green-light/50'
                       }`
                     }
                   >
@@ -232,9 +233,7 @@ export default function Navbar() {
                 )}
               </div>
             ))}
-
-            {/* btn-don in mobile */}
-            <div className="pt-3 border-t border-site-border mt-3">
+            <div className="pt-3 border-t border-gray-100 mt-3">
               <Link to="/faire-un-don" onClick={() => setOpen(false)} className="btn-don w-full justify-center">
                 Faire un don ♥
               </Link>

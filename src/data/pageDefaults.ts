@@ -43,7 +43,7 @@ const pageDefaults: Record<string, Record<string, unknown>> = {
       },
     ],
     // Témoignages
-    show_temoignages: true,
+    show_temoignages: false,
     temoignages_title: 'Ils ont adopté',
     temoignages_subtitle: 'Les témoignages de nos familles adoptantes',
     temoignages: [

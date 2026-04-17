@@ -9,9 +9,11 @@
   "email_contact": "contact@domainedefuego.fr",
   "maintenance": false,
   "chiffres": {
-    "animaux_adoptes": 247,
-    "familles_accueil": 38,
-    "annees_existence": 8,
-    "custom": []
+    "animaux_adoptes": 2,
+    "familles_accueil": 3,
+    "annees_existence": 0,
+    "custom": [
+      { "label": "dons collectés", "value": 2100 }
+    ]
   }
 }

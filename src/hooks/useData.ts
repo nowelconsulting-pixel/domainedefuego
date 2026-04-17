@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
 import type { Animal, Config, Pages } from '../types';
 
+export interface Article {
+  id: string; title: string; slug: string; excerpt: string;
+  cover_url: string; author: string; published_at: string; published: boolean;
+}
+
 function useJsonData<T>(localStorageKey: string, url: string) {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
@@ -44,4 +49,8 @@ export function useConfig() {
 
 export function usePages() {
   return useJsonData<Pages>('pages', '/data/pages.json');
+}
+
+export function useArticles() {
+  return useJsonData<Article[]>('articles', '/data/articles.json');
 }

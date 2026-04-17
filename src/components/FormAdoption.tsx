@@ -7,19 +7,35 @@ const STEPS = ['Identité', 'Logement', 'Situation', 'Projet'];
 
 const DEFAULT_CHARTE = "J'ai lu et j'accepte la charte d'adoption de Domaine de Fuego. Je m'engage à adopter l'animal en toute responsabilité, pour toute sa vie.";
 
+const DEFAULT_OPTS = {
+  type_logement:   ['Maison', 'Appartement', 'Autre'],
+  jardin:          ['Oui, clôturé', 'Oui, non clôturé', 'Non'],
+  statut_occupant: ['Propriétaire', 'Locataire avec autorisation', 'Locataire (à vérifier)'],
+  statut_familial: ['Seul(e)', 'En couple', 'Famille avec enfant(s)'],
+  heures_seul:     ['Moins de 4h', '4 à 6h', '6 à 8h', 'Plus de 8h'],
+};
+
 function loadAdoptionConfig() {
   try {
     const raw = localStorage.getItem('form_config');
     if (raw) {
       const cfg = JSON.parse(raw)?.adoption ?? {};
+      const opts = cfg.options && typeof cfg.options === 'object' ? cfg.options : {};
       return {
         active: cfg.active !== false,
         intro: (cfg.intro as string) || '',
         charte_text: (cfg.charte_text as string) || DEFAULT_CHARTE,
+        options: {
+          type_logement:   (Array.isArray(opts.type_logement)   && opts.type_logement.length)   ? opts.type_logement   : DEFAULT_OPTS.type_logement,
+          jardin:          (Array.isArray(opts.jardin)          && opts.jardin.length)          ? opts.jardin          : DEFAULT_OPTS.jardin,
+          statut_occupant: (Array.isArray(opts.statut_occupant) && opts.statut_occupant.length) ? opts.statut_occupant : DEFAULT_OPTS.statut_occupant,
+          statut_familial: (Array.isArray(opts.statut_familial) && opts.statut_familial.length) ? opts.statut_familial : DEFAULT_OPTS.statut_familial,
+          heures_seul:     (Array.isArray(opts.heures_seul)     && opts.heures_seul.length)     ? opts.heures_seul     : DEFAULT_OPTS.heures_seul,
+        },
       };
     }
   } catch { /* ignore */ }
-  return { active: true, intro: '', charte_text: DEFAULT_CHARTE };
+  return { active: true, intro: '', charte_text: DEFAULT_CHARTE, options: { ...DEFAULT_OPTS } };
 }
 
 interface FormData {
@@ -229,7 +245,7 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
                 <label className="form-label">Type de logement *</label>
                 <select className={`form-input ${errors.type_logement ? 'border-red-400' : ''}`} value={data.type_logement} onChange={e => set('type_logement', e.target.value)}>
                   <option value="">Choisir...</option>
-                  <option>Maison</option><option>Appartement</option><option>Autre</option>
+                  {cfg.options.type_logement.map(o => <option key={o}>{o}</option>)}
                 </select>
                 <Err msg={errors.type_logement} />
               </div>
@@ -237,7 +253,7 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
                 <label className="form-label">Jardin / extérieur *</label>
                 <select className={`form-input ${errors.jardin ? 'border-red-400' : ''}`} value={data.jardin} onChange={e => set('jardin', e.target.value)}>
                   <option value="">Choisir...</option>
-                  <option>Oui, clôturé</option><option>Oui, non clôturé</option><option>Non</option>
+                  {cfg.options.jardin.map(o => <option key={o}>{o}</option>)}
                 </select>
                 <Err msg={errors.jardin} />
               </div>
@@ -249,9 +265,7 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
                 <label className="form-label">Statut *</label>
                 <select className={`form-input ${errors.statut_occupant ? 'border-red-400' : ''}`} value={data.statut_occupant} onChange={e => set('statut_occupant', e.target.value)}>
                   <option value="">Choisir...</option>
-                  <option>Propriétaire</option>
-                  <option>Locataire avec autorisation</option>
-                  <option>Locataire (à vérifier)</option>
+                  {cfg.options.statut_occupant.map(o => <option key={o}>{o}</option>)}
                 </select>
                 <Err msg={errors.statut_occupant} />
               </div>
@@ -268,7 +282,7 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
                 <label className="form-label">Situation familiale *</label>
                 <select className={`form-input ${errors.statut_familial ? 'border-red-400' : ''}`} value={data.statut_familial} onChange={e => set('statut_familial', e.target.value)}>
                   <option value="">Choisir...</option>
-                  <option>Seul(e)</option><option>En couple</option><option>Famille avec enfant(s)</option>
+                  {cfg.options.statut_familial.map(o => <option key={o}>{o}</option>)}
                 </select>
                 <Err msg={errors.statut_familial} />
               </div>
@@ -303,7 +317,7 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
               <label className="form-label">Combien d'heures l'animal serait-il seul par jour ? *</label>
               <select className={`form-input ${errors.heures_seul ? 'border-red-400' : ''}`} value={data.heures_seul} onChange={e => set('heures_seul', e.target.value)}>
                 <option value="">Choisir...</option>
-                <option>Moins de 4h</option><option>4 à 6h</option><option>6 à 8h</option><option>Plus de 8h</option>
+                {cfg.options.heures_seul.map(o => <option key={o}>{o}</option>)}
               </select>
               <Err msg={errors.heures_seul} />
             </div>

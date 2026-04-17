@@ -13,6 +13,7 @@ import MentionsLegales from './pages/MentionsLegales';
 import Blog from './pages/Blog';
 import ArticleDetail from './pages/ArticleDetail';
 import CustomPage from './pages/CustomPage';
+import FormulairePage from './pages/FormulairePage';
 
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminLayout from './pages/admin/AdminLayout';
@@ -59,6 +60,7 @@ function App() {
           <Route path="/actualites/:slug"   element={<ArticleDetail />} />
           <Route path="/blog"               element={<Blog />} />
           <Route path="/blog/:slug"         element={<ArticleDetail />} />
+          <Route path="/formulaire/:slug"    element={<FormulairePage />} />
           <Route path="/:slug"              element={<CustomPage />} />
         </Route>
 

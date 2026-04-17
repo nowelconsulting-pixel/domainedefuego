@@ -11,21 +11,36 @@ const DEFAULT_DUREES = [
   'Long terme (plusieurs mois)',
   'Flexible selon les besoins',
 ];
+const DEFAULT_FA_OPTS = {
+  type_logement:   ['Maison', 'Appartement', 'Autre'],
+  jardin:          ['Oui, clôturé', 'Oui, non clôturé', 'Non'],
+  statut_occupant: ['Propriétaire', 'Locataire avec autorisation', 'Locataire (à vérifier)'],
+  statut_familial: ['Seul(e)', 'En couple', 'Famille'],
+  urgences:        ['Oui, selon disponibilités', 'Non'],
+};
 
 function loadFaConfig() {
   try {
     const raw = localStorage.getItem('form_config');
     if (raw) {
       const cfg = JSON.parse(raw)?.fa ?? {};
+      const opts = cfg.options && typeof cfg.options === 'object' ? cfg.options : {};
       return {
         active:        cfg.active !== false,
         intro:         (cfg.intro as string) || '',
         types_animaux: Array.isArray(cfg.types_animaux) && cfg.types_animaux.length > 0 ? cfg.types_animaux as string[] : DEFAULT_TYPES,
         durees:        Array.isArray(cfg.durees)        && cfg.durees.length        > 0 ? cfg.durees        as string[] : DEFAULT_DUREES,
+        options: {
+          type_logement:   (Array.isArray(opts.type_logement)   && opts.type_logement.length)   ? opts.type_logement   : DEFAULT_FA_OPTS.type_logement,
+          jardin:          (Array.isArray(opts.jardin)          && opts.jardin.length)          ? opts.jardin          : DEFAULT_FA_OPTS.jardin,
+          statut_occupant: (Array.isArray(opts.statut_occupant) && opts.statut_occupant.length) ? opts.statut_occupant : DEFAULT_FA_OPTS.statut_occupant,
+          statut_familial: (Array.isArray(opts.statut_familial) && opts.statut_familial.length) ? opts.statut_familial : DEFAULT_FA_OPTS.statut_familial,
+          urgences:        (Array.isArray(opts.urgences)        && opts.urgences.length)        ? opts.urgences        : DEFAULT_FA_OPTS.urgences,
+        },
       };
     }
   } catch { /* ignore */ }
-  return { active: true, intro: '', types_animaux: DEFAULT_TYPES, durees: DEFAULT_DUREES };
+  return { active: true, intro: '', types_animaux: DEFAULT_TYPES, durees: DEFAULT_DUREES, options: { ...DEFAULT_FA_OPTS } };
 }
 
 interface FormData {
@@ -237,7 +252,7 @@ export default function FormFamilleAccueil() {
                 <label className="form-label">Type de logement *</label>
                 <select className={`form-input ${errors.type_logement ? 'border-red-400' : ''}`} value={data.type_logement} onChange={e => set('type_logement', e.target.value)}>
                   <option value="">Choisir...</option>
-                  <option>Maison</option><option>Appartement</option><option>Autre</option>
+                  {cfg.options.type_logement.map(o => <option key={o}>{o}</option>)}
                 </select>
                 <Err msg={errors.type_logement} />
               </div>
@@ -245,7 +260,7 @@ export default function FormFamilleAccueil() {
                 <label className="form-label">Jardin / extérieur *</label>
                 <select className={`form-input ${errors.jardin ? 'border-red-400' : ''}`} value={data.jardin} onChange={e => set('jardin', e.target.value)}>
                   <option value="">Choisir...</option>
-                  <option>Oui, clôturé</option><option>Oui, non clôturé</option><option>Non</option>
+                  {cfg.options.jardin.map(o => <option key={o}>{o}</option>)}
                 </select>
                 <Err msg={errors.jardin} />
               </div>
@@ -257,9 +272,7 @@ export default function FormFamilleAccueil() {
                 <label className="form-label">Statut *</label>
                 <select className={`form-input ${errors.statut_occupant ? 'border-red-400' : ''}`} value={data.statut_occupant} onChange={e => set('statut_occupant', e.target.value)}>
                   <option value="">Choisir...</option>
-                  <option>Propriétaire</option>
-                  <option>Locataire avec autorisation</option>
-                  <option>Locataire (à vérifier)</option>
+                  {cfg.options.statut_occupant.map(o => <option key={o}>{o}</option>)}
                 </select>
                 <Err msg={errors.statut_occupant} />
               </div>
@@ -275,7 +288,7 @@ export default function FormFamilleAccueil() {
                 <label className="form-label">Situation familiale *</label>
                 <select className={`form-input ${errors.statut_familial ? 'border-red-400' : ''}`} value={data.statut_familial} onChange={e => set('statut_familial', e.target.value)}>
                   <option value="">Choisir...</option>
-                  <option>Seul(e)</option><option>En couple</option><option>Famille</option>
+                  {cfg.options.statut_familial.map(o => <option key={o}>{o}</option>)}
                 </select>
                 <Err msg={errors.statut_familial} />
               </div>
@@ -341,8 +354,7 @@ export default function FormFamilleAccueil() {
               <label className="form-label">Urgences acceptées (accueil immédiat) ? *</label>
               <select className={`form-input ${errors.urgences ? 'border-red-400' : ''}`} value={data.urgences} onChange={e => set('urgences', e.target.value)}>
                 <option value="">Choisir...</option>
-                <option>Oui, selon disponibilités</option>
-                <option>Non</option>
+                {cfg.options.urgences.map(o => <option key={o}>{o}</option>)}
               </select>
               <Err msg={errors.urgences} />
             </div>

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Heart, Users, ArrowRight, ChevronDown, Newspaper, Check } from 'lucide-react';
+import { ArrowRight, ChevronDown, Newspaper, Check } from 'lucide-react';
 import AnimalCard from '../components/AnimalCard';
 import { useAnimaux, useConfig } from '../hooks/useData';
 import { usePageContent } from '../hooks/usePageContent';

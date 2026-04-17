@@ -1,60 +1,209 @@
 {
+  "accueil": {
+    "hero_title": "Chaque animal mérite un foyer",
+    "hero_subtitle": "Domaine de Fuego accompagne chiens, chats et autres animaux vers l'adoption responsable.",
+    "hero_badge": "Association loi 1901 · Ardèche & Vaucluse",
+    "hero_bg_url": "/adoption.png",
+    "hero_cta_primary_text": "Voir les animaux",
+    "hero_cta_primary_url": "/animaux",
+    "hero_cta_primary_color": "coral",
+    "hero_cta_secondary_text": "Faire un don",
+    "hero_cta_secondary_url": "/faire-un-don",
+    "show_stats": true,
+    "show_how_it_works": true,
+    "how_title": "Comment adopter ?",
+    "how_subtitle": "Un processus simple et bienveillant en 3 étapes",
+    "how_cta_label": "Déposer une candidature",
+    "how_cta_url": "/adopter",
+    "etapes": [
+      {
+        "num": "01",
+        "titre": "Candidature",
+        "desc": "Remplissez notre formulaire en ligne. Présentez-vous, votre logement et votre projet de vie avec un animal."
+      },
+      {
+        "num": "02",
+        "titre": "Entretien",
+        "desc": "Un bénévole de l'association vous contacte pour échanger et vérifier la compatibilité avec l'animal."
+      },
+      {
+        "num": "03",
+        "titre": "Adoption",
+        "desc": "Signature du contrat d'adoption, versement de la participation aux frais, et votre nouveau compagnon rentre à la maison !"
+      }
+    ],
+    "show_latest_animals": true,
+    "section_title": "Derniers arrivants",
+    "section_subtitle": "Ces animaux attendent leur famille idéale",
+    "blocks": [
+      {
+        "id": "default-blog-block",
+        "type": "featured-article",
+        "data": {
+          "auto": "true",
+          "section_title": "Dernière actualité",
+          "cta_text": "Lire l'article",
+          "fallback_url": "/actualites"
+        }
+      }
+    ],
+    "show_temoignages": false,
+    "temoignages_title": "Ils ont adopté",
+    "temoignages_subtitle": "Les témoignages de nos familles adoptantes",
+    "temoignages": [
+      {
+        "texte": "Nous avons adopté Rex il y a 6 mois et c'est le plus beau cadeau qu'on se soit fait. L'équipe de Domaine de Fuego nous a accompagnés avec beaucoup de professionnalisme et de bienveillance.",
+        "auteur": "Marie & Julien",
+        "lieu": "Lyon (69)",
+        "photo_url": "",
+        "animal": "Rex"
+      },
+      {
+        "texte": "Lola a rejoint notre famille et elle s'est intégrée en quelques jours seulement. Merci à l'association pour leur suivi post-adoption, c'est vraiment rassurant.",
+        "auteur": "Pascal",
+        "lieu": "Montpellier (34)",
+        "photo_url": "",
+        "animal": "Lola"
+      },
+      {
+        "texte": "J'avais des craintes avec mes jeunes enfants mais l'association a très bien évalué la compatibilité. Mia adore nos enfants, c'est magique !",
+        "auteur": "Sandrine",
+        "lieu": "Paris (75)",
+        "photo_url": "",
+        "animal": "Mia"
+      }
+    ],
+    "footer_cta_title": "Prêt à changer une vie ?",
+    "footer_cta_text": "Devenez adoptant ou famille d'accueil — chaque geste compte pour nos animaux.",
+    "footer_cta_label": "Adopter un animal",
+    "footer_cta_url": "/animaux",
+    "cta_btn2_label": "Devenir famille d'accueil",
+    "cta_btn2_url": "/famille-accueil"
+  },
   "presentation": {
     "hero_title": "Notre association",
-    "hero_subtitle": "Découvrez qui nous sommes, notre mission et nos valeurs.",
+    "hero_subtitle": "Une mission claire, un engagement humain et un héritage : donner une voix à ceux qui n'en ont pas.",
     "cta_label": "Adopter un animal",
     "cta_url": "/animaux",
     "mission_title": "Notre mission",
-    "mission_text": "<p><strong>L'origine du projet</strong> Le Domaine de Fuego est né d'une conviction profonde : aucun animal n'est un déchet, chaque vie mérite une seconde chance. Fondée pour honorer la mémoire de Fuego, notre association transforme la détresse en parcours de vie sécurisés.</p><p><strong>Notre action concrète</strong> Nous ne sommes pas un refuge traditionnel. Nous fonctionnons grâce à un réseau de <strong>familles d'accueil</strong> qui offrent un foyer temporaire et une observation réelle du comportement de l'animal. Cette étape est la clé pour garantir une adoption réussie et durable.</p><p><strong>L'adoption raisonnée</strong> Pour nous, placer un animal n'est pas une finalité, c'est le début d'un engagement. Nous accompagnons chaque binôme avant, pendant et après l'adoption pour assurer une intégration sereine dans le respect du bien-être animal.</p>",
+    "mission_text": "<p><strong>L'origine du projet</strong></p><p>Le Domaine de Fuego est né d'une conviction profonde : aucun animal n'est un déchet, chaque vie mérite une seconde chance. Fondée pour honorer la mémoire de Fuego, notre association transforme la détresse en parcours de vie sécurisés.</p><p></p><p><strong>Notre action concrète</strong></p><p>Nous ne sommes pas un refuge traditionnel. Nous fonctionnons grâce à un réseau de <strong>familles d'accueil</strong> qui offrent un foyer temporaire et une observation réelle du comportement de l'animal. Cette étape est la clé pour garantir une adoption réussie et durable.</p><p></p><p><strong>L'adoption raisonnée</strong></p><p>Pour nous, placer un animal n'est pas une finalité, c'est le début d'un engagement. Nous accompagnons chaque binôme avant, pendant et après l'adoption pour assurer une intégration sereine dans le respect du bien-être animal.</p>",
     "valeurs_title": "Nos valeurs",
     "valeurs": [
       {
-        "titre": "Bienveillance",
-        "description": "Chaque animal est traité avec respect, douceur et professionnalisme. Nous refusons toute méthode coercitive."
+        "titre": "Éthique & Respect",
+        "description": "Nous ne cachons rien. Caractère, besoins spécifiques, limites : nous décryptons chaque profil en famille d'accueil pour vous garantir une rencontre sans mauvaises surprises."
       },
       {
-        "titre": "Transparence",
-        "description": "Nous sommes honnêtes sur le profil de chaque animal, ses besoins et son histoire pour garantir des adoptions durables."
+        "titre": "Vérité du terrain",
+        "description": "Nous ne cachons rien. Caractère, besoins spécifiques, limites : nous décryptons chaque profil en famille d'accueil pour vous garantir une rencontre sans mauvaises surprises."
       },
       {
-        "titre": "Engagement",
-        "description": "Nous accompagnons les adoptants sur le long terme. Une adoption n'est jamais une transaction — c'est un engagement mutuel."
+        "titre": "Suivi engagé",
+        "description": "L’adoption n’est pas une transaction, c’est le début d’un lien. Nous restons à vos côtés bien après la signature pour conseiller, guider et sécuriser l’intégration de votre compagnon."
       }
     ],
     "show_equipe": true,
     "equipe_title": "Notre équipe",
     "equipe": [
       {
-        "nom": "Sophie Martin",
+        "nom": "Coraline RICOU",
         "role": "Fondatrice & Présidente",
-        "photo": ""
+        "photo": "https://raw.githubusercontent.com/nowelconsulting-pixel/domainedefuego/ce07c5be0aca5dda9c7dab07e3b0c722bcfc6ecd/public/coralinevpro.jpeg"
       },
       {
-        "nom": "Thomas Durand",
-        "role": "Responsable des adoptions",
-        "photo": ""
+        "nom": "Anaïs FOURRIER",
+        "role": "Co-Fondatrice & Secrétaire générale",
+        "photo": "https://raw.githubusercontent.com/nowelconsulting-pixel/domainedefuego/ce07c5be0aca5dda9c7dab07e3b0c722bcfc6ecd/public/anaisvpro.png"
       },
       {
-        "nom": "Camille Bernard",
-        "role": "Coordinatrice familles d'accueil",
+        "nom": "Françoise RICOU",
+        "role": "Trésorière",
         "photo": ""
       }
     ],
     "show_partenaires": true,
     "partenaires_title": "Nos partenaires",
-    "partenaires": [
+    "partenaires": []
+  },
+  "famille-accueil": {
+    "hero_title": "Devenir famille d'accueil",
+    "hero_subtitle": "En devenant famille d'accueil, vous offrez un foyer temporaire à un animal en attente d'adoption. Un geste simple, un impact immense.",
+    "cta_label": "Adopter un animal",
+    "cta_url": "/animaux",
+    "avantages_title": "Pourquoi devenir famille d'accueil ?",
+    "avantages": [
       {
-        "nom": "Mairie d'Aubenas"
+        "titre": "Chez vous",
+        "desc": "L'animal vit dans votre foyer et s'intègre à votre quotidien dans un environnement chaleureux."
       },
       {
-        "nom": "Clinique vétérinaire du Plateau"
+        "titre": "Lien unique",
+        "desc": "Vous créez un lien fort avec l'animal le temps de son accueil, une expérience profondément humaine."
       },
       {
-        "nom": "Fondation 30 Millions d'Amis"
-      },
-      {
-        "nom": "SPA de l'Ardèche"
+        "titre": "À votre rythme",
+        "desc": "Vous choisissez la durée et le type d'animal selon vos disponibilités et votre mode de vie."
       }
-    ]
+    ],
+    "show_faq": true,
+    "faq_title": "Questions fréquentes",
+    "faq": [
+      {
+        "q": "Est-ce que je peux adopter l'animal que j'accueille ?",
+        "r": "Oui, sous certaines conditions. Les familles d'accueil qui souhaitent adopter l'animal dont elles s'occupent sont souvent prioritaires, après validation par l'association."
+      },
+      {
+        "q": "Combien de temps dure un accueil ?",
+        "r": "Cela dépend des situations. Un accueil peut durer quelques jours (urgence) ou plusieurs semaines/mois. Vous êtes consulté au préalable et vous restez libre d'accepter ou non."
+      },
+      {
+        "q": "Puis-je accueillir si j'ai déjà un animal ?",
+        "r": "Oui, dans la majorité des cas. Nous veillons à la compatibilité entre les animaux. Un test de rencontre est toujours organisé avant de confirmer l'accueil."
+      }
+    ],
+    "show_form": true,
+    "form_title": "Candidature famille d'accueil"
+  },
+  "faire-un-don": {
+    "hero_title": "Faire un don",
+    "hero_subtitle": "Votre générosité permet à des centaines d'animaux de trouver une famille chaque année.",
+    "helloasso_url": "",
+    "intro_title": "Soutenez notre action",
+    "intro_text": "Domaine de Fuego fonctionne grâce aux dons de particuliers comme vous. Aucune subvention publique ne vient financer nos actions — c'est votre générosité qui permet à des centaines d'animaux de trouver une famille chaque année.\n\nVotre don, qu'il soit ponctuel ou mensuel, a un impact direct et concret sur la vie des animaux que nous prenons en charge.",
+    "helloasso_btn_label": "Faire un don via HelloAsso",
+    "helloasso_note": "HelloAsso est une plateforme sécurisée. 100% de votre don va à l'association (aucune commission).",
+    "show_utilisations": true,
+    "utilisations_title": "À quoi sert votre don ?",
+    "utilisations": [
+      {
+        "titre": "Soins vétérinaires",
+        "description": "Vaccinations, stérilisations, traitements médicaux d'urgence pour les animaux en détresse.",
+        "icone": "Heart"
+      },
+      {
+        "titre": "Hébergement & nourriture",
+        "description": "Prise en charge complète des animaux pendant leur séjour au refuge.",
+        "icone": "Home"
+      },
+      {
+        "titre": "Sauvetages & transport",
+        "description": "Interventions d'urgence, rapatriements et transports vers les familles d'accueil partout en France.",
+        "icone": "Truck"
+      }
+    ],
+    "show_fiscal": true,
+    "fiscal_title": "Réduction fiscale",
+    "fiscal_text": "En tant qu'association loi 1901 reconnue d'intérêt général, vos dons peuvent ouvrir droit à une réduction d'impôt de 66% dans la limite de 20% du revenu imposable. Un reçu fiscal vous sera envoyé par HelloAsso."
+  },
+  "mentions-legales": {
+    "hero_title": "Mentions légales",
+    "editeur_title": "Éditeur du site",
+    "editeur_content": "<p>Domaine de Fuego Association loi 1901</p><p>Siège social : 24 rue de la Ravinière 95520 Osny, France</p><p>Email : contact@domainedefuego.fr</p>",
+    "hebergement_title": "Hébergement",
+    "hebergement_content": "Ce site est hébergé par Hostinger\nwww.hostinger.fr",
+    "donnees_title": "Données personnelles",
+    "donnees_content": "Les informations recueillies via les formulaires de ce site sont utilisées uniquement dans le cadre du traitement de vos candidatures d'adoption ou de famille d'accueil. Elles ne sont pas transmises à des tiers. Conformément à la loi Informatique et Libertés du 6 janvier 1978 et au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données en nous contactant à contact@domainedefuego.fr.",
+    "cookies_title": "Cookies",
+    "cookies_content": "Ce site utilise le localStorage de votre navigateur pour sauvegarder vos préférences et les données de l'administration. Aucun cookie de tracking tiers n'est utilisé."
   }
 }

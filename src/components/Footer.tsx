@@ -46,7 +46,7 @@ export default function Footer() {
 
           {/* Col 1 — Brand */}
           <div>
-            <Logo className="brightness-0 invert" size={44} />
+            <Logo className="brightness-0 invert" />
             <p className="mt-4 text-sm leading-relaxed italic" style={{ color: 'rgba(255,255,255,0.35)' }}>
               Parce que chaque animal mérite une histoire.
             </p>

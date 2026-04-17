@@ -36,7 +36,7 @@ export default function AdminLogin() {
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
       <div className="bg-white rounded-2xl shadow-lg p-10 w-full max-w-md">
         <div className="text-center mb-8">
-          <Logo className="justify-center" size={40} />
+          <Logo className="justify-center" />
           <h1 className="text-2xl font-bold text-gray-900 mt-4 mb-1">Administration</h1>
           <p className="text-gray-500 text-sm">Accès réservé aux membres de l'association</p>
         </div>

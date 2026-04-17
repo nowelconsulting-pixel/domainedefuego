@@ -1,11 +1,6 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 
-function ScrollToTop() {
-  const { pathname } = useLocation();
-  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
-  return null;
-}
 import Layout from './components/Layout';
 import MaintenancePage from './pages/MaintenancePage';
 import Accueil from './pages/Accueil';
@@ -37,24 +32,46 @@ import AdminRoles from './pages/admin/AdminRoles';
 import AdminCandidatures from './pages/admin/AdminCandidatures';
 import AdminFormulaires from './pages/admin/AdminFormulaires';
 
-function App() {
+function readMaintenance() {
   const stored = localStorage.getItem('site_maintenance');
-  const isMaintenance = stored !== null
+  return stored !== null
     ? stored === 'true'
     : import.meta.env.VITE_MAINTENANCE_MODE === 'true';
-  const hasPreviewAccess = localStorage.getItem('preview_access') === 'true';
+}
 
-  if (isMaintenance && !hasPreviewAccess && !window.location.pathname.startsWith('/admin')) {
-    return (
-      <BrowserRouter>
-        <ScrollToTop />
-        <MaintenancePage />
-      </BrowserRouter>
-    );
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
+
+function AppContent() {
+  const { pathname } = useLocation();
+  const [isMaintenance, setIsMaintenance] = useState(readMaintenance);
+  const [hasPreviewAccess, setHasPreviewAccess] = useState(
+    () => localStorage.getItem('preview_access') === 'true',
+  );
+
+  useEffect(() => {
+    const sync = () => {
+      setIsMaintenance(readMaintenance());
+      setHasPreviewAccess(localStorage.getItem('preview_access') === 'true');
+    };
+    // storage fires in OTHER tabs; maintenance_changed fires in the SAME tab
+    window.addEventListener('storage', sync);
+    window.addEventListener('maintenance_changed', sync);
+    return () => {
+      window.removeEventListener('storage', sync);
+      window.removeEventListener('maintenance_changed', sync);
+    };
+  }, []);
+
+  if (isMaintenance && !hasPreviewAccess && !pathname.startsWith('/admin')) {
+    return <MaintenancePage />;
   }
 
   return (
-    <BrowserRouter>
+    <>
       <ScrollToTop />
       <Routes>
         {/* Public site */}
@@ -67,13 +84,13 @@ function App() {
           <Route path="/famille-accueil"    element={<FamilleAccueil />} />
           <Route path="/faire-un-don"       element={<FaireUnDon />} />
           <Route path="/contact"            element={<Contact />} />
-          <Route path="/devenir-membre"      element={<DevenirMembre />} />
+          <Route path="/devenir-membre"     element={<DevenirMembre />} />
           <Route path="/mentions-legales"   element={<MentionsLegales />} />
           <Route path="/actualites"         element={<Blog />} />
           <Route path="/actualites/:slug"   element={<ArticleDetail />} />
           <Route path="/blog"               element={<Blog />} />
           <Route path="/blog/:slug"         element={<ArticleDetail />} />
-          <Route path="/formulaire/:slug"    element={<FormulairePage />} />
+          <Route path="/formulaire/:slug"   element={<FormulairePage />} />
           <Route path="/:slug"              element={<CustomPage />} />
         </Route>
 
@@ -81,23 +98,29 @@ function App() {
         <Route path="/admin">
           <Route index element={<AdminLogin />} />
           <Route element={<AdminLayout />}>
-            <Route path="dashboard"              element={<AdminDashboard />} />
-            <Route path="animaux"                element={<AdminAnimaux />} />
-            <Route path="animaux/:action"        element={<AdminAnimaux />} />
-            <Route path="pages"                  element={<AdminPageManager />} />
-            <Route path="pages/edit/:id"         element={<AdminPageEditor />} />
-            <Route path="blog"                   element={<AdminBlog />} />
-            <Route path="blog/edit/:id"          element={<AdminArticleEditor />} />
-            <Route path="config"                 element={<AdminConfig />} />
-            <Route path="users"                  element={<AdminUsers />} />
-            <Route path="roles"                  element={<AdminRoles />} />
-            <Route path="candidatures"           element={<AdminCandidatures />} />
-            <Route path="formulaires"            element={<AdminFormulaires />} />
+            <Route path="dashboard"     element={<AdminDashboard />} />
+            <Route path="animaux"       element={<AdminAnimaux />} />
+            <Route path="animaux/:action" element={<AdminAnimaux />} />
+            <Route path="pages"         element={<AdminPageManager />} />
+            <Route path="pages/edit/:id" element={<AdminPageEditor />} />
+            <Route path="blog"          element={<AdminBlog />} />
+            <Route path="blog/edit/:id" element={<AdminArticleEditor />} />
+            <Route path="config"        element={<AdminConfig />} />
+            <Route path="users"         element={<AdminUsers />} />
+            <Route path="roles"         element={<AdminRoles />} />
+            <Route path="candidatures"  element={<AdminCandidatures />} />
+            <Route path="formulaires"   element={<AdminFormulaires />} />
           </Route>
         </Route>
       </Routes>
-    </BrowserRouter>
+    </>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
+  );
+}

@@ -8,10 +8,12 @@ interface MaintenanceConfig {
   title: string;
   subtitle: string;
   show_don_btn: boolean;
+  preview_code: string;
 }
 
+const DEFAULT_PREVIEW_CODE = 'Bigdodo33$';
+
 function loadMaintenanceConfig(): MaintenanceConfig {
-  // If site_maintenance was never explicitly set, initialize from the env var
   if (localStorage.getItem('site_maintenance') === null) {
     localStorage.setItem(
       'site_maintenance',
@@ -28,6 +30,7 @@ function loadMaintenanceConfig(): MaintenanceConfig {
         title:        s.title        || 'Le site arrive bientôt 🐾',
         subtitle:     s.subtitle     || "Nous préparons actuellement la plateforme d'adoption.\nMerci pour votre patience.",
         show_don_btn: s.show_don_btn ?? true,
+        preview_code: s.preview_code || DEFAULT_PREVIEW_CODE,
       };
     }
   } catch { /**/ }
@@ -36,12 +39,14 @@ function loadMaintenanceConfig(): MaintenanceConfig {
     title: 'Le site arrive bientôt 🐾',
     subtitle: "Nous préparons actuellement la plateforme d'adoption.\nMerci pour votre patience.",
     show_don_btn: true,
+    preview_code: DEFAULT_PREVIEW_CODE,
   };
 }
 
 function saveMaintenanceConfig(mc: MaintenanceConfig) {
   localStorage.setItem('maintenance_config', JSON.stringify(mc));
   localStorage.setItem('site_maintenance', mc.enabled ? 'true' : 'false');
+  window.dispatchEvent(new Event('maintenance_changed'));
 }
 
 // ─── Field defined OUTSIDE component to prevent remount on re-render ─────────
@@ -332,6 +337,13 @@ export default function AdminConfig() {
               onChange={e => setMc(p => ({ ...p, show_don_btn: e.target.checked }))}
               className="rounded border-gray-300" />
             <label htmlFor="show_don_btn" className="text-sm text-gray-700">Afficher le bouton "Faire un don"</label>
+          </div>
+          <div>
+            <label className="form-label">Code d'accès preview</label>
+            <input className="form-input" type="text" value={mc.preview_code}
+              onChange={e => setMc(p => ({ ...p, preview_code: e.target.value }))}
+              placeholder="Ex: MonCode2024!" />
+            <p className="text-xs text-gray-400 mt-1">Ce code permet à certaines personnes d'accéder au site même en mode maintenance.</p>
           </div>
           <button onClick={handleSaveMaintenance}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-white text-sm transition-all ${mcSaved ? 'bg-green-500' : 'bg-amber-500 hover:bg-amber-600'}`}>

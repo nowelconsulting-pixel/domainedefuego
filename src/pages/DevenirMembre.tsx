@@ -12,15 +12,25 @@ type AvaItem = { text: string };
 export default function DevenirMembre() {
   const pc = usePageContent('devenir-membre');
 
-  const heroTitle    = pc.hero_title    as string;
-  const heroSubtitle = pc.hero_subtitle as string;
-  const argTitle     = pc.argumentaire_title as string;
-  const argItems     = (pc.argumentaire as ArgItem[]) ?? [];
-  const avaTitle     = pc.avantages_title    as string;
-  const avaSubtitle  = pc.avantages_subtitle as string;
-  const avaItems     = (pc.avantages as AvaItem[]) ?? [];
-  const formTitle    = pc.form_title    as string;
-  const formSubtitle = pc.form_subtitle as string;
+  const heroTitle    = (pc.hero_title    as string) || 'Porter la voix des oubliés';
+  const heroSubtitle = (pc.hero_subtitle as string) || "En adhérant à Domaine de Fuego, vous rejoignez une communauté engagée pour offrir une seconde chance aux animaux abandonnés.";
+  const argTitle     = (pc.argumentaire_title as string) || 'Pourquoi adhérer ?';
+  const argItems     = (pc.argumentaire as ArgItem[]) || [
+    { titre: 'Indépendance des sauvetages', description: "Votre adhésion nous permet d'agir librement et rapidement pour secourir les animaux en détresse, sans compromis.", icone: 'Shield' },
+    { titre: 'Excellence des soins',        description: "Grâce à vos cotisations, chaque animal bénéficie de soins vétérinaires adaptés et d'un suivi personnalisé.", icone: 'Heart' },
+    { titre: 'Changer les mentalités',      description: "Ensemble, nous sensibilisons le public à la cause animale et construisons un avenir plus respectueux de la vie.", icone: 'Star' },
+  ];
+  const avaTitle     = (pc.avantages_title    as string) || 'Les avantages membres';
+  const avaSubtitle  = (pc.avantages_subtitle as string) || "En rejoignant l'association, vous bénéficiez de droits et d'avantages concrets.";
+  const avaItems     = (pc.avantages as AvaItem[]) || [
+    { text: 'Droit de vote en Assemblée Générale' },
+    { text: 'Newsletter exclusive réservée aux membres' },
+    { text: 'Déduction fiscale de 66 % sur votre cotisation' },
+    { text: 'Accès aux événements et rencontres associatives' },
+    { text: "Participation active aux décisions de l'association" },
+  ];
+  const formTitle    = (pc.form_title    as string) || "Rejoignez-nous";
+  const formSubtitle = (pc.form_subtitle as string) || "Remplissez ce formulaire pour devenir membre de l'association. Nous vous répondrons sous 48 h pour finaliser votre adhésion.";
   const showPrice    = pc.show_price !== false;
   const price        = (pc.adhesion_price as string) || '15 € / an';
 

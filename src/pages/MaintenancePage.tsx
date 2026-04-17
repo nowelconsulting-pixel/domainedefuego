@@ -4,12 +4,10 @@ import { Mail } from 'lucide-react';
 import { useConfig } from '../hooks/useData';
 import { FacebookIcon, InstagramIcon, LinkedInIcon } from '../components/SocialIcons';
 
-const SECRET_CODE = 'Bigdodo33$';
-
 function loadMaintenanceContent() {
   try {
     const raw = localStorage.getItem('maintenance_config');
-    if (raw) return JSON.parse(raw) as { title?: string; subtitle?: string; show_don_btn?: boolean };
+    if (raw) return JSON.parse(raw) as { title?: string; subtitle?: string; show_don_btn?: boolean; preview_code?: string };
   } catch { /**/ }
   return {};
 }
@@ -17,14 +15,15 @@ function loadMaintenanceContent() {
 export default function MaintenancePage() {
   const { data: config } = useConfig();
   const mc = loadMaintenanceContent();
+  const secretCode = mc.preview_code || 'Bigdodo33$';
   const [showInput, setShowInput] = useState(false);
   const [code, setCode] = useState('');
   const [error, setError] = useState(false);
 
   const handleSubmit = () => {
-    if (code === SECRET_CODE) {
+    if (code === secretCode) {
       localStorage.setItem('preview_access', 'true');
-      window.location.href = '/';
+      window.dispatchEvent(new Event('maintenance_changed'));
     } else {
       setError(true);
       setTimeout(() => setError(false), 2000);

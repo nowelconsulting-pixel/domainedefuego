@@ -2,16 +2,10 @@ import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
 
-const stored = localStorage.getItem('site_maintenance');
-const isMaintenance = stored !== null
-  ? stored === 'true'
-  : import.meta.env.VITE_MAINTENANCE_MODE === 'true';
-const isPreview = isMaintenance && localStorage.getItem('preview_access') === 'true';
-
 function PreviewBanner() {
   const quit = () => {
     localStorage.removeItem('preview_access');
-    window.location.reload();
+    window.dispatchEvent(new Event('maintenance_changed'));
   };
   return (
     <div className="bg-amber-500 text-amber-900 text-xs text-center py-1.5 px-4 flex items-center justify-center gap-3">
@@ -24,6 +18,12 @@ function PreviewBanner() {
 }
 
 export default function Layout() {
+  const stored = localStorage.getItem('site_maintenance');
+  const isMaintenance = stored !== null
+    ? stored === 'true'
+    : import.meta.env.VITE_MAINTENANCE_MODE === 'true';
+  const isPreview = isMaintenance && localStorage.getItem('preview_access') === 'true';
+
   return (
     <div className="flex flex-col min-h-screen">
       {isPreview && <PreviewBanner />}

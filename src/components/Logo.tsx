@@ -9,7 +9,7 @@ export default function Logo({ className = '', size = 44 }: LogoProps) {
       <img
         src="/logo_transparent.png"
         alt="Domaine de Fuego"
-        style={{ height: size, width: 'auto' }}
+        style={{ height: size, width: 'auto', maxWidth: 'none' }}
       />
     </div>
   );

@@ -221,11 +221,12 @@ export function renderBlock(block: Block) {
         <div key={block.id} className="my-8">
           {sectionTitle && <h2 className="text-2xl font-bold text-gray-900 mb-6">{sectionTitle}</h2>}
           <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col md:flex-row">
-            {article.cover_url && (
-              <div className="md:w-2/5 flex-shrink-0">
-                <img src={article.cover_url} alt={article.title} className="w-full h-56 md:h-full object-cover" loading="lazy" />
-              </div>
-            )}
+            <div className="md:w-2/5 flex-shrink-0">
+              {article.cover_url
+                ? <img src={article.cover_url} alt={article.title} className="w-full h-56 md:h-full object-cover" loading="lazy" />
+                : <div className="w-full h-56 md:h-full bg-gray-100" />
+              }
+            </div>
             <div className="p-6 flex flex-col justify-between flex-1">
               <div>
                 {article.published_at && (

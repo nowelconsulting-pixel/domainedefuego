@@ -42,9 +42,6 @@ export default function Accueil() {
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-28 md:pb-36">
           <div className="max-w-3xl mx-auto text-center">
 
-            {/* Accent décoratif */}
-            <div className="w-14 h-[3px] rounded-full bg-nv-amber mx-auto mb-8" />
-
             <h1
               className="font-black text-white whitespace-pre-line mb-7"
               style={{

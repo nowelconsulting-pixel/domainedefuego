@@ -182,7 +182,14 @@ const pageDefaults: Record<string, Record<string, unknown>> = {
 
   'mentions-legales': {
     hero_title: 'Mentions légales',
-    hero_subtitle: '',
+    editeur_title: 'Éditeur du site',
+    editeur_content: "Domaine de Fuego\nAssociation loi 1901\nSiège social : 07200 Aubenas, France\nEmail : contact@domainedefuego.fr",
+    hebergement_title: 'Hébergement',
+    hebergement_content: "Ce site est hébergé par Hostinger\nwww.hostinger.fr",
+    donnees_title: 'Données personnelles',
+    donnees_content: "Les informations recueillies via les formulaires de ce site sont utilisées uniquement dans le cadre du traitement de vos candidatures d'adoption ou de famille d'accueil. Elles ne sont pas transmises à des tiers. Conformément à la loi Informatique et Libertés du 6 janvier 1978 et au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données en nous contactant à contact@domainedefuego.fr.",
+    cookies_title: 'Cookies',
+    cookies_content: "Ce site utilise le localStorage de votre navigateur pour sauvegarder vos préférences et les données de l'administration. Aucun cookie de tracking tiers n'est utilisé.",
   },
 
   blog: {

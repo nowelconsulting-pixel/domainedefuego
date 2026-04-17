@@ -94,5 +94,6 @@ export const SYSTEM_PAGES: Pick<AdminPage, 'id' | 'title' | 'slug' | 'menu_order
   { id: 'sys-animaux',        title: 'Nos animaux',        slug: 'animaux',         menu_order: 10, parent_id: null,              system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
   { id: 'sys-adopter',        title: 'Adopter',            slug: 'adopter',         menu_order: 20, parent_id: null,              system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
   { id: 'sys-fa',             title: "Famille d'accueil",  slug: 'famille-accueil', menu_order: 30, parent_id: null,              system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
-  { id: 'sys-contact',        title: 'Contact',            slug: 'contact',         menu_order: 50, parent_id: null,              system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
+  { id: 'sys-contact',        title: 'Contact',            slug: 'contact',         menu_order: 50,  parent_id: null, system: true, status: 'published', show_in_nav: true,  show_in_footer: true  },
+  { id: 'sys-mentions-legales', title: 'Mentions légales', slug: 'mentions-legales', menu_order: 100, parent_id: null, system: true, status: 'published', show_in_nav: false, show_in_footer: true  },
 ];

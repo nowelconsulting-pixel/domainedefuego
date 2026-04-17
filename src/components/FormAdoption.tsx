@@ -245,7 +245,7 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
                 <label className="form-label">Type de logement *</label>
                 <select className={`form-input ${errors.type_logement ? 'border-red-400' : ''}`} value={data.type_logement} onChange={e => set('type_logement', e.target.value)}>
                   <option value="">Choisir...</option>
-                  {cfg.options.type_logement.map(o => <option key={o}>{o}</option>)}
+                  {cfg.options.type_logement.map((o: string) => <option key={o}>{o}</option>)}
                 </select>
                 <Err msg={errors.type_logement} />
               </div>
@@ -253,7 +253,7 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
                 <label className="form-label">Jardin / extérieur *</label>
                 <select className={`form-input ${errors.jardin ? 'border-red-400' : ''}`} value={data.jardin} onChange={e => set('jardin', e.target.value)}>
                   <option value="">Choisir...</option>
-                  {cfg.options.jardin.map(o => <option key={o}>{o}</option>)}
+                  {cfg.options.jardin.map((o: string) => <option key={o}>{o}</option>)}
                 </select>
                 <Err msg={errors.jardin} />
               </div>
@@ -265,7 +265,7 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
                 <label className="form-label">Statut *</label>
                 <select className={`form-input ${errors.statut_occupant ? 'border-red-400' : ''}`} value={data.statut_occupant} onChange={e => set('statut_occupant', e.target.value)}>
                   <option value="">Choisir...</option>
-                  {cfg.options.statut_occupant.map(o => <option key={o}>{o}</option>)}
+                  {cfg.options.statut_occupant.map((o: string) => <option key={o}>{o}</option>)}
                 </select>
                 <Err msg={errors.statut_occupant} />
               </div>
@@ -282,7 +282,7 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
                 <label className="form-label">Situation familiale *</label>
                 <select className={`form-input ${errors.statut_familial ? 'border-red-400' : ''}`} value={data.statut_familial} onChange={e => set('statut_familial', e.target.value)}>
                   <option value="">Choisir...</option>
-                  {cfg.options.statut_familial.map(o => <option key={o}>{o}</option>)}
+                  {cfg.options.statut_familial.map((o: string) => <option key={o}>{o}</option>)}
                 </select>
                 <Err msg={errors.statut_familial} />
               </div>
@@ -317,7 +317,7 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
               <label className="form-label">Combien d'heures l'animal serait-il seul par jour ? *</label>
               <select className={`form-input ${errors.heures_seul ? 'border-red-400' : ''}`} value={data.heures_seul} onChange={e => set('heures_seul', e.target.value)}>
                 <option value="">Choisir...</option>
-                {cfg.options.heures_seul.map(o => <option key={o}>{o}</option>)}
+                {cfg.options.heures_seul.map((o: string) => <option key={o}>{o}</option>)}
               </select>
               <Err msg={errors.heures_seul} />
             </div>

@@ -1,7 +1,7 @@
 {
   "accueil": {
     "hero_title": "Chaque animal mérite un foyer",
-    "hero_subtitle": "Domaine de Fuego accompagne chiens, chats et autres animaux vers l'adoption responsable depuis 2016.",
+    "hero_subtitle": "Domaine de Fuego accompagne chiens, chats et autres animaux vers l'adoption responsable.",
     "etapes": [
       { "num": "01", "titre": "Candidature", "desc": "Remplissez notre formulaire en ligne. Présentez-vous, votre logement et votre projet de vie avec un animal." },
       { "num": "02", "titre": "Entretien",   "desc": "Un bénévole de l'association vous contacte pour échanger et vérifier la compatibilité avec l'animal." },

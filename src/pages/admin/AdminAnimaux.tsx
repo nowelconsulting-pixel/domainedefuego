@@ -284,7 +284,13 @@ export default function AdminAnimaux() {
   };
 
   const exportData = () => {
-    const blob = new Blob([JSON.stringify(animaux, null, 2)], { type: 'application/json' });
+    const resolveLocal = (u: string) =>
+      u.startsWith('local:') ? (localStorage.getItem(u.slice('local:'.length)) ?? '') : u;
+    const resolved = (animaux ?? []).map(a => ({
+      ...a,
+      photos: a.photos.map(resolveLocal),
+    }));
+    const blob = new Blob([JSON.stringify(resolved, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a'); a.href = url; a.download = 'animaux.json'; a.click();
     URL.revokeObjectURL(url);

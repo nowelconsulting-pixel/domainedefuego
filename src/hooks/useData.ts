@@ -12,23 +12,29 @@ function useJsonData<T>(localStorageKey: string, url: string) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // localStorage first (admin edits, offline)
-    const stored = localStorage.getItem(localStorageKey);
-    if (stored) {
-      try {
-        setData(JSON.parse(stored));
-        setLoading(false);
-        return;
-      } catch { /* fall through */ }
-    }
-    // Fallback: server JSON
-    fetch(url)
-      .then(res => {
-        if (!res.ok) throw new Error('Network error');
-        return res.json();
-      })
-      .then((json: T) => { setData(json); setLoading(false); })
-      .catch(err => { setError(err.message); setLoading(false); });
+    const load = () => {
+      const stored = localStorage.getItem(localStorageKey);
+      if (stored) {
+        try { setData(JSON.parse(stored)); setLoading(false); return; }
+        catch { /* fall through */ }
+      }
+      fetch(url)
+        .then(res => { if (!res.ok) throw new Error('Network error'); return res.json(); })
+        .then((json: T) => { setData(json); setLoading(false); })
+        .catch(err => { setError(err.message); setLoading(false); });
+    };
+
+    load();
+
+    // Refresh when another tab (or admin) updates this key in localStorage
+    const onStorage = (e: StorageEvent) => {
+      if (e.key !== localStorageKey) return;
+      if (e.newValue) {
+        try { setData(JSON.parse(e.newValue)); } catch { /* ignore */ }
+      }
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
   }, [localStorageKey, url]);
 
   const save = (newData: T) => {

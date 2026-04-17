@@ -30,9 +30,15 @@ export default function FaireUnDon() {
           <h2 className="text-2xl font-extrabold text-forest mb-6">
             {(pc.intro_title as string) || 'Soutenez notre action'}
           </h2>
-          {((pc.intro_text as string) || '').split('\n\n').map((p, i) => (
-            <p key={i} className="text-muted leading-relaxed mb-4 text-lg">{p}</p>
-          ))}
+          {(() => {
+            const text = (pc.intro_text as string) || '';
+            if (text.startsWith('<')) {
+              return <div className="prose prose-gray max-w-none text-lg [&_p]:text-muted [&_p]:leading-relaxed [&_p]:mb-4" dangerouslySetInnerHTML={{ __html: text }} />;
+            }
+            return text.split('\n\n').map((p, i) => (
+              <p key={i} className="text-muted leading-relaxed mb-4 text-lg">{p}</p>
+            ));
+          })()}
           <div className="mt-8">
             <a
               href={(pc.helloasso_url as string) || config?.helloasso_url || '#'}

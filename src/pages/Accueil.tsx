@@ -34,7 +34,7 @@ export default function Accueil() {
         <div className="absolute inset-0" style={{ backgroundImage: `url(${heroBg})`, backgroundSize: 'cover', backgroundPosition: 'center 30%' }} />
         <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(15,20,17,0.93) 0%, rgba(15,20,17,0.60) 50%, rgba(15,20,17,0.15) 100%)' }} />
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 md:pb-28">
-          <div className="max-w-2xl ml-auto text-center">
+          <div className="max-w-2xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-6 text-[11px] font-extrabold uppercase tracking-widest" style={{ background: 'rgba(226,169,79,0.18)', color: '#E2A94F' }}>
               🤍 Association de protection animale - Val d'Oise
             </div>

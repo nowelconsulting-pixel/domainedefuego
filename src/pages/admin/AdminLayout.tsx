@@ -91,7 +91,7 @@ export default function AdminLayout() {
           {navItem('/admin/pages', FileText, 'Pages')}
           {navItem('/admin/blog', Newspaper, 'Blog')}
           {navItem('/admin/formulaires', ClipboardList, 'Formulaires')}
-          {navItem('/admin/candidatures', Inbox, 'Candidatures', unread)}
+          {navItem('/admin/candidatures', Inbox, 'Messagerie', unread)}
           {navItem('/admin/users', Users, 'Utilisateurs')}
           {session?.role === 'superadmin' && navItem('/admin/roles', Shield, 'Rôles & Permissions')}
           {navItem('/admin/config', Settings, 'Configuration')}

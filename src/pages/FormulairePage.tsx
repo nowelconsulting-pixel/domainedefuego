@@ -133,6 +133,95 @@ export default function FormulairePage() {
   );
 }
 
+export function CustomFormEmbed({ slug }: { slug: string }) {
+  const form = loadCustomForms().find(f => f.slug === slug);
+  const [values, setValues] = useState<Record<string, string | boolean>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  if (!form || !form.active) {
+    return <p className="text-sm text-muted italic">Formulaire indisponible.</p>;
+  }
+
+  const setValue = (id: string, v: string | boolean) => {
+    setValues(p => ({ ...p, [id]: v }));
+    setErrors(p => { const n = { ...p }; delete n[id]; return n; });
+  };
+
+  const validate = () => {
+    const errs: Record<string, string> = {};
+    for (const field of form.fields) {
+      if (field.required) {
+        const v = values[field.id];
+        if (v === undefined || v === '' || v === false) errs[field.id] = 'Champ obligatoire';
+      }
+    }
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validate()) return;
+    setSending(true);
+    try {
+      const firstText  = form.fields.find(f => f.type === 'text');
+      const firstEmail = form.fields.find(f => f.type === 'email');
+      const candidature = {
+        id: `custom_${form.id}_${Date.now()}`,
+        type: `custom_${form.slug}`,
+        form_title: form.title,
+        status: 'nouvelle',
+        nom:   firstText  ? String(values[firstText.id]  ?? 'Anonyme') : 'Anonyme',
+        email: firstEmail ? String(values[firstEmail.id] ?? '')        : '',
+        data:  Object.fromEntries(form.fields.map(f => [f.label, values[f.id] ?? ''])),
+        notes: '', createdAt: new Date().toISOString(),
+      };
+      const existing = JSON.parse(localStorage.getItem('candidatures') || '[]');
+      localStorage.setItem('candidatures', JSON.stringify([candidature, ...existing]));
+      const unread = parseInt(localStorage.getItem('candidatures_unread') || '0');
+      localStorage.setItem('candidatures_unread', String(unread + 1));
+    } catch { /**/ }
+    try {
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_CONTACT,
+        { form_title: form.title, ...values },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+      );
+    } catch { /**/ }
+    setSending(false);
+    setSent(true);
+  };
+
+  if (sent) {
+    return (
+      <div className="text-center py-8">
+        <CheckCircle2 size={40} className="text-nv-green mx-auto mb-3" />
+        <p className="text-forest font-semibold">{form.success_message}</p>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={submit} noValidate className="space-y-5">
+      {form.fields.map(field => (
+        <div key={field.id}>
+          {field.type !== 'checkbox' && (
+            <label className="form-label">{field.label}{field.required ? ' *' : ''}</label>
+          )}
+          {renderField(field, values, setValue)}
+          {errors[field.id] && <p className="text-xs text-red-500 mt-1">{errors[field.id]}</p>}
+        </div>
+      ))}
+      <button type="submit" disabled={sending} className="btn-primary w-full justify-center">
+        {sending ? 'Envoi en cours…' : <><Send size={18} />Envoyer</>}
+      </button>
+    </form>
+  );
+}
+
 function renderField(
   field: { id: string; type: FieldType; placeholder: string; options: string[]; label: string; required: boolean },
   values: Record<string, string | boolean>,

@@ -22,6 +22,7 @@ export const BLOCK_TYPES: { type: BlockType; label: string; emoji: string }[] = 
   { type: 'team',         label: "Liste d'équipe",        emoji: '👥' },
   { type: 'embed',            label: 'Embed HTML',            emoji: '🔧' },
   { type: 'featured-article', label: 'Article mis en avant',  emoji: '📰' },
+  { type: 'form',             label: 'Formulaire',            emoji: '📋' },
 ];
 
 export function newBlock(type: BlockType): Block {
@@ -433,6 +434,32 @@ export function BlockEditor({ block, onChange, onDelete, onMove, isFirst, isLast
         {block.type === 'featured-article' && (
           <FeaturedArticleBlockEditor block={block} onChange={onChange} />
         )}
+
+        {block.type === 'form' && (() => {
+          let customForms: { id: string; title: string; slug: string }[] = [];
+          try {
+            const stored = localStorage.getItem('custom_forms');
+            if (stored) customForms = JSON.parse(stored);
+          } catch { /**/ }
+          return (
+            <div>
+              <label className="form-label">Formulaire à afficher</label>
+              <select
+                className="form-input"
+                value={(block.data.form_type as string) || ''}
+                onChange={e => setData('form_type', e.target.value)}
+              >
+                <option value="">— Choisir un formulaire —</option>
+                <option value="contact">Formulaire de contact</option>
+                <option value="adoption">Formulaire d'adoption</option>
+                <option value="fa">Formulaire famille d'accueil</option>
+                {customForms.map(f => (
+                  <option key={f.id} value={`custom_${f.slug}`}>{f.title}</option>
+                ))}
+              </select>
+            </div>
+          );
+        })()}
       </div>
     </div>
   );

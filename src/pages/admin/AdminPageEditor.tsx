@@ -263,11 +263,9 @@ function ContentEditor({ schema, data, onChange }: ContentEditorProps) {
           return (
             <div key={field.key}>
               <label className="form-label">{field.label}</label>
-              <textarea
-                className="form-input"
-                rows={5}
-                value={(data[field.key] as string) || ''}
-                onChange={e => set(field.key, e.target.value)}
+              <RichTextEditor
+                content={(data[field.key] as string) || ''}
+                onChange={v => set(field.key, v)}
               />
             </div>
           );

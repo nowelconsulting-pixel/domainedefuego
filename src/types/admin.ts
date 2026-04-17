@@ -21,7 +21,7 @@ export interface AdminSession {
 export type BlockType =
   | 'text' | 'image' | 'card' | 'cta' | 'gallery' | 'contact_form'
   | 'faq' | 'testimonial' | 'video' | 'separator' | 'columns2'
-  | 'hero_banner' | 'stat' | 'team' | 'embed' | 'featured-article';
+  | 'hero_banner' | 'stat' | 'team' | 'embed' | 'featured-article' | 'form';
 
 export interface Block {
   id: string;
@@ -48,11 +48,12 @@ export interface AdminPage {
 }
 
 export type CandidatureStatus = 'nouvelle' | 'en_cours' | 'acceptee' | 'refusee';
-export type CandidatureType = 'adoption' | 'fa';
+export type CandidatureType = string;
 
 export interface Candidature {
   id: string;
   type: CandidatureType;
+  form_title?: string;
   status: CandidatureStatus;
   animal?: string;
   nom: string;

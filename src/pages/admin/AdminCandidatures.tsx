@@ -13,16 +13,27 @@ const STATUS_LABELS: Record<CandidatureStatus, string> = {
   nouvelle: 'Nouvelle', en_cours: 'En cours', acceptee: 'Acceptée', refusee: 'Refusée',
 };
 
-const TYPE_LABELS: Record<string, string> = {
-  adoption: 'Adoption',
-  fa: "Famille d'accueil",
-};
+function getTypeLabel(c: Candidature): string {
+  if (c.type === 'adoption') return 'Adoption';
+  if (c.type === 'fa') return "Famille d'accueil";
+  return c.form_title || c.type;
+}
+
+function getTypeBadgeClass(c: Candidature): string {
+  if (c.type === 'adoption') return 'bg-coral-100 text-coral-700';
+  if (c.type === 'fa') return 'bg-blue-100 text-blue-700';
+  return 'bg-purple-100 text-purple-700';
+}
 
 export default function AdminCandidatures() {
   const { candidatures, update, markAllRead } = useCandidatures();
   const [selected, setSelected] = useState<Candidature | null>(null);
   const [filterType, setFilterType]     = useState('Tous');
   const [filterStatus, setFilterStatus] = useState('Tous');
+
+  const typeOptions = Array.from(
+    new Map(candidatures.map(c => [c.type, getTypeLabel(c)])).entries()
+  ).map(([value, label]) => ({ value, label }));
 
   // Mark all read when opening this page
   useState(() => { markAllRead(); });
@@ -40,14 +51,14 @@ export default function AdminCandidatures() {
     const headers = ['Date', 'Type', 'Nom', 'Email', 'Téléphone', 'Animal', 'Statut', 'Notes'];
     const rows = filtered.map(c => [
       new Date(c.createdAt).toLocaleDateString('fr-FR'),
-      TYPE_LABELS[c.type] ?? c.type,
+      getTypeLabel(c),
       c.nom, c.email, c.telephone, c.animal ?? '',
       STATUS_LABELS[c.status], c.notes,
     ]);
     const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
     const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = 'candidatures.csv'; a.click();
+    const a = document.createElement('a'); a.href = url; a.download = 'messagerie.csv'; a.click();
     URL.revokeObjectURL(url);
   };
 
@@ -58,7 +69,7 @@ export default function AdminCandidatures() {
     <div className="p-8">
       <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
         <h1 className="text-2xl font-bold text-gray-900">
-          Candidatures
+          Messagerie
           <span className="ml-2 text-sm font-normal text-gray-400">({filtered.length})</span>
         </h1>
         <button onClick={exportCsv} className="flex items-center gap-2 px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50">
@@ -71,8 +82,9 @@ export default function AdminCandidatures() {
         <div className="relative">
           <select className="form-input py-2 pr-8 appearance-none" value={filterType} onChange={e => setFilterType(e.target.value)}>
             <option value="Tous">Tous les types</option>
-            <option value="adoption">Adoption</option>
-            <option value="fa">Famille d'accueil</option>
+            {typeOptions.map(({ value, label }) => (
+              <option key={value} value={value}>{label}</option>
+            ))}
           </select>
           <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
         </div>
@@ -93,7 +105,7 @@ export default function AdminCandidatures() {
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="text-left py-3 px-4 font-medium text-gray-500">Date</th>
-              <th className="text-left py-3 px-4 font-medium text-gray-500">Type</th>
+              <th className="text-left py-3 px-4 font-medium text-gray-500">Provenance</th>
               <th className="text-left py-3 px-4 font-medium text-gray-500">Candidat</th>
               <th className="text-left py-3 px-4 font-medium text-gray-500 hidden md:table-cell">Animal</th>
               <th className="text-left py-3 px-4 font-medium text-gray-500">Statut</th>
@@ -102,14 +114,14 @@ export default function AdminCandidatures() {
           </thead>
           <tbody className="divide-y divide-gray-50">
             {filtered.length === 0 ? (
-              <tr><td colSpan={6} className="text-center py-12 text-gray-400">Aucune candidature</td></tr>
+              <tr><td colSpan={6} className="text-center py-12 text-gray-400">Aucun message</td></tr>
             ) : (
               filtered.map(c => (
                 <tr key={c.id} className="hover:bg-gray-50">
                   <td className="py-3 px-4 text-gray-400 text-xs">{formatDate(c.createdAt)}</td>
                   <td className="py-3 px-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${c.type === 'adoption' ? 'bg-coral-100 text-coral-700' : 'bg-blue-100 text-blue-700'}`}>
-                      {TYPE_LABELS[c.type]}
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeBadgeClass(c)}`}>
+                      {getTypeLabel(c)}
                     </span>
                   </td>
                   <td className="py-3 px-4">
@@ -152,7 +164,7 @@ export default function AdminCandidatures() {
             <div className="flex justify-between items-center px-6 py-4 border-b">
               <div>
                 <h2 className="text-lg font-semibold text-gray-900">{selected.nom}</h2>
-                <p className="text-sm text-gray-400">{TYPE_LABELS[selected.type]} · {formatDate(selected.createdAt)}</p>
+                <p className="text-sm text-gray-400">{getTypeLabel(selected)} · {formatDate(selected.createdAt)}</p>
               </div>
               <button onClick={() => setSelected(null)} className="p-2 hover:bg-gray-100 rounded-lg"><X size={20} /></button>
             </div>

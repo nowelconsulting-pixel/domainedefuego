@@ -4,6 +4,9 @@ import { Star, ChevronDown, ChevronRight } from 'lucide-react';
 import { useAdminPages } from '../hooks/useAdminData';
 import type { AdminPage, Block } from '../types/admin';
 import FormContact from '../components/FormContact';
+import FormAdoption from '../components/FormAdoption';
+import FormFamilleAccueil from '../components/FormFamilleAccueil';
+import { CustomFormEmbed } from './FormulairePage';
 import { detectVideoType, getYoutubeEmbedUrl, resolveImageUrl } from '../utils/image';
 
 // ─── FAQ accordion ────────────────────────────────────────────────────────────
@@ -306,6 +309,18 @@ function renderBlock(block: Block) {
           </div>
         </div>
       );
+    }
+
+    case 'form': {
+      const formType = (block.data.form_type as string) || '';
+      if (formType === 'contact') return <div key={block.id} className="my-8"><FormContact /></div>;
+      if (formType === 'adoption') return <div key={block.id} className="my-8"><FormAdoption /></div>;
+      if (formType === 'fa') return <div key={block.id} className="my-8"><FormFamilleAccueil /></div>;
+      if (formType.startsWith('custom_')) {
+        const customSlug = formType.replace(/^custom_/, '');
+        return <div key={block.id} className="my-8"><CustomFormEmbed slug={customSlug} /></div>;
+      }
+      return null;
     }
 
     default:

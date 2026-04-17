@@ -31,9 +31,15 @@ export default function Presentation() {
           <h2 className="text-3xl font-extrabold text-forest mb-8">
             {(pc.mission_title as string) || 'Notre mission'}
           </h2>
-          {((pc.mission_text as string) || '').split('\n\n').map((p, i) => (
-            <p key={i} className="text-muted leading-relaxed mb-6 text-lg">{p}</p>
-          ))}
+          {(() => {
+            const text = (pc.mission_text as string) || '';
+            if (text.startsWith('<')) {
+              return <div className="prose prose-gray max-w-none text-lg [&_p]:text-muted [&_p]:leading-relaxed [&_p]:mb-6" dangerouslySetInnerHTML={{ __html: text }} />;
+            }
+            return text.split('\n\n').map((p, i) => (
+              <p key={i} className="text-muted leading-relaxed mb-6 text-lg">{p}</p>
+            ));
+          })()}
         </div>
       </section>
 

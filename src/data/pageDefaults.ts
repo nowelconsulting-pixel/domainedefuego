@@ -83,7 +83,12 @@ const pageDefaults: Record<string, Record<string, unknown>> = {
     ],
     show_partenaires: true,
     partenaires_title: 'Nos partenaires',
-    partenaires: ["Mairie d'Aubenas", 'Clinique vétérinaire du Plateau', "Fondation 30 Millions d'Amis", "SPA de l'Ardèche"],
+    partenaires: [
+      { nom: "Mairie d'Aubenas" },
+      { nom: 'Clinique vétérinaire du Plateau' },
+      { nom: "Fondation 30 Millions d'Amis" },
+      { nom: "SPA de l'Ardèche" },
+    ],
   },
 
   animaux: {

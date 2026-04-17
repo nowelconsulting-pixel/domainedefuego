@@ -10,7 +10,7 @@ export default function Presentation() {
   const pc = usePageContent('presentation');
   const valeurs = pc.valeurs as Array<{ titre: string; description: string }> | undefined;
   const equipe  = pc.equipe  as Array<{ nom: string; role: string; photo: string }> | undefined;
-  const partenaires = pc.partenaires as string[] | undefined;
+  const partenaires = pc.partenaires as Array<string | { nom: string }> | undefined;
 
   return (
     <div className="min-h-screen">
@@ -99,7 +99,7 @@ export default function Presentation() {
             <div className="flex flex-wrap justify-center gap-4">
               {partenaires.map((p, i) => (
                 <div key={i} className="bg-surface px-6 py-4 rounded-xl border-2 border-site-border text-muted font-medium">
-                  {p}
+                  {typeof p === 'string' ? p : p.nom}
                 </div>
               ))}
             </div>

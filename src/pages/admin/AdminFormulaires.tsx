@@ -293,7 +293,7 @@ export default function AdminFormulaires() {
           </Field>
           <Field
             label="Types d'animaux acceptés"
-            hint='Cases à cocher proposées à l\'étape "Disponibilités"'
+            hint={`Cases à cocher proposées à l'étape "Disponibilités"`}
           >
             <EditableList
               items={config.fa.types_animaux}

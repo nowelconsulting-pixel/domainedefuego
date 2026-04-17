@@ -23,7 +23,9 @@ export default function MentionsLegales() {
                 <h2 className="text-xl font-semibold text-forest mb-3">{s.title}</h2>
               )}
               {s.content && (
-                <p className="text-muted leading-relaxed whitespace-pre-line">{s.content}</p>
+                s.content.trimStart().startsWith('<')
+                  ? <div className="text-muted leading-relaxed prose prose-sm max-w-none [&_p]:mb-3 [&_a]:text-nv-green" dangerouslySetInnerHTML={{ __html: s.content }} />
+                  : <p className="text-muted leading-relaxed whitespace-pre-line">{s.content}</p>
               )}
             </div>
           ))}

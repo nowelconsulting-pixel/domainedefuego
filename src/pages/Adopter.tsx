@@ -55,8 +55,8 @@ export default function Adopter() {
         {/* Conditions */}
         {conditions.length > 0 && (
           <div className="bg-nv-green-light border border-nv-green/20 rounded-[20px] p-6 mb-12">
-            <h3 className="font-bold text-nv-green mb-3">Conditions d'adoption</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <h3 className="font-bold text-nv-green mb-4 text-center">Conditions d'adoption</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-xl mx-auto">
               {conditions.map((c, i) => (
                 <div key={i} className="flex items-center gap-2 text-sm text-forest">
                   <CheckCircle2 size={16} className="text-nv-green flex-shrink-0" />

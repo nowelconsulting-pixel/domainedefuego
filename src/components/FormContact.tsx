@@ -57,6 +57,7 @@ export default function FormContact() {
     const newErrors: Record<string, string> = {};
     if (!data.nom.trim()) newErrors.nom = 'Champ obligatoire';
     if (!data.email.trim()) newErrors.email = 'Champ obligatoire';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) newErrors.email = 'Adresse email invalide';
     if (!data.sujet) newErrors.sujet = 'Champ obligatoire';
     if (!data.message.trim()) newErrors.message = 'Champ obligatoire';
     setErrors(newErrors);

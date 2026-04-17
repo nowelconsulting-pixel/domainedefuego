@@ -187,6 +187,34 @@ const PAGE_CONTENT_SCHEMA: Record<string, FieldDef[]> = {
     { type: 'text', key: 'hero_subtitle', label: 'Sous-titre' },
     { type: 'text', key: 'subtitle',      label: 'Sous-titre affiché sous la liste' },
   ],
+  'devenir-membre': [
+    { type: 'section', label: 'Héro' },
+    { type: 'text', key: 'hero_title',    label: 'Titre principal' },
+    { type: 'text', key: 'hero_subtitle', label: 'Sous-titre' },
+    { type: 'section', label: 'Argumentaire (3 raisons d\'adhérer)' },
+    { type: 'text',  key: 'argumentaire_title', label: 'Titre de section' },
+    { type: 'array', key: 'argumentaire',        label: 'Arguments',
+      itemFields: [
+        { key: 'titre',       label: 'Titre' },
+        { key: 'description', label: 'Description', multiline: true },
+        { key: 'icone',       label: 'Icône (Shield / Heart / Star / Users / Trophy / Zap)' },
+      ]
+    },
+    { type: 'section', label: 'Avantages membres' },
+    { type: 'text',  key: 'avantages_title',    label: 'Titre de section' },
+    { type: 'text',  key: 'avantages_subtitle', label: 'Sous-titre' },
+    { type: 'array', key: 'avantages',          label: 'Avantages',
+      itemFields: [{ key: 'text', label: 'Avantage' }]
+    },
+    { type: 'section', label: 'Formulaire d\'adhésion' },
+    { type: 'text',    key: 'form_title',     label: 'Titre du formulaire' },
+    { type: 'text',    key: 'form_subtitle',  label: 'Sous-titre / description' },
+    { type: 'boolean', key: 'show_price',     label: 'Afficher le prix d\'adhésion' },
+    { type: 'text',    key: 'adhesion_price', label: 'Prix (ex: 15 € / an)' },
+    { type: 'section', label: "Bouton d'action (en bas de page)" },
+    { type: 'text',    key: 'cta_label',      label: 'Libellé du bouton' },
+    { type: 'text',    key: 'cta_url',        label: 'Lien du bouton (URL de destination)' },
+  ],
 };
 
 // ─── Dynamic content editor ───────────────────────────────────────────────────

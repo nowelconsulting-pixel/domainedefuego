@@ -103,6 +103,12 @@ export default function FormFamilleAccueil() {
     for (const field of required) {
       if (!data[field]) newErrors[field as string] = 'Champ obligatoire';
     }
+    if (s === 0) {
+      if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email))
+        newErrors.email = 'Adresse email invalide';
+      if (data.telephone && data.telephone.replace(/\D/g, '').length < 6)
+        newErrors.telephone = 'Numéro de téléphone invalide';
+    }
     if (s === 3 && data.types_acceptes.length === 0) {
       newErrors.types_acceptes = 'Champ obligatoire';
     }

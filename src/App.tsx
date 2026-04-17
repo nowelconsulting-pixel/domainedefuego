@@ -21,6 +21,7 @@ import Blog from './pages/Blog';
 import ArticleDetail from './pages/ArticleDetail';
 import CustomPage from './pages/CustomPage';
 import FormulairePage from './pages/FormulairePage';
+import DevenirMembre from './pages/DevenirMembre';
 
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminLayout from './pages/admin/AdminLayout';
@@ -37,8 +38,10 @@ import AdminCandidatures from './pages/admin/AdminCandidatures';
 import AdminFormulaires from './pages/admin/AdminFormulaires';
 
 function App() {
-  const isMaintenance = import.meta.env.VITE_MAINTENANCE_MODE === 'true'
-    || localStorage.getItem('site_maintenance') === 'true';
+  const stored = localStorage.getItem('site_maintenance');
+  const isMaintenance = stored !== null
+    ? stored === 'true'
+    : import.meta.env.VITE_MAINTENANCE_MODE === 'true';
   const hasPreviewAccess = localStorage.getItem('preview_access') === 'true';
 
   if (isMaintenance && !hasPreviewAccess && !window.location.pathname.startsWith('/admin')) {
@@ -64,6 +67,7 @@ function App() {
           <Route path="/famille-accueil"    element={<FamilleAccueil />} />
           <Route path="/faire-un-don"       element={<FaireUnDon />} />
           <Route path="/contact"            element={<Contact />} />
+          <Route path="/devenir-membre"      element={<DevenirMembre />} />
           <Route path="/mentions-legales"   element={<MentionsLegales />} />
           <Route path="/actualites"         element={<Blog />} />
           <Route path="/actualites/:slug"   element={<ArticleDetail />} />

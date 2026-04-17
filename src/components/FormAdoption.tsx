@@ -91,6 +91,12 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
     for (const field of required) {
       if (!data[field]) newErrors[field as string] = 'Champ obligatoire';
     }
+    if (s === 0) {
+      if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email))
+        newErrors.email = 'Adresse email invalide';
+      if (data.telephone && data.telephone.replace(/\D/g, '').length < 6)
+        newErrors.telephone = 'Numéro de téléphone invalide';
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };

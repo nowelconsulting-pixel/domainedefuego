@@ -43,11 +43,11 @@ export default function FamilleAccueil() {
             <h2 className="text-2xl font-extrabold text-forest text-center mb-12">
               {(pc.avantages_title as string) || "Pourquoi devenir famille d'accueil ?"}
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="flex flex-wrap justify-center gap-6">
               {avantages.map((a, i) => {
                 const Icon = a.icon;
                 return (
-                  <div key={i} className="bg-surface rounded-[20px] p-6 border-2 border-site-border text-center">
+                  <div key={i} className="bg-surface rounded-[20px] p-6 border-2 border-site-border text-center w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] min-w-[200px] max-w-[280px]">
                     <div className="w-14 h-14 bg-nv-green-light rounded-2xl flex items-center justify-center mx-auto mb-4">
                       <Icon size={26} className="text-nv-green" />
                     </div>

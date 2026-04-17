@@ -185,6 +185,30 @@ const pageDefaults: Record<string, Record<string, unknown>> = {
     hero_subtitle: "Actualités, témoignages et conseils de l'association.",
     subtitle: "Actualités, témoignages et conseils de l'association.",
   },
+
+  'devenir-membre': {
+    hero_title: 'Porter la voix des oubliés',
+    hero_subtitle: "En adhérant à Domaine de Fuego, vous rejoignez une communauté engagée pour offrir une seconde chance aux animaux abandonnés.",
+    argumentaire_title: 'Pourquoi adhérer ?',
+    argumentaire: [
+      { titre: 'Indépendance des sauvetages', description: "Votre adhésion nous permet d'agir librement et rapidement pour secourir les animaux en détresse, sans compromis.", icone: 'Shield' },
+      { titre: 'Excellence des soins',        description: "Grâce à vos cotisations, chaque animal bénéficie de soins vétérinaires adaptés et d'un suivi personnalisé.", icone: 'Heart' },
+      { titre: 'Changer les mentalités',      description: "Ensemble, nous sensibilisons le public à la cause animale et construisons un avenir plus respectueux de la vie.", icone: 'Star' },
+    ],
+    avantages_title: 'Les avantages membres',
+    avantages_subtitle: "En rejoignant l'association, vous bénéficiez de droits et d'avantages concrets.",
+    avantages: [
+      { text: 'Droit de vote en Assemblée Générale' },
+      { text: 'Newsletter exclusive réservée aux membres' },
+      { text: 'Déduction fiscale de 66 % sur votre cotisation' },
+      { text: 'Accès aux événements et rencontres associatives' },
+      { text: "Participation active aux décisions de l'association" },
+    ],
+    form_title: 'Rejoignez-nous',
+    form_subtitle: "Remplissez ce formulaire pour devenir membre de l'association. Nous vous répondrons sous 48 h pour finaliser votre adhésion.",
+    show_price: true,
+    adhesion_price: '15 € / an',
+  },
 };
 
 export default pageDefaults;

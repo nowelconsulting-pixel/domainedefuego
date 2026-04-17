@@ -11,14 +11,30 @@ interface MaintenanceConfig {
 }
 
 function loadMaintenanceConfig(): MaintenanceConfig {
+  // If site_maintenance was never explicitly set, initialize from the env var
+  if (localStorage.getItem('site_maintenance') === null) {
+    localStorage.setItem(
+      'site_maintenance',
+      import.meta.env.VITE_MAINTENANCE_MODE === 'true' ? 'true' : 'false',
+    );
+  }
+  const enabled = localStorage.getItem('site_maintenance') === 'true';
   try {
     const raw = localStorage.getItem('maintenance_config');
-    if (raw) return { enabled: false, title: '', subtitle: '', show_don_btn: true, ...JSON.parse(raw) };
+    if (raw) {
+      const s = JSON.parse(raw) as Partial<MaintenanceConfig>;
+      return {
+        enabled,
+        title:        s.title        || 'Le site arrive bientôt 🐾',
+        subtitle:     s.subtitle     || "Nous préparons actuellement la plateforme d'adoption.\nMerci pour votre patience.",
+        show_don_btn: s.show_don_btn ?? true,
+      };
+    }
   } catch { /**/ }
   return {
-    enabled: false,
+    enabled,
     title: 'Le site arrive bientôt 🐾',
-    subtitle: 'Nous préparons actuellement la plateforme d\'adoption.\nMerci pour votre patience.',
+    subtitle: "Nous préparons actuellement la plateforme d'adoption.\nMerci pour votre patience.",
     show_don_btn: true,
   };
 }
@@ -282,7 +298,11 @@ export default function AdminConfig() {
             </div>
             <button
               type="button"
-              onClick={() => setMc(p => ({ ...p, enabled: !p.enabled }))}
+              onClick={() => {
+                const updated = { ...mc, enabled: !mc.enabled };
+                setMc(updated);
+                saveMaintenanceConfig(updated); // immediate effect — no need to click Enregistrer
+              }}
               className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${mc.enabled ? 'bg-amber-500' : 'bg-gray-200'}`}
             >
               <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ${mc.enabled ? 'translate-x-5' : 'translate-x-0'}`} />

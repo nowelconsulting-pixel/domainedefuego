@@ -1,6 +1,7 @@
 import { Heart, Eye, Handshake, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { usePageContent } from '../hooks/usePageContent';
+import SystemPageBlocks from '../components/SystemPageBlocks';
 import { resolveImageUrl } from '../utils/image';
 
 const valeurIcons = [Heart, Eye, Handshake];
@@ -105,6 +106,8 @@ export default function Presentation() {
           </div>
         </section>
       )}
+
+      <SystemPageBlocks pageId="sys-presentation" />
 
       {/* Optional CTA button */}
       {(pc.cta_url as string) && (

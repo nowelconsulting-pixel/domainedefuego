@@ -1,6 +1,7 @@
 import { ExternalLink, Heart, Home, Truck } from 'lucide-react';
 import { useConfig } from '../hooks/useData';
 import { usePageContent } from '../hooks/usePageContent';
+import SystemPageBlocks from '../components/SystemPageBlocks';
 
 const iconMap: Record<string, React.ElementType> = { Heart, Home, Truck };
 
@@ -76,6 +77,8 @@ export default function FaireUnDon() {
             </div>
           </section>
         )}
+
+        <SystemPageBlocks pageId="sys-don" />
 
         {/* Note fiscale */}
         <section className="bg-surface rounded-[20px] p-8 border-2 border-site-border text-center max-w-2xl mx-auto">

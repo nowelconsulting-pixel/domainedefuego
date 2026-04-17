@@ -55,6 +55,7 @@ export interface Candidature {
   type: CandidatureType;
   form_title?: string;
   status: CandidatureStatus;
+  archived?: boolean;
   animal?: string;
   nom: string;
   email: string;

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, MessageSquare, Download, ChevronDown } from 'lucide-react';
+import { X, MessageSquare, Download, ChevronDown, Archive, ArchiveRestore, Trash2, Inbox } from 'lucide-react';
 import { useCandidatures } from '../../hooks/useAdminData';
 import type { Candidature, CandidatureStatus } from '../../types/admin';
 
@@ -16,50 +16,74 @@ const STATUS_LABELS: Record<CandidatureStatus, string> = {
 function getTypeLabel(c: Candidature): string {
   if (c.type === 'adoption') return 'Adoption';
   if (c.type === 'fa') return "Famille d'accueil";
+  if (c.type === 'contact') return 'Contact';
   return c.form_title || c.type;
 }
 
 function getTypeBadgeClass(c: Candidature): string {
   if (c.type === 'adoption') return 'bg-coral-100 text-coral-700';
   if (c.type === 'fa') return 'bg-blue-100 text-blue-700';
+  if (c.type === 'contact') return 'bg-gray-100 text-gray-700';
   return 'bg-purple-100 text-purple-700';
 }
 
 export default function AdminCandidatures() {
-  const { candidatures, update, markAllRead } = useCandidatures();
+  const { candidatures, update, remove, markAllRead } = useCandidatures();
   const [selected, setSelected] = useState<Candidature | null>(null);
+  const [tab, setTab] = useState<'inbox' | 'archives'>('inbox');
   const [filterType, setFilterType]     = useState('Tous');
   const [filterStatus, setFilterStatus] = useState('Tous');
 
-  const typeOptions = Array.from(
-    new Map(candidatures.map(c => [c.type, getTypeLabel(c)])).entries()
-  ).map(([value, label]) => ({ value, label }));
-
-  // Mark all read when opening this page
   useState(() => { markAllRead(); });
 
-  const filtered = candidatures.filter(c => {
-    if (filterType !== 'Tous' && c.type !== filterType) return false;
+  const inbox    = candidatures.filter(c => !c.archived);
+  const archives = candidatures.filter(c => c.archived);
+  const pool     = tab === 'inbox' ? inbox : archives;
+
+  const typeOptions = Array.from(
+    new Map(pool.map(c => [c.type, getTypeLabel(c)])).entries()
+  ).map(([value, label]) => ({ value, label }));
+
+  const filtered = pool.filter(c => {
+    if (filterType   !== 'Tous' && c.type   !== filterType)   return false;
     if (filterStatus !== 'Tous' && c.status !== filterStatus) return false;
     return true;
   });
 
-  const setStatus = (id: string, status: CandidatureStatus) => update(id, { status });
+  const setStatus = (id: string, status: CandidatureStatus) => {
+    update(id, { status });
+    if (selected?.id === id) setSelected(s => s ? { ...s, status } : null);
+  };
+
+  const archiveMsg = (c: Candidature) => {
+    update(c.id, { archived: true });
+    if (selected?.id === c.id) setSelected(null);
+  };
+
+  const restoreMsg = (c: Candidature) => {
+    update(c.id, { archived: false });
+  };
+
+  const deleteMsg = (c: Candidature) => {
+    if (!window.confirm(`Supprimer définitivement le message de ${c.nom} ?`)) return;
+    remove(c.id);
+    if (selected?.id === c.id) setSelected(null);
+  };
 
   const exportCsv = () => {
     if (filtered.length === 0) return;
-    const headers = ['Date', 'Type', 'Nom', 'Email', 'Téléphone', 'Animal', 'Statut', 'Notes'];
+    const headers = ['Date', 'Provenance', 'Nom', 'Email', 'Téléphone', 'Animal', 'Statut', 'Notes'];
     const rows = filtered.map(c => [
       new Date(c.createdAt).toLocaleDateString('fr-FR'),
-      getTypeLabel(c),
-      c.nom, c.email, c.telephone, c.animal ?? '',
-      STATUS_LABELS[c.status], c.notes,
+      getTypeLabel(c), c.nom, c.email, c.telephone ?? '', c.animal ?? '',
+      STATUS_LABELS[c.status] ?? c.status, c.notes,
     ]);
     const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
     const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = 'messagerie.csv'; a.click();
-    URL.revokeObjectURL(url);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'messagerie.csv';
+    a.click();
   };
 
   const formatDate = (iso: string) =>
@@ -68,19 +92,34 @@ export default function AdminCandidatures() {
   return (
     <div className="p-8">
       <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">
-          Messagerie
-          <span className="ml-2 text-sm font-normal text-gray-400">({filtered.length})</span>
-        </h1>
+        <h1 className="text-2xl font-bold text-gray-900">Messagerie</h1>
         <button onClick={exportCsv} className="flex items-center gap-2 px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50">
           <Download size={16} />Exporter CSV
+        </button>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-1 mb-5 border-b border-gray-200">
+        <button
+          onClick={() => { setTab('inbox'); setFilterType('Tous'); setFilterStatus('Tous'); }}
+          className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${tab === 'inbox' ? 'border-coral-500 text-coral-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+        >
+          <Inbox size={16} />Boîte de réception
+          {inbox.length > 0 && <span className="bg-coral-100 text-coral-700 text-xs rounded-full px-2 py-0.5 font-semibold">{inbox.length}</span>}
+        </button>
+        <button
+          onClick={() => { setTab('archives'); setFilterType('Tous'); setFilterStatus('Tous'); }}
+          className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${tab === 'archives' ? 'border-coral-500 text-coral-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+        >
+          <Archive size={16} />Archives
+          {archives.length > 0 && <span className="bg-gray-100 text-gray-600 text-xs rounded-full px-2 py-0.5 font-semibold">{archives.length}</span>}
         </button>
       </div>
 
       {/* Filters */}
       <div className="flex gap-3 mb-5 flex-wrap">
         <div className="relative">
-          <select className="form-input py-2 pr-8 appearance-none" value={filterType} onChange={e => setFilterType(e.target.value)}>
+          <select className="form-input py-2 pr-8 appearance-none text-sm" value={filterType} onChange={e => setFilterType(e.target.value)}>
             <option value="Tous">Tous les types</option>
             {typeOptions.map(({ value, label }) => (
               <option key={value} value={value}>{label}</option>
@@ -89,7 +128,7 @@ export default function AdminCandidatures() {
           <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
         </div>
         <div className="relative">
-          <select className="form-input py-2 pr-8 appearance-none" value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+          <select className="form-input py-2 pr-8 appearance-none text-sm" value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
             <option value="Tous">Tous les statuts</option>
             {(Object.entries(STATUS_LABELS) as [CandidatureStatus, string][]).map(([k, v]) => (
               <option key={k} value={k}>{v}</option>
@@ -97,6 +136,7 @@ export default function AdminCandidatures() {
           </select>
           <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
         </div>
+        <span className="self-center text-xs text-gray-400">{filtered.length} message{filtered.length !== 1 ? 's' : ''}</span>
       </div>
 
       {/* Table */}
@@ -106,7 +146,7 @@ export default function AdminCandidatures() {
             <tr>
               <th className="text-left py-3 px-4 font-medium text-gray-500">Date</th>
               <th className="text-left py-3 px-4 font-medium text-gray-500">Provenance</th>
-              <th className="text-left py-3 px-4 font-medium text-gray-500">Candidat</th>
+              <th className="text-left py-3 px-4 font-medium text-gray-500">Expéditeur</th>
               <th className="text-left py-3 px-4 font-medium text-gray-500 hidden md:table-cell">Animal</th>
               <th className="text-left py-3 px-4 font-medium text-gray-500">Statut</th>
               <th className="text-right py-3 px-4 font-medium text-gray-500">Actions</th>
@@ -118,7 +158,7 @@ export default function AdminCandidatures() {
             ) : (
               filtered.map(c => (
                 <tr key={c.id} className="hover:bg-gray-50">
-                  <td className="py-3 px-4 text-gray-400 text-xs">{formatDate(c.createdAt)}</td>
+                  <td className="py-3 px-4 text-gray-400 text-xs whitespace-nowrap">{formatDate(c.createdAt)}</td>
                   <td className="py-3 px-4">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeBadgeClass(c)}`}>
                       {getTypeLabel(c)}
@@ -130,23 +170,36 @@ export default function AdminCandidatures() {
                   </td>
                   <td className="py-3 px-4 text-gray-500 hidden md:table-cell">{c.animal ?? '—'}</td>
                   <td className="py-3 px-4">
-                    <div className="relative">
-                      <select
-                        className={`px-2 py-1 rounded-full text-xs font-medium appearance-none pr-5 cursor-pointer ${STATUS_COLORS[c.status]}`}
-                        value={c.status}
-                        onChange={e => setStatus(c.id, e.target.value as CandidatureStatus)}
-                      >
-                        {(Object.entries(STATUS_LABELS) as [CandidatureStatus, string][]).map(([k, v]) => (
-                          <option key={k} value={k}>{v}</option>
-                        ))}
-                      </select>
-                    </div>
+                    <select
+                      className={`px-2 py-1 rounded-full text-xs font-medium appearance-none pr-5 cursor-pointer ${STATUS_COLORS[c.status] ?? 'bg-gray-100 text-gray-700'}`}
+                      value={c.status}
+                      onChange={e => setStatus(c.id, e.target.value as CandidatureStatus)}
+                    >
+                      {(Object.entries(STATUS_LABELS) as [CandidatureStatus, string][]).map(([k, v]) => (
+                        <option key={k} value={k}>{v}</option>
+                      ))}
+                    </select>
                   </td>
                   <td className="py-3 px-4">
                     <div className="flex justify-end gap-1">
-                      <button onClick={() => setSelected(c)} title="Détails"
+                      <button onClick={() => setSelected(c)} title="Voir le message"
                         className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700">
                         <MessageSquare size={15} />
+                      </button>
+                      {tab === 'inbox' ? (
+                        <button onClick={() => archiveMsg(c)} title="Archiver"
+                          className="p-2 rounded-lg hover:bg-yellow-50 text-gray-400 hover:text-yellow-600">
+                          <Archive size={15} />
+                        </button>
+                      ) : (
+                        <button onClick={() => restoreMsg(c)} title="Restaurer dans la boîte"
+                          className="p-2 rounded-lg hover:bg-green-50 text-gray-400 hover:text-green-600">
+                          <ArchiveRestore size={15} />
+                        </button>
+                      )}
+                      <button onClick={() => deleteMsg(c)} title="Supprimer définitivement"
+                        className="p-2 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500">
+                        <Trash2 size={15} />
                       </button>
                     </div>
                   </td>
@@ -166,58 +219,69 @@ export default function AdminCandidatures() {
                 <h2 className="text-lg font-semibold text-gray-900">{selected.nom}</h2>
                 <p className="text-sm text-gray-400">{getTypeLabel(selected)} · {formatDate(selected.createdAt)}</p>
               </div>
-              <button onClick={() => setSelected(null)} className="p-2 hover:bg-gray-100 rounded-lg"><X size={20} /></button>
+              <div className="flex items-center gap-1">
+                {!selected.archived ? (
+                  <button onClick={() => archiveMsg(selected)} title="Archiver"
+                    className="p-2 hover:bg-yellow-50 rounded-lg text-gray-400 hover:text-yellow-600">
+                    <Archive size={18} />
+                  </button>
+                ) : (
+                  <button onClick={() => restoreMsg(selected)} title="Restaurer"
+                    className="p-2 hover:bg-green-50 rounded-lg text-gray-400 hover:text-green-600">
+                    <ArchiveRestore size={18} />
+                  </button>
+                )}
+                <button onClick={() => deleteMsg(selected)} title="Supprimer"
+                  className="p-2 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-500">
+                  <Trash2 size={18} />
+                </button>
+                <button onClick={() => setSelected(null)} className="p-2 hover:bg-gray-100 rounded-lg">
+                  <X size={20} />
+                </button>
+              </div>
             </div>
 
             <div className="p-6 space-y-5 max-h-[70vh] overflow-y-auto">
-              {/* Contact */}
               <div className="grid grid-cols-2 gap-3 bg-gray-50 rounded-xl p-4">
                 <div><div className="text-xs text-gray-400">Email</div><div className="text-sm font-medium">{selected.email}</div></div>
-                <div><div className="text-xs text-gray-400">Téléphone</div><div className="text-sm font-medium">{selected.telephone}</div></div>
+                {selected.telephone && <div><div className="text-xs text-gray-400">Téléphone</div><div className="text-sm font-medium">{selected.telephone}</div></div>}
                 {selected.animal && <div><div className="text-xs text-gray-400">Animal souhaité</div><div className="text-sm font-medium">{selected.animal}</div></div>}
               </div>
 
-              {/* Data */}
-              {Object.keys(selected.data).length > 0 && (
+              {Object.keys(selected.data ?? {}).length > 0 && (
                 <div>
-                  <h3 className="font-medium text-gray-900 mb-3">Détails de la candidature</h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    {Object.entries(selected.data).map(([k, v]) => (
+                  <h3 className="font-medium text-gray-900 mb-3">Détails</h3>
+                  <div className="space-y-2">
+                    {Object.entries(selected.data ?? {}).map(([k, v]) => (
                       <div key={k} className="bg-gray-50 rounded-lg p-3">
-                        <div className="text-xs text-gray-400 capitalize">{k.replace(/_/g, ' ')}</div>
-                        <div className="text-sm text-gray-800 mt-0.5">{v || '—'}</div>
+                        <div className="text-xs text-gray-400 capitalize mb-1">{k.replace(/_/g, ' ')}</div>
+                        <div className="text-sm text-gray-800 whitespace-pre-wrap">{v || '—'}</div>
                       </div>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* Notes */}
               <div>
                 <label className="form-label">Notes internes</label>
                 <textarea
                   className="form-input"
-                  rows={4}
+                  rows={3}
                   value={selected.notes}
                   onChange={e => {
                     update(selected.id, { notes: e.target.value });
                     setSelected({ ...selected, notes: e.target.value });
                   }}
-                  placeholder="Vos notes sur cette candidature..."
+                  placeholder="Vos notes internes..."
                 />
               </div>
 
-              {/* Status */}
               <div>
                 <label className="form-label">Statut</label>
                 <select
                   className="form-input"
                   value={selected.status}
-                  onChange={e => {
-                    const s = e.target.value as CandidatureStatus;
-                    setStatus(selected.id, s);
-                    setSelected({ ...selected, status: s });
-                  }}
+                  onChange={e => setStatus(selected.id, e.target.value as CandidatureStatus)}
                 >
                   {(Object.entries(STATUS_LABELS) as [CandidatureStatus, string][]).map(([k, v]) => (
                     <option key={k} value={k}>{v}</option>

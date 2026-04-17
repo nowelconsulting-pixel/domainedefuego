@@ -104,11 +104,19 @@ export function useCandidatures() {
     });
   }, []);
 
+  const remove = useCallback((id: string) => {
+    setCandidatures(prev => {
+      const updated = prev.filter(c => c.id !== id);
+      saveCandidatures(updated);
+      return updated;
+    });
+  }, []);
+
   const markAllRead = useCallback(() => {
     localStorage.setItem('candidatures_unread', '0');
   }, []);
 
   const unread = parseInt(localStorage.getItem('candidatures_unread') || '0');
 
-  return { candidatures, save, update, add, markAllRead, unread };
+  return { candidatures, save, update, add, remove, markAllRead, unread };
 }

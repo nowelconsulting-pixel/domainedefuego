@@ -4,6 +4,7 @@ import FormContact from '../components/FormContact';
 import { FacebookIcon, InstagramIcon, LinkedInIcon } from '../components/SocialIcons';
 import { useConfig } from '../hooks/useData';
 import { usePageContent } from '../hooks/usePageContent';
+import SystemPageBlocks from '../components/SystemPageBlocks';
 
 export default function Contact() {
   const { data: config } = useConfig();
@@ -113,6 +114,8 @@ export default function Contact() {
           </div>
         </div>
       </div>
+
+      <SystemPageBlocks pageId="sys-contact" />
 
       {/* Optional CTA button */}
       {(pc.cta_url as string) && (

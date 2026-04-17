@@ -2,6 +2,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { ClipboardList, Phone, Heart, CheckCircle2, ChevronRight } from 'lucide-react';
 import FormAdoption from '../components/FormAdoption';
 import { usePageContent } from '../hooks/usePageContent';
+import SystemPageBlocks from '../components/SystemPageBlocks';
 
 // Icons are presentational — kept in code, content comes from hook
 const ETAPE_ICONS = [ClipboardList, Phone, Heart];
@@ -72,6 +73,8 @@ export default function Adopter() {
           <FormAdoption defaultAnimal={defaultAnimal} />
         </div>
       </div>
+
+      <SystemPageBlocks pageId="sys-adopter" />
 
       {/* Optional CTA button */}
       {(pc.cta_url as string) && (

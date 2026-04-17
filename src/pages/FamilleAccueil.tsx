@@ -3,6 +3,7 @@ import { Home, Heart, Clock, Shield, ChevronDown, ChevronUp, ChevronRight } from
 import { Link } from 'react-router-dom';
 import FormFamilleAccueil from '../components/FormFamilleAccueil';
 import { usePageContent } from '../hooks/usePageContent';
+import SystemPageBlocks from '../components/SystemPageBlocks';
 
 // Icon list stays in code — icons are presentational and can't be serialised to JSON
 const AVANTAGE_ICONS = [Home, Heart, Clock, Shield];
@@ -89,6 +90,8 @@ export default function FamilleAccueil() {
         </section>
 
       </div>
+
+      <SystemPageBlocks pageId="sys-fa" />
 
       {/* Optional CTA button */}
       {(pc.cta_url as string) && (

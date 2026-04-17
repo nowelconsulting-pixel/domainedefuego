@@ -2,7 +2,9 @@ import { useState, useMemo } from 'react';
 import { SlidersHorizontal } from 'lucide-react';
 import AnimalCard from '../components/AnimalCard';
 import { useAnimaux } from '../hooks/useData';
+import { usePageContent } from '../hooks/usePageContent';
 import { getAge } from '../types';
+import SystemPageBlocks from '../components/SystemPageBlocks';
 
 type EspeceFilter = 'Tous' | 'Chien' | 'Chat' | 'Lapin' | 'Autre';
 type AgeFilter = 'Tous' | 'Junior' | 'Adulte' | 'Senior';
@@ -11,6 +13,7 @@ type LocalisationFilter = 'Tous' | 'Refuge' | 'Famille d\'accueil';
 
 export default function Animaux() {
   const { data: animaux, loading } = useAnimaux();
+  const pc = usePageContent('animaux');
   const [espece, setEspece] = useState<EspeceFilter>('Tous');
   const [age, setAge] = useState<AgeFilter>('Tous');
   const [sexe, setSexe] = useState<SexeFilter>('Tous');
@@ -54,12 +57,17 @@ export default function Animaux() {
       {/* Header */}
       <div className="bg-surface border-b-2 border-site-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <h1 className="text-4xl font-extrabold text-forest mb-2">Nos animaux</h1>
+          <h1 className="text-4xl font-extrabold text-forest mb-2">
+            {(pc.hero_title as string) || 'Nos animaux'}
+          </h1>
           <p className="text-muted">
             {loading
               ? 'Chargement...'
-              : `${filtered.length} animal${filtered.length > 1 ? 'ux' : ''} disponible${filtered.length > 1 ? 's' : ''}`}
+              : `${filtered.length} ${filtered.length > 1 ? 'animaux' : 'animal'} disponible${filtered.length > 1 ? 's' : ''}`}
           </p>
+          {(pc.hero_subtitle as string) && (
+            <p className="text-hint text-sm mt-1">{pc.hero_subtitle as string}</p>
+          )}
         </div>
       </div>
 
@@ -145,6 +153,7 @@ export default function Animaux() {
           </div>
         )}
       </div>
+      <SystemPageBlocks pageId="sys-animaux" />
     </div>
   );
 }

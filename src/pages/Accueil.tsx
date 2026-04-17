@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, ChevronDown, Newspaper, Check } from 'lucide-react';
+import { ArrowRight, ChevronDown, Newspaper, Check, Quote } from 'lucide-react';
 import AnimalCard from '../components/AnimalCard';
 import { useAnimaux, useConfig } from '../hooks/useData';
 import { usePageContent } from '../hooks/usePageContent';
 import pageDefaults from '../data/pageDefaults';
 import { resolveImageUrl } from '../utils/image';
+import SystemPageBlocks from '../components/SystemPageBlocks';
 
 interface FeaturedArticleData { auto?: string; article_id?: string; section_title?: string; cta_text?: string; fallback_url?: string; }
 interface SimpleBlock { type: string; data: Record<string, string>; }
@@ -35,9 +36,6 @@ export default function Accueil() {
         <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(15,20,17,0.93) 0%, rgba(15,20,17,0.60) 50%, rgba(15,20,17,0.15) 100%)' }} />
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 md:pb-28">
           <div className="max-w-2xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-6 text-[11px] font-extrabold uppercase tracking-widest" style={{ background: 'rgba(226,169,79,0.18)', color: '#E2A94F' }}>
-              🤍 Association de protection animale - Val d'Oise
-            </div>
             <h1 className="font-black text-white leading-[1.02] mb-5 whitespace-pre-line" style={{ fontSize: 'clamp(3rem, 7vw, 5.5rem)' }}>
               {(pc.hero_title as string) || "ILS N'ATTENDENT\nQUE VOUS"}
             </h1>
@@ -153,6 +151,51 @@ export default function Accueil() {
           </section>
         );
       })()}
+
+      {/* TÉMOIGNAGES */}
+      {(pc.show_temoignages !== false) && (() => {
+        const temoignages = pc.temoignages as Array<{ texte: string; auteur: string; lieu?: string; animal?: string; photo_url?: string }> | undefined;
+        if (!temoignages || temoignages.length === 0) return null;
+        return (
+          <section className="bg-page py-24">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-14">
+                <p className="text-nv-teal text-[11px] font-extrabold uppercase tracking-widest mb-3">Témoignages</p>
+                <h2 className="text-4xl font-black text-forest">
+                  {(pc.temoignages_title as string) || 'Ils ont adopté'}
+                </h2>
+                {(pc.temoignages_subtitle as string) && (
+                  <p className="text-muted mt-3 text-lg">{pc.temoignages_subtitle as string}</p>
+                )}
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {temoignages.map((t, i) => (
+                  <div key={i} className="bg-surface rounded-[20px] p-8 border-2 border-site-border flex flex-col">
+                    <Quote size={28} className="text-nv-teal/30 mb-4 flex-shrink-0" />
+                    <p className="text-muted leading-relaxed flex-1 italic">"{t.texte}"</p>
+                    <div className="mt-6 flex items-center gap-3">
+                      {t.photo_url ? (
+                        <img src={resolveImageUrl(t.photo_url)} alt={t.auteur} className="w-10 h-10 rounded-full object-cover" />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-nv-green-light flex items-center justify-center text-nv-green font-bold text-sm flex-shrink-0">
+                          {t.auteur.charAt(0)}
+                        </div>
+                      )}
+                      <div>
+                        <div className="font-semibold text-forest text-sm">{t.auteur}</div>
+                        {t.lieu && <div className="text-hint text-xs">{t.lieu}{t.animal ? ` · ${t.animal}` : ''}</div>}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      })()}
+
+      {/* BLOCS ADDITIONNELS */}
+      <SystemPageBlocks pageId="sys-accueil" skipTypes={['featured-article']} />
 
       {/* DEVENIR MEMBRE */}
       <section className="bg-[#1e2b25] py-28">

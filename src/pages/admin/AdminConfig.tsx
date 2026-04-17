@@ -155,9 +155,15 @@ export default function AdminConfig() {
     const animaux = localStorage.getItem('animaux');
     const pages   = localStorage.getItem('pages');
     const adminPg = localStorage.getItem('admin_pages');
+    const PAGE_SLUGS = ['accueil','presentation','animaux','adopter','famille-accueil','faire-un-don','contact','mentions-legales','blog','devenir-membre'];
+    const pageContent: Record<string, unknown> = {};
+    for (const s of PAGE_SLUGS) {
+      try { const r = localStorage.getItem(`page_content_${s}`); if (r) pageContent[s] = JSON.parse(r); } catch { /* ignore */ }
+    }
     const allData = {
       config: form, animaux: animaux ? JSON.parse(animaux) : null,
       pages: pages ? JSON.parse(pages) : null,
+      page_content: Object.keys(pageContent).length ? pageContent : null,
       admin_pages: adminPg ? JSON.parse(adminPg) : null,
       exported_at: new Date().toISOString(),
     };

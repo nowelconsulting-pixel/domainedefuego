@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Save, Eye, Trash2, Plus, X } from 'lucide-react';
+import { ArrowLeft, Save, Eye, Trash2, Plus, X, Download } from 'lucide-react';
 import RichTextEditor from '../../components/admin/RichTextEditor';
 import { BlockEditor, BLOCK_TYPES, newBlock } from '../../components/admin/AdminBlockEditors';
 import { useAdminPages } from '../../hooks/useAdminData';
-import { savePageContent } from '../../hooks/usePageContent';
+import { savePageContent, exportPagesJson } from '../../hooks/usePageContent';
 import pageDefaults from '../../data/pageDefaults';
 import type { AdminPage, BlockType } from '../../types/admin';
 import { SYSTEM_PAGES } from '../../types/admin';
@@ -800,6 +800,11 @@ export default function AdminPageEditor() {
           <button onClick={() => handleSave('draft')}
             className="flex items-center gap-2 px-5 py-2.5 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50">
             <Save size={16} />Enregistrer brouillon
+          </button>
+          <button onClick={exportPagesJson}
+            className="flex items-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50"
+            title="Télécharger pages.json pour déploiement en production">
+            <Download size={15} />Exporter pages.json
           </button>
           <button onClick={() => handleSave('published')}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors ${saved ? 'bg-green-500' : 'bg-coral-500 hover:bg-coral-600'}`}>

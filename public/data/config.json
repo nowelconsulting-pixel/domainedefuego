@@ -7,6 +7,7 @@
   "telephone": "06 00 00 00 00",
   "adresse": "Domaine de Fuego — 07200 Aubenas",
   "email_contact": "contact@domainedefuego.fr",
+  "maintenance": false,
   "chiffres": {
     "animaux_adoptes": 247,
     "familles_accueil": 38,

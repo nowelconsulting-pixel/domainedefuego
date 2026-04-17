@@ -37,11 +37,8 @@ import AdminFormulaires from './pages/admin/AdminFormulaires';
 // Efface toutes les clés page_content_* pour forcer les nouveaux defaults sur
 // tous les navigateurs (Samsung, Chrome mobile, etc.).
 // NB : animaux / config / articles / candidatures sont préservés.
-const SCHEMA_V = '5';
+const SCHEMA_V = '6';
 if (typeof localStorage !== 'undefined' && localStorage.getItem('_schema_v') !== SCHEMA_V) {
-  Object.keys(localStorage)
-    .filter(k => k.startsWith('page_content_'))
-    .forEach(k => localStorage.removeItem(k));
   localStorage.setItem('_schema_v', SCHEMA_V);
 }
 // ──────────────────────────────────────────────────────────────────────────

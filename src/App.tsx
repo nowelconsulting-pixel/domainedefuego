@@ -34,7 +34,11 @@ const hasPreviewAccess = localStorage.getItem('preview_access') === 'true';
 
 function App() {
   if (isMaintenance && !hasPreviewAccess && !window.location.pathname.startsWith('/admin')) {
-    return <MaintenancePage />;
+    return (
+      <BrowserRouter>
+        <MaintenancePage />
+      </BrowserRouter>
+    );
   }
 
   return (

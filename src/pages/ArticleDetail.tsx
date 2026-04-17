@@ -34,11 +34,11 @@ export default function ArticleDetail() {
     <div className="min-h-screen bg-white">
       {/* Cover image */}
       {article.cover_url && (
-        <div className="w-full max-h-96 overflow-hidden">
+        <div className="w-full max-h-48 sm:max-h-96 overflow-hidden">
           <img
             src={resolveImageUrl(article.cover_url)}
             alt={article.title}
-            className="w-full h-96 object-cover"
+            className="w-full h-48 sm:h-96 object-cover"
             loading="lazy"
           />
         </div>

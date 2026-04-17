@@ -91,7 +91,7 @@ export default function Accueil() {
         return (
           <section className="bg-[#2d3a35] py-14">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex flex-wrap justify-center gap-x-20 gap-y-8 text-center text-white">
+              <div className="flex flex-wrap justify-center gap-x-10 sm:gap-x-20 gap-y-8 text-center text-white">
                 {items.map((item, i) => (
                   <div key={i} className="min-w-[120px]">
                     <div className="text-5xl font-black tracking-tighter mb-1">{item.value}</div>

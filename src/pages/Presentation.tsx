@@ -16,7 +16,7 @@ export default function Presentation() {
       {/* Hero */}
       <div className="bg-forest text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-5xl font-extrabold mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4">
             {(pc.hero_title as string) || 'Notre association'}
           </h1>
           <p className="text-white/50 text-xl">
@@ -42,7 +42,7 @@ export default function Presentation() {
         <section className="py-20 bg-page">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-extrabold text-forest text-center mb-14">Nos valeurs</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
               {valeurs.map((v, i) => {
                 const Icon = valeurIcons[i] ?? Heart;
                 return (
@@ -68,7 +68,7 @@ export default function Presentation() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
               {equipe.map((membre, i) => (
                 <div key={i} className="text-center">
-                  <div className="w-32 h-32 bg-page rounded-full mx-auto mb-4 overflow-hidden border-2 border-site-border">
+                  <div className="w-24 h-24 sm:w-32 sm:h-32 bg-page rounded-full mx-auto mb-4 overflow-hidden border-2 border-site-border">
                     {membre.photo ? (
                       <img src={resolveImageUrl(membre.photo)} alt={membre.nom} className="w-full h-full object-cover" />
                     ) : (

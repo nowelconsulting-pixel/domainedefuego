@@ -124,7 +124,7 @@ export default function AnimalDetail() {
             {/* Identité */}
             <div className="bg-surface rounded-[20px] p-6 border-2 border-site-border">
               <h2 className="font-bold text-forest mb-4">Fiche d'identité</h2>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="flex items-center gap-2 text-sm text-muted">
                   <Heart size={16} className="text-nv-teal flex-shrink-0" />
                   <span>{getAgeLabel(animal.naissance)}</span>

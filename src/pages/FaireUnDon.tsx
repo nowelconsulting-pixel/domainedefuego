@@ -14,7 +14,7 @@ export default function FaireUnDon() {
       {/* Hero */}
       <div className="bg-nv-green text-white py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl font-extrabold mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4">
             {(pc.hero_title as string) || 'Faire un don'}
           </h1>
           <p className="text-white/75 text-xl leading-relaxed">
@@ -54,7 +54,7 @@ export default function FaireUnDon() {
         {utilisations && utilisations.length > 0 && (
           <section>
             <h2 className="text-2xl font-extrabold text-forest text-center mb-10">À quoi sert votre don ?</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
               {utilisations.map((u, i) => {
                 const Icon = iconMap[u.icone] ?? Heart;
                 return (

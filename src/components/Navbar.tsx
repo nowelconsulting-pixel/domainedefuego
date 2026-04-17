@@ -198,7 +198,7 @@ export default function Navbar() {
                             }`
                           }
                         >
-                          {item.label} (vue d'ensemble)
+                          {item.label}
                         </NavLink>
                         {item.children.map(child => (
                           <NavLink

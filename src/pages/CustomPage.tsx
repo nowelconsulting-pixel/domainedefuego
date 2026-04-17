@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAdminPages } from '../hooks/useAdminData';
-import type { AdminPage } from '../types/admin';
+import type { AdminPage, Block } from '../types/admin';
+import { SYSTEM_PAGES } from '../types/admin';
 import { renderBlock } from '../utils/blockRenderer';
+
+function loadSystemPageData(): Record<string, Partial<AdminPage> & { blocks?: Block[] }> {
+  try { return JSON.parse(localStorage.getItem('system_page_data') || '{}'); }
+  catch { return {}; }
+}
 
 export default function CustomPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -10,8 +16,35 @@ export default function CustomPage() {
   const [page, setPage] = useState<AdminPage | null | undefined>(undefined);
 
   useEffect(() => {
+    // First: try custom (non-system) published pages
     const found = pages.find(p => p.slug === slug && p.status === 'published' && !p.system);
-    setPage(found ?? null);
+    if (found) { setPage(found); return; }
+
+    // Second: fall back to system pages that have no dedicated route component
+    const sysMeta = SYSTEM_PAGES.find(sp => sp.slug === slug);
+    if (sysMeta) {
+      const sysData = loadSystemPageData()[sysMeta.id] ?? {};
+      setPage({
+        id: sysMeta.id,
+        title: (sysData.title as string) || sysMeta.title,
+        slug: sysMeta.slug ?? '',
+        content: (sysData.content as string) || '',
+        blocks: (sysData.blocks as Block[]) || [],
+        seo_description: (sysData.seo_description as string) || '',
+        menu_icon: '',
+        menu_order: sysMeta.menu_order,
+        parent_id: sysMeta.parent_id,
+        status: 'published',
+        system: true,
+        show_in_nav: sysMeta.show_in_nav,
+        show_in_footer: sysMeta.show_in_footer,
+        updatedAt: '',
+        createdAt: '',
+      });
+      return;
+    }
+
+    setPage(null);
   }, [slug, pages]);
 
   if (page === undefined) return null;

@@ -230,12 +230,12 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
                 <label className="form-label">Code postal *</label>
-                <input className={`form-input ${errors.code_postal ? 'border-red-400' : ''}`} value={data.code_postal} onChange={e => set('code_postal', e.target.value)} placeholder="07200" />
+                <input className={`form-input ${errors.code_postal ? 'border-red-400' : ''}`} value={data.code_postal} onChange={e => set('code_postal', e.target.value)} placeholder="75001" />
                 <Err msg={errors.code_postal} />
               </div>
               <div>
                 <label className="form-label">Ville *</label>
-                <input className={`form-input ${errors.ville ? 'border-red-400' : ''}`} value={data.ville} onChange={e => set('ville', e.target.value)} placeholder="Aubenas" />
+                <input className={`form-input ${errors.ville ? 'border-red-400' : ''}`} value={data.ville} onChange={e => set('ville', e.target.value)} placeholder="Paris" />
                 <Err msg={errors.ville} />
               </div>
             </div>

@@ -6,8 +6,17 @@ import { FacebookIcon, InstagramIcon, LinkedInIcon } from '../components/SocialI
 
 const SECRET_CODE = 'Bigdodo33$';
 
+function loadMaintenanceContent() {
+  try {
+    const raw = localStorage.getItem('maintenance_config');
+    if (raw) return JSON.parse(raw) as { title?: string; subtitle?: string; show_don_btn?: boolean };
+  } catch { /**/ }
+  return {};
+}
+
 export default function MaintenancePage() {
   const { data: config } = useConfig();
+  const mc = loadMaintenanceContent();
   const [showInput, setShowInput] = useState(false);
   const [code, setCode] = useState('');
   const [error, setError] = useState(false);
@@ -32,19 +41,20 @@ export default function MaintenancePage() {
 
       {/* Title */}
       <h1 className="font-black text-4xl md:text-5xl text-white mb-4 leading-tight">
-        Le site arrive bientôt 🐾
+        {mc.title || 'Le site arrive bientôt 🐾'}
       </h1>
 
       {/* Subtitle */}
-      <p className="text-white/50 text-lg max-w-md leading-relaxed mb-10">
-        Nous préparons actuellement la plateforme d'adoption.<br />
-        Merci pour votre patience.
+      <p className="text-white/50 text-lg max-w-md leading-relaxed mb-10 whitespace-pre-line">
+        {mc.subtitle || 'Nous préparons actuellement la plateforme d\'adoption.\nMerci pour votre patience.'}
       </p>
 
       {/* Donation CTA */}
-      <Link to="/faire-un-don" className="btn-don mb-10">
-        Soutenir le projet dès maintenant ♥
-      </Link>
+      {mc.show_don_btn !== false && (
+        <Link to="/faire-un-don" className="btn-don mb-10">
+          Soutenir le projet dès maintenant ♥
+        </Link>
+      )}
 
       {/* Email from config */}
       {config?.email_contact && (

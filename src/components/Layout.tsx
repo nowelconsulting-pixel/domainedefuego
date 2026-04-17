@@ -2,7 +2,8 @@ import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
 
-const isMaintenance = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
+const isMaintenance = import.meta.env.VITE_MAINTENANCE_MODE === 'true'
+  || localStorage.getItem('site_maintenance') === 'true';
 const isPreview = isMaintenance && localStorage.getItem('preview_access') === 'true';
 
 function PreviewBanner() {

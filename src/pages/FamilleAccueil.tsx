@@ -84,7 +84,7 @@ export default function FamilleAccueil() {
         {/* Form */}
         <section>
           <h2 className="text-2xl font-extrabold text-forest mb-8">Candidature famille d'accueil</h2>
-          <div className="max-w-3xl">
+          <div className="max-w-3xl mx-auto">
             <FormFamilleAccueil />
           </div>
         </section>

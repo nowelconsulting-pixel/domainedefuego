@@ -1,7 +1,32 @@
 import { useState, useEffect } from 'react';
-import { Save, Download, Upload, CheckCircle2, Plus, Trash2 } from 'lucide-react';
+import { Save, Download, Upload, CheckCircle2, Plus, Trash2, Construction } from 'lucide-react';
 import { useConfig } from '../../hooks/useData';
 import type { Config } from '../../types';
+
+interface MaintenanceConfig {
+  enabled: boolean;
+  title: string;
+  subtitle: string;
+  show_don_btn: boolean;
+}
+
+function loadMaintenanceConfig(): MaintenanceConfig {
+  try {
+    const raw = localStorage.getItem('maintenance_config');
+    if (raw) return { enabled: false, title: '', subtitle: '', show_don_btn: true, ...JSON.parse(raw) };
+  } catch { /**/ }
+  return {
+    enabled: false,
+    title: 'Le site arrive bientôt 🐾',
+    subtitle: 'Nous préparons actuellement la plateforme d\'adoption.\nMerci pour votre patience.',
+    show_don_btn: true,
+  };
+}
+
+function saveMaintenanceConfig(mc: MaintenanceConfig) {
+  localStorage.setItem('maintenance_config', JSON.stringify(mc));
+  localStorage.setItem('site_maintenance', mc.enabled ? 'true' : 'false');
+}
 
 // ─── Field defined OUTSIDE component to prevent remount on re-render ─────────
 interface FieldProps {
@@ -30,6 +55,8 @@ export default function AdminConfig() {
   const { data: config, save } = useConfig();
   const [form, setForm] = useState<Config | null>(null);
   const [saved, setSaved] = useState(false);
+  const [mc, setMc] = useState<MaintenanceConfig>(loadMaintenanceConfig);
+  const [mcSaved, setMcSaved] = useState(false);
 
   useEffect(() => {
     if (config) {
@@ -95,6 +122,12 @@ export default function AdminConfig() {
     save(form);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handleSaveMaintenance = () => {
+    saveMaintenanceConfig(mc);
+    setMcSaved(true);
+    setTimeout(() => setMcSaved(false), 2000);
   };
 
   const exportAll = () => {
@@ -236,6 +269,55 @@ export default function AdminConfig() {
           className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-white transition-all ${saved ? 'bg-green-500' : 'bg-coral-500 hover:bg-coral-600'}`}>
           {saved ? <><CheckCircle2 size={18} />Sauvegardé !</> : <><Save size={18} />Sauvegarder</>}
         </button>
+
+        {/* Maintenance */}
+        <div className={`rounded-xl shadow-sm p-6 space-y-5 ${mc.enabled ? 'bg-amber-50 border-2 border-amber-300' : 'bg-white'}`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Construction size={20} className={mc.enabled ? 'text-amber-600' : 'text-gray-400'} />
+              <div>
+                <h2 className="font-semibold text-gray-900">Site en construction</h2>
+                <p className="text-xs text-gray-400 mt-0.5">Affiche une page d'attente aux visiteurs</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setMc(p => ({ ...p, enabled: !p.enabled }))}
+              className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${mc.enabled ? 'bg-amber-500' : 'bg-gray-200'}`}
+            >
+              <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ${mc.enabled ? 'translate-x-5' : 'translate-x-0'}`} />
+            </button>
+          </div>
+
+          {mc.enabled && (
+            <div className="rounded-lg bg-amber-100 border border-amber-200 px-4 py-2 text-sm text-amber-800 font-medium">
+              ⚠️ Le site est actuellement en mode maintenance — les visiteurs voient la page d'attente.
+            </div>
+          )}
+
+          <div>
+            <label className="form-label">Titre de la page</label>
+            <input className="form-input" value={mc.title}
+              onChange={e => setMc(p => ({ ...p, title: e.target.value }))}
+              placeholder="Le site arrive bientôt 🐾" />
+          </div>
+          <div>
+            <label className="form-label">Sous-titre</label>
+            <textarea className="form-input" rows={3} value={mc.subtitle}
+              onChange={e => setMc(p => ({ ...p, subtitle: e.target.value }))}
+              placeholder="Nous préparons actuellement la plateforme..." />
+          </div>
+          <div className="flex items-center gap-3">
+            <input type="checkbox" id="show_don_btn" checked={mc.show_don_btn}
+              onChange={e => setMc(p => ({ ...p, show_don_btn: e.target.checked }))}
+              className="rounded border-gray-300" />
+            <label htmlFor="show_don_btn" className="text-sm text-gray-700">Afficher le bouton "Faire un don"</label>
+          </div>
+          <button onClick={handleSaveMaintenance}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-white text-sm transition-all ${mcSaved ? 'bg-green-500' : 'bg-amber-500 hover:bg-amber-600'}`}>
+            {mcSaved ? <><CheckCircle2 size={16} />Sauvegardé !</> : <><Save size={16} />Enregistrer</>}
+          </button>
+        </div>
 
         <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-5 text-sm text-yellow-800">
           <strong>Sauvegarde :</strong> Les données sont en localStorage. Exportez régulièrement pour éviter toute perte.

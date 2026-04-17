@@ -1,4 +1,11 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
 import Layout from './components/Layout';
 import MaintenancePage from './pages/MaintenancePage';
 import Accueil from './pages/Accueil';
@@ -29,14 +36,15 @@ import AdminRoles from './pages/admin/AdminRoles';
 import AdminCandidatures from './pages/admin/AdminCandidatures';
 import AdminFormulaires from './pages/admin/AdminFormulaires';
 
-// Evaluated once at module load — no hook, no Router needed
-const isMaintenance = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
-const hasPreviewAccess = localStorage.getItem('preview_access') === 'true';
-
 function App() {
+  const isMaintenance = import.meta.env.VITE_MAINTENANCE_MODE === 'true'
+    || localStorage.getItem('site_maintenance') === 'true';
+  const hasPreviewAccess = localStorage.getItem('preview_access') === 'true';
+
   if (isMaintenance && !hasPreviewAccess && !window.location.pathname.startsWith('/admin')) {
     return (
       <BrowserRouter>
+        <ScrollToTop />
         <MaintenancePage />
       </BrowserRouter>
     );
@@ -44,6 +52,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         {/* Public site */}
         <Route element={<Layout />}>

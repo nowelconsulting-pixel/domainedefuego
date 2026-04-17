@@ -51,7 +51,7 @@ export default function AdminLogin() {
               className="form-input"
               value={email}
               onChange={e => { setEmail(e.target.value); setError(''); }}
-              placeholder="admin@domainedefuego.fr"
+              placeholder="votre@email.fr"
               autoComplete="username"
               required
               autoFocus
@@ -98,12 +98,6 @@ export default function AdminLogin() {
           </button>
         </form>
 
-        <p className="text-center text-xs text-gray-400 mt-6">
-          Compte par défaut :{' '}
-          <code className="bg-gray-100 px-1 rounded">admin@domainedefuego.fr</code>
-          {' / '}
-          <code className="bg-gray-100 px-1 rounded">Admin1234!</code>
-        </p>
       </div>
     </div>
   );

@@ -98,9 +98,10 @@ export default function Navbar() {
           <Link
             to="/"
             onClick={() => setOpen(false)}
-            className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0 lg:flex-shrink-0 z-10"
+            className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0 lg:flex-shrink-0 pointer-events-auto"
+            style={{ zIndex: 1 }}
           >
-            <Logo size={54} />
+            <Logo />
           </Link>
 
           {/* Desktop nav */}
@@ -154,9 +155,10 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Mobile burger — ml-auto pour coller à droite */}
+          {/* Mobile burger — ml-auto pour coller à droite, z-index au-dessus du logo */}
           <button
-            className="lg:hidden ml-auto p-2 rounded-lg text-muted hover:bg-nv-green-light transition-colors"
+            className="lg:hidden ml-auto p-2 rounded-lg text-muted hover:bg-nv-green-light transition-colors relative"
+            style={{ zIndex: 2 }}
             onClick={() => setOpen(!open)}
             aria-label="Menu"
           >

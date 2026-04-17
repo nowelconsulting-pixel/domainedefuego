@@ -1,15 +1,15 @@
 interface LogoProps {
   className?: string;
-  size?: number;
 }
 
-export default function Logo({ className = '', size = 44 }: LogoProps) {
+export default function Logo({ className = '' }: LogoProps) {
   return (
     <div className={`flex items-center ${className}`}>
       <img
         src="/logo_transparent.png"
         alt="Domaine de Fuego"
-        style={{ height: size, width: 'auto', maxWidth: 'none' }}
+        className="h-8 lg:h-[52px] w-auto"
+        style={{ maxWidth: 'none' }}
       />
     </div>
   );

@@ -83,7 +83,7 @@ export default function Navbar() {
   }, []);
 
   const linkCls = ({ isActive }: { isActive: boolean }) =>
-    `px-4 py-1.5 rounded-full text-sm font-semibold transition-colors duration-150 ${
+    `px-4 py-2 rounded-full text-base font-semibold transition-colors duration-150 ${
       isActive
         ? 'bg-nv-green-light text-nv-green'
         : 'text-muted hover:text-forest hover:bg-nv-green-light/50'
@@ -92,11 +92,11 @@ export default function Navbar() {
   return (
     <nav className="bg-surface border-b-2 border-site-border sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-[70px] gap-6">
+        <div className="flex items-center justify-between h-[80px] gap-6">
 
           {/* Logo */}
           <Link to="/" onClick={() => setOpen(false)} className="flex-shrink-0">
-            <Logo size={44} />
+            <Logo size={54} />
           </Link>
 
           {/* Desktop nav */}
@@ -108,7 +108,7 @@ export default function Navbar() {
                     to={item.to}
                     end={item.to === '/'}
                     className={({ isActive }) =>
-                      `flex items-center gap-1 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors duration-150 ${
+                      `flex items-center gap-1 px-4 py-2 rounded-full text-base font-semibold transition-colors duration-150 ${
                         isActive ? 'bg-nv-green-light text-nv-green' : 'text-muted hover:text-forest hover:bg-nv-green-light/50'
                       }`
                     }
@@ -123,7 +123,7 @@ export default function Navbar() {
                           key={child.id}
                           to={child.to}
                           className={({ isActive }) =>
-                            `block px-4 py-2.5 text-sm transition-colors ${
+                            `block px-4 py-2.5 text-base transition-colors ${
                               isActive ? 'text-nv-green bg-nv-green-light font-semibold' : 'text-muted hover:text-forest hover:bg-nv-green-light/40'
                             }`
                           }
@@ -163,7 +163,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="lg:hidden border-t-2 border-site-border bg-surface/95 backdrop-blur-md max-h-[calc(100vh-70px)] overflow-y-auto">
+        <div className="lg:hidden border-t-2 border-site-border bg-surface/95 backdrop-blur-md max-h-[calc(100vh-80px)] overflow-y-auto">
           <div className="px-4 py-4 space-y-1">
             {navItems.map(item => (
               <div key={item.id}>

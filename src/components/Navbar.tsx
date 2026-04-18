@@ -242,5 +242,12 @@ export default function Navbar() {
         </div>
       )}
     </nav>
+    <Link
+      to="/faire-un-don"
+      className="btn-don md:hidden fixed bottom-5 right-5 z-50 shadow-xl"
+      style={{ borderRadius: '9999px' }}
+    >
+      Faire un don ♥
+    </Link>
   );
 }

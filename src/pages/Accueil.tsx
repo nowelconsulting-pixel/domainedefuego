@@ -34,13 +34,13 @@ export default function Accueil() {
       {/* HERO */}
       <section className="relative min-h-screen flex items-end overflow-hidden">
         {/* Photo de fond */}
-        <div className="absolute inset-0" style={{ backgroundImage: `url(${heroBg})`, backgroundSize: 'cover', backgroundPosition: 'center 25%' }} />
+        <div className="absolute inset-0" style={{ backgroundImage: `url(${heroBg})`, backgroundSize: 'cover', backgroundPosition: 'center 45%' }} />
         {/* Gradient principal — lisibilité du texte */}
         <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(8,12,10,0.98) 0%, rgba(8,12,10,0.80) 32%, rgba(8,12,10,0.30) 62%, transparent 100%)' }} />
         {/* Vignette périmétrique — effet cinématique */}
         <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 140% 90% at 50% 110%, transparent 35%, rgba(0,0,0,0.20) 100%)' }} />
 
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-28 md:pb-36">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-40 md:pb-52">
           <div className="max-w-3xl mx-auto text-center">
 
             <h1

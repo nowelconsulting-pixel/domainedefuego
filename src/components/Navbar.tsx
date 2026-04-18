@@ -69,6 +69,13 @@ export default function Navbar() {
   const [open, setOpen]             = useState(false);
   const [navItems, setNavItems]     = useState<NavItem[]>(buildNavItems);
   const [mobileOpen, setMobileOpen] = useState<string | null>(null);
+  const [scrolled, setScrolled]     = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 80);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   useEffect(() => { setNavItems(buildNavItems()); }, []);
   useEffect(() => {
@@ -245,7 +252,7 @@ export default function Navbar() {
     </nav>
     <Link
       to="/faire-un-don"
-      className="btn-don md:hidden fixed bottom-5 right-5 z-50 shadow-xl"
+      className={`btn-don md:hidden fixed bottom-5 right-5 z-50 shadow-xl transition-all duration-300 ${scrolled ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}
       style={{ borderRadius: '9999px' }}
     >
       Faire un don ♥

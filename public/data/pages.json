@@ -134,15 +134,15 @@
     "avantages": [
       {
         "titre": "Chez vous",
-        "desc": "L'animal vit dans votre foyer et s'intègre à votre quotidien dans un environnement chaleureux."
+        "desc": "L'animal intègre votre foyer et votre quotidien. Vous lui offrez un cadre de vie stable, bienveillant et chaleureux."
       },
       {
-        "titre": "Lien unique",
-        "desc": "Vous créez un lien fort avec l'animal le temps de son accueil, une expérience profondément humaine."
+        "titre": "Mission solidaire",
+        "desc": "En offrant ce foyer temporaire, vous sauvez une vie et vous participez activement à une belle aventure humaine."
       },
       {
         "titre": "Transition sereine",
-        "desc": "Vous accompagnez l'animal tout au long de sa transition. Vous restez son point de repère et son foyer protecteur jusqu'à ce que nous trouvions sa famille pour la vie."
+        "desc": "Vous restez son point de repère et son protecteur jusqu'à ce que nous trouvions sa nouvelle famille pour la vie."
       }
     ],
     "show_faq": true,

@@ -49,7 +49,7 @@ interface FormData {
   type_logement: string; jardin: string; surface: string; statut_occupant: string;
   statut_familial: string; enfants: string; enfants_ages: string;
   autres_animaux: string; autres_animaux_detail: string;
-  duree_disponible: string; types_acceptes: string[];
+  types_acceptes: string[];
   urgences: string; experience: string;
 }
 
@@ -57,7 +57,7 @@ const initialData: FormData = {
   prenom: '', nom: '', email: '', telephone: '', adresse: '', code_postal: '', ville: '',
   type_logement: '', jardin: '', surface: '', statut_occupant: '',
   statut_familial: '', enfants: '', enfants_ages: '', autres_animaux: '', autres_animaux_detail: '',
-  duree_disponible: '', types_acceptes: [], urgences: '', experience: '',
+  types_acceptes: [], urgences: '', experience: '',
 };
 
 // required string fields per step
@@ -65,7 +65,7 @@ const REQUIRED: Record<number, (keyof FormData)[]> = {
   0: ['prenom', 'nom', 'email', 'telephone', 'adresse', 'code_postal', 'ville'],
   1: ['type_logement', 'jardin', 'statut_occupant'],
   2: ['statut_familial'],
-  3: ['duree_disponible', 'urgences'],
+  3: ['urgences'],
 };
 
 function Err({ msg }: { msg?: string }) {
@@ -132,7 +132,6 @@ export default function FormFamilleAccueil() {
         logement: `${data.type_logement}, jardin: ${data.jardin}`,
         situation: data.statut_familial,
         enfants: data.enfants === 'Oui' ? `Oui (${data.enfants_ages})` : 'Non',
-        duree: data.duree_disponible,
         types_acceptes: data.types_acceptes.join(', '),
         urgences: data.urgences,
         experience: data.experience,
@@ -331,14 +330,6 @@ export default function FormFamilleAccueil() {
         {step === 3 && (
           <div className="space-y-5">
             <h3 className="text-xl font-semibold text-gray-900">Vos disponibilités</h3>
-            <div>
-              <label className="form-label">Durée disponible *</label>
-              <select className={`form-input ${errors.duree_disponible ? 'border-red-400' : ''}`} value={data.duree_disponible} onChange={e => set('duree_disponible', e.target.value)}>
-                <option value="">Choisir...</option>
-                {cfg.durees.map(d => <option key={d}>{d}</option>)}
-              </select>
-              <Err msg={errors.duree_disponible} />
-            </div>
             <div>
               <label className="form-label">Types d'animaux acceptés *</label>
               <div className="flex flex-wrap gap-3 mt-2">

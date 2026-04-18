@@ -86,12 +86,12 @@
     "cta_label": "Adopter un animal",
     "cta_url": "/animaux",
     "mission_title": "Notre mission",
-    "mission_text": "<p><strong>L'origine du projet</strong></p><p>Le Domaine de Fuego est né d'une conviction profonde : aucun animal n'est un déchet, chaque vie mérite une seconde chance. Fondée pour honorer la mémoire de Fuego, notre association transforme la détresse en parcours de vie sécurisés.</p><p></p><p><strong>Notre action concrète</strong></p><p>Nous ne sommes pas un refuge traditionnel. Nous fonctionnons grâce à un réseau de <strong>familles d'accueil</strong> qui offrent un foyer temporaire et une observation réelle du comportement de l'animal. Cette étape est la clé pour garantir une adoption réussie et durable.</p><p></p><p><strong>L'adoption raisonnée</strong></p><p>Pour nous, placer un animal n'est pas une finalité, c'est le début d'un engagement. Nous accompagnons chaque binôme avant, pendant et après l'adoption pour assurer une intégration sereine dans le respect du bien-être animal.</p>",
+    "mission_text": "<p><strong>L'origine du projet</strong></p><p>Le Domaine de Fuego est né d'une conviction profonde : chaque vie mérite d'être sauvée, chaque vie mérite une seconde chance. Fondée pour honorer la mémoire de Fuego, notre association transforme la détresse en parcours de vie sécurisés.</p><p></p><p><strong>Notre action concrète</strong></p><p>Nous ne sommes pas un refuge traditionnel. Nous fonctionnons grâce à un réseau de <strong>familles d'accueil</strong> qui offrent un foyer temporaire et une observation réelle du comportement de l'animal. Cette étape est la clé pour garantir une adoption réussie et durable.</p><p></p><p><strong>L'adoption raisonnée</strong></p><p>Pour nous, placer un animal n'est pas une finalité, c'est le début d'un engagement. Nous accompagnons chaque binôme avant, pendant et après l'adoption pour assurer une intégration sereine dans le respect du bien-être animal.</p>",
     "valeurs_title": "Nos valeurs",
     "valeurs": [
       {
         "titre": "Éthique & Respect",
-        "description": "Nous ne cachons rien. Caractère, besoins spécifiques, limites : nous décryptons chaque profil en famille d'accueil pour vous garantir une rencontre sans mauvaises surprises."
+        "description": "Chaque animal est un individu avec son histoire et son rythme. Nous agissons avec douceur et professionnalisme, en excluant strictement toute méthode coercitive ou brusque."
       },
       {
         "titre": "Vérité du terrain",
@@ -231,10 +231,10 @@
     "avantages_subtitle": "En rejoignant l'association, vous bénéficiez de droits et d'avantages concrets.",
     "avantages": [
       {
-        "text": "Droit de vote en Assemblée Générale"
+        "text": "Rejoignez notre communauté de passionné"
       },
       {
-        "text": "Newsletter exclusive réservée aux membres"
+        "text": "Droit de vote en Assemblée Générale"
       },
       {
         "text": "Déduction fiscale de 66 % sur votre cotisation"

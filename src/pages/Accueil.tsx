@@ -40,7 +40,7 @@ export default function Accueil() {
         {/* Vignette périmétrique — effet cinématique */}
         <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 140% 90% at 50% 110%, transparent 35%, rgba(0,0,0,0.20) 100%)' }} />
 
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-40 md:pb-52">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-64 md:pb-52">
           <div className="max-w-3xl mx-auto text-center">
 
             <h1

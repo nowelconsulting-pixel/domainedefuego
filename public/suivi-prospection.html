@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prospection Domaine de Fuego</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F5F2EC;
+    --surface: #FEFCF8;
+    --border: #D8D2C4;
+    --text: #1C1A16;
+    --muted: #7A7468;
+    --accent: #2C4A2E;
+    --accent-light: #E8F0E8;
+    --amber: #B5640A;
+    --amber-light: #FDF0E0;
+    --red: #8B2020;
+    --red-light: #FDEAEA;
+    --blue: #1A3A5C;
+    --blue-light: #E8EFF8;
+    --purple: #4A2E6E;
+    --purple-light: #F0EBF8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; padding: 2rem; }
+
+  header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1.5px solid var(--border); flex-wrap: wrap; gap: 1rem; }
+  .logo-zone h1 { font-family: 'DM Serif Display', serif; font-size: 26px; font-weight: 400; }
+  .logo-zone h1 span { font-style: italic; color: var(--accent); }
+  .logo-zone p { font-size: 10px; color: var(--muted); margin-top: 4px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  .stats { display: flex; gap: 1.25rem; align-items: flex-end; flex-wrap: wrap; }
+  .stat { text-align: right; }
+  .stat-num { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--text); line-height: 1; }
+  .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .stat-sep { width: 1px; height: 36px; background: var(--border); }
+
+  .toolbar { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
+  .filter-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .filter-btn { font-family: 'DM Mono', monospace; font-size: 11px; padding: 4px 10px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); cursor: pointer; border-radius: 2px; transition: all 0.15s; }
+  .filter-btn:hover { background: var(--bg); color: var(--text); }
+  .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .search-bar { margin-left: auto; font-family: 'DM Mono', monospace; font-size: 12px; padding: 5px 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 2px; outline: none; width: 180px; }
+  .search-bar:focus { border-color: var(--accent); }
+
+  .group-header td { background: var(--bg); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); padding: 8px 14px; border-bottom: 1px solid var(--border); border-top: 1.5px solid var(--border); font-weight: 500; }
+
+  table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--border); font-size: 12px; }
+  thead tr { border-bottom: 1.5px solid var(--border); }
+  th { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); padding: 9px 12px; text-align: left; white-space: nowrap; cursor: pointer; user-select: none; }
+  th:hover { color: var(--text); }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr.data-row:hover td { background: var(--bg); }
+
+  .commune-name { font-weight: 500; font-size: 13px; }
+  .maire-name { color: var(--muted); font-size: 11px; }
+  .dist { font-variant-numeric: tabular-nums; color: var(--muted); }
+  .dist.near { color: var(--accent); font-weight: 500; }
+
+  .badge { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 2px; font-weight: 500; margin-right: 3px; }
+  .badge-smgfavo { background: var(--accent-light); color: var(--accent); }
+  .badge-nonsmgfavo { background: var(--purple-light); color: var(--purple); }
+  .badge-double { background: var(--blue-light); color: var(--blue); }
+  .badge-urbain { background: #F0EDE8; color: #6B6358; }
+  .badge-vexin { background: #EDF5F0; color: #2C5E3A; }
+
+  .statut-select { font-family: 'DM Mono', monospace; font-size: 11px; padding: 3px 7px; border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 2px; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none; min-width: 115px; }
+  .statut-select.s-a_contacter { color: var(--muted); }
+  .statut-select.s-contacte { border-color: var(--amber); background: var(--amber-light); color: var(--amber); }
+  .statut-select.s-rdv { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
+  .statut-select.s-positif { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+  .statut-select.s-negatif { border-color: var(--red); background: var(--red-light); color: var(--red); }
+  .statut-select.s-sans_reponse { color: var(--muted); }
+
+  .note-input { font-family: 'DM Mono', monospace; font-size: 11px; padding: 3px 7px; border: 1px solid transparent; background: transparent; color: var(--text); border-radius: 2px; width: 100%; outline: none; transition: border-color 0.15s; }
+  .note-input:hover { border-color: var(--border); background: var(--surface); }
+  .note-input:focus { border-color: var(--accent); background: var(--surface); }
+  .note-input::placeholder { color: var(--border); }
+
+  .date-input { font-family: 'DM Mono', monospace; font-size: 11px; padding: 3px 7px; border: 1px solid transparent; background: transparent; color: var(--muted); border-radius: 2px; outline: none; width: 108px; }
+  .date-input:hover { border-color: var(--border); background: var(--surface); }
+  .date-input:focus { border-color: var(--accent); background: var(--surface); color: var(--text); }
+
+  .priority-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+  .dot-high { background: var(--accent); }
+  .dot-med { background: var(--amber); }
+  .dot-low { background: var(--border); }
+
+  .progress-bar { height: 3px; background: var(--border); border-radius: 2px; margin-top: 1.25rem; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; }
+  .progress-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 5px; display: flex; justify-content: space-between; }
+
+  footer { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .btn { font-family: 'DM Mono', monospace; font-size: 10px; padding: 4px 10px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); cursor: pointer; border-radius: 2px; transition: all 0.15s; }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-zone">
+    <h1>Domaine de <span>Fuego</span></h1>
+    <p>Suivi prospection foncière — Vexin Val-d'Oise · rayon 13 km · Épiais-Rhus</p>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-num" id="total-count">—</div><div class="stat-label">Communes</div></div>
+    <div class="stat-sep"></div>
+    <div class="stat"><div class="stat-num" id="smgfavo-count">—</div><div class="stat-label">SMGFAVO</div></div>
+    <div class="stat-sep"></div>
+    <div class="stat"><div class="stat-num" id="contacte-count">0</div><div class="stat-label">Contactées</div></div>
+    <div class="stat-sep"></div>
+    <div class="stat"><div class="stat-num" id="positif-count">0</div><div class="stat-label">Positives</div></div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <span class="filter-label">Statut :</span>
+  <button class="filter-btn active" onclick="setFilter('statut','tous',this)">Tous</button>
+  <button class="filter-btn" onclick="setFilter('statut','a_contacter',this)">À contacter</button>
+  <button class="filter-btn" onclick="setFilter('statut','contacte',this)">Contacté</button>
+  <button class="filter-btn" onclick="setFilter('statut','rdv',this)">RDV</button>
+  <button class="filter-btn" onclick="setFilter('statut','positif',this)">Positif</button>
+  <button class="filter-btn" onclick="setFilter('statut','negatif',this)">Négatif</button>
+  <span class="filter-label" style="margin-left:12px">Type :</span>
+  <button class="filter-btn active" onclick="setFilter('type','tous',this)" data-group="type">Tous</button>
+  <button class="filter-btn" onclick="setFilter('type','smgfavo',this)" data-group="type">SMGFAVO</button>
+  <button class="filter-btn" onclick="setFilter('type','non_smgfavo',this)" data-group="type">Hors syndicat</button>
+  <input class="search-bar" type="text" placeholder="Rechercher…" oninput="searchTable(this.value)">
+</div>
+
+<table id="main-table">
+  <thead>
+    <tr>
+      <th style="width:32px"></th>
+      <th onclick="sortTable(1)">Commune</th>
+      <th onclick="sortTable(2)">Maire</th>
+      <th onclick="sortTable(3)">km</th>
+      <th>Tags</th>
+      <th onclick="sortTable(5)">Statut</th>
+      <th>Contact</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody id="table-body"></tbody>
+</table>
+
+<div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+<div class="progress-label"><span>Avancement prospection</span><span id="progress-pct">0%</span></div>
+
+<footer>
+  <span id="footer-info">—</span>
+  <div style="display:flex;gap:8px">
+    <button class="btn" onclick="exportCSV()">↓ Export CSV</button>
+    <button class="btn" onclick="resetAll()">⟳ Réinitialiser</button>
+  </div>
+</footer>
+
+<script>
+const DATA = [
+  // SMGFAVO ≤ 10 km
+  {commune:"Cormeilles-en-Vexin", maire:"Vincent IBRELISLE", dist:3.2, smgfavo:true, profil:["vexin"], priorite:"haute"},
+  {commune:"Bréançon", maire:"Christophe BENOIST POUTEAU", dist:3.9, smgfavo:true, profil:["vexin"], priorite:"haute"},
+  {commune:"Frémécourt", maire:"Grégoire BOUILLIANT", dist:4.9, smgfavo:true, profil:["vexin"], priorite:"haute"},
+  {commune:"Boissy-l'Aillerie", maire:"Paul DUBRAY", dist:5.0, smgfavo:true, profil:["vexin","double"], priorite:"haute"},
+  {commune:"Ennery", maire:"Matthieu LAURENT", dist:6.0, smgfavo:true, profil:["vexin"], priorite:"haute"},
+  {commune:"Marines", maire:"Michel DEJARDIN", dist:6.4, smgfavo:true, profil:["vexin"], priorite:"haute"},
+  {commune:"Courcelles-sur-Viosne", maire:"Christophe ROCHE", dist:6.7, smgfavo:true, profil:["vexin"], priorite:"haute"},
+  {commune:"Ableiges", maire:"Patrick PELLETIER", dist:7.1, smgfavo:true, profil:["vexin"], priorite:"haute"},
+  {commune:"Berville", maire:"Isabelle JONCOUR DANEL", dist:7.4, smgfavo:true, profil:["vexin"], priorite:"haute"},
+  {commune:"Arronville", maire:"Frédéric GODIN", dist:7.5, smgfavo:true, profil:["vexin"], priorite:"haute"},
+  {commune:"Brignancourt", maire:"Bertrand LACHAISE", dist:8.9, smgfavo:true, profil:["vexin"], priorite:"haute"},
+  {commune:"Auvers-sur-Oise", maire:"Isabelle MEZIERES", dist:9.7, smgfavo:true, profil:["vexin"], priorite:"haute"},
+  {commune:"Osny", maire:"Laurent ACHITE-HENNI", dist:5.9, smgfavo:true, profil:["urbain"], priorite:"moyenne"},
+  {commune:"Pontoise", maire:"Stéphanie VON EUW", dist:8.5, smgfavo:true, profil:["urbain"], priorite:"moyenne"},
+  {commune:"Saint-Ouen-l'Aumône", maire:"Laurent LINQUETTE", dist:9.4, smgfavo:true, profil:["urbain"], priorite:"moyenne"},
+  {commune:"Cergy", maire:"Jean-Paul JEANDON", dist:9.8, smgfavo:true, profil:["urbain"], priorite:"basse"},
+  // SMGFAVO 10-13 km
+  {commune:"Chars", maire:"Nicolas BELANGÉ", dist:10.2, smgfavo:true, profil:["vexin"], priorite:"haute"},
+  {commune:"Butry-sur-Oise", maire:"Claude NOEL", dist:10.4, smgfavo:true, profil:["vexin"], priorite:"haute"},
+  {commune:"Méry-sur-Oise", maire:"Pierre-Edouard EON", dist:10.9, smgfavo:true, profil:["double"], priorite:"haute"},
+  {commune:"Courdimanche", maire:"Sophie MATHARAN", dist:10.9, smgfavo:true, profil:["urbain"], priorite:"moyenne"},
+  {commune:"Vauréal", maire:"Raphaël LANTERI", dist:10.9, smgfavo:true, profil:["urbain"], priorite:"moyenne"},
+  {commune:"Éragny-sur-Oise", maire:"Thibault HUMBERT", dist:11.2, smgfavo:true, profil:["urbain"], priorite:"basse"},
+  {commune:"Mériel", maire:"Jérôme François", dist:11.3, smgfavo:true, profil:["vexin"], priorite:"haute"},
+  {commune:"Jouy-le-Moutier", maire:"Hervé FLORCZAK", dist:12.0, smgfavo:true, profil:["urbain"], priorite:"basse"},
+  {commune:"Boisemont", maire:"Stéphanie SAVILL", dist:12.5, smgfavo:true, profil:["vexin"], priorite:"haute"},
+  {commune:"Champagne-sur-Oise", maire:"Stéphane CARTEADO", dist:12.5, smgfavo:true, profil:["vexin"], priorite:"haute"},
+  {commune:"Menucourt", maire:"Catherine RENAUD", dist:12.6, smgfavo:true, profil:["vexin"], priorite:"haute"},
+  {commune:"Condécourt", maire:"Michel FINET", dist:12.9, smgfavo:true, profil:["vexin"], priorite:"haute"},
+  {commune:"Commeny", maire:"Damien RADET", dist:13.0, smgfavo:true, profil:["vexin"], priorite:"haute"},
+  {commune:"Pierrelaye", maire:"Eric BOSC", dist:13.0, smgfavo:true, profil:["urbain"], priorite:"basse"},
+  // NON-SMGFAVO Vexin ≤ 13 km
+  {commune:"Grisy-les-Plâtres", maire:"Catherine CARPENTIER", dist:2.2, smgfavo:false, profil:["vexin"], priorite:"haute"},
+  {commune:"Le Heaulme", maire:"Maurice DELAHAYE", dist:2.5, smgfavo:false, profil:["vexin"], priorite:"haute"},
+  {commune:"Vallangoujard", maire:"Philippe FABREGES", dist:3.5, smgfavo:false, profil:["vexin"], priorite:"haute"},
+  {commune:"Livilliers", maire:"François DANCONNIER", dist:4.7, smgfavo:false, profil:["vexin"], priorite:"haute"},
+  {commune:"Gadancourt", maire:"—", dist:5.3, smgfavo:false, profil:["vexin"], priorite:"haute"},
+  {commune:"Théméricourt", maire:"Denis SARGERET", dist:6.2, smgfavo:false, profil:["vexin"], priorite:"haute"},
+  {commune:"Us", maire:"Jhony BOURGIN", dist:7.4, smgfavo:false, profil:["vexin"], priorite:"haute"},
+  {commune:"Puiseux-Pontoise", maire:"Thierry THOMASSIN", dist:7.1, smgfavo:false, profil:["vexin"], priorite:"haute"},
+  {commune:"Haravilliers", maire:"Olivier BIRON", dist:7.3, smgfavo:false, profil:["vexin"], priorite:"haute"},
+  {commune:"Génicourt", maire:"Olivier DESLANDES", dist:7.7, smgfavo:false, profil:["vexin"], priorite:"haute"},
+  {commune:"Longuesse", maire:"Norbert LALLOYER", dist:8.7, smgfavo:false, profil:["vexin"], priorite:"haute"},
+  {commune:"Montgeroult", maire:"Rémi LEPAPE", dist:8.8, smgfavo:false, profil:["vexin"], priorite:"haute"},
+  {commune:"Vigny", maire:"Vanessa LEGAIGNEUR", dist:11.4, smgfavo:false, profil:["vexin"], priorite:"haute"},
+  {commune:"Neuville-sur-Oise", maire:"Sébastien DRUART", dist:11.5, smgfavo:false, profil:["urbain"], priorite:"moyenne"},
+  {commune:"Hodent", maire:"Eric BRETON", dist:11.7, smgfavo:false, profil:["vexin"], priorite:"haute"},
+  {commune:"Hérouville-en-Vexin", maire:"Eric BAERT", dist:12.2, smgfavo:false, profil:["vexin"], priorite:"haute"},
+  {commune:"Le Perchay", maire:"Grégory LEOST", dist:12.2, smgfavo:false, profil:["vexin"], priorite:"haute"},
+];
+
+const STATUTS = ["a_contacter","contacte","rdv","positif","negatif","sans_reponse"];
+const STATUT_LABELS = {a_contacter:"À contacter",contacte:"Contacté",rdv:"RDV fixé",positif:"Positif",negatif:"Négatif",sans_reponse:"Sans réponse"};
+
+let state = {};
+try { state = JSON.parse(localStorage.getItem('fuego_v2') || '{}'); } catch(e) {}
+
+let filterStatut = 'tous';
+let filterType = 'tous';
+let searchVal = '';
+let sortCol = 3;
+let sortAsc = true;
+
+function saveState() { localStorage.setItem('fuego_v2', JSON.stringify(state)); }
+function getRow(i) { return state[i] || {statut:'a_contacter', date:'', note:''}; }
+
+function setFilter(group, val, btn) {
+  if (group === 'statut') filterStatut = val;
+  if (group === 'type') filterType = val;
+  const selector = group === 'type' ? '[data-group="type"]' : '.toolbar .filter-btn:not([data-group="type"])';
+  if (group === 'statut') {
+    document.querySelectorAll('.toolbar .filter-btn:not([data-group])').forEach(b => b.classList.remove('active'));
+  } else {
+    document.querySelectorAll('.toolbar .filter-btn[data-group="type"]').forEach(b => b.classList.remove('active'));
+  }
+  btn.classList.add('active');
+  renderTable();
+}
+
+function searchTable(v) { searchVal = v; renderTable(); }
+
+function sortTable(col) {
+  if (sortCol === col) sortAsc = !sortAsc;
+  else { sortCol = col; sortAsc = true; }
+  renderTable();
+}
+
+function renderTable() {
+  let rows = DATA.map((d,i) => ({...d, i, ...getRow(i)}));
+
+  if (filterStatut !== 'tous') rows = rows.filter(r => r.statut === filterStatut);
+  if (filterType === 'smgfavo') rows = rows.filter(r => r.smgfavo);
+  if (filterType === 'non_smgfavo') rows = rows.filter(r => !r.smgfavo);
+  if (searchVal) {
+    const s = searchVal.toLowerCase();
+    rows = rows.filter(r => r.commune.toLowerCase().includes(s) || r.maire.toLowerCase().includes(s));
+  }
+
+  rows.sort((a,b) => {
+    let va, vb;
+    if (sortCol===1){va=a.commune;vb=b.commune;}
+    else if (sortCol===2){va=a.maire;vb=b.maire;}
+    else if (sortCol===3){va=a.dist;vb=b.dist;}
+    else if (sortCol===5){va=a.statut;vb=b.statut;}
+    else {const o={haute:0,moyenne:1,basse:2};va=o[a.priorite];vb=o[b.priorite];}
+    if(va<vb) return sortAsc?-1:1;
+    if(va>vb) return sortAsc?1:-1;
+    return 0;
+  });
+
+  // Group by smgfavo
+  const smgfavoRows = rows.filter(r=>r.smgfavo);
+  const nonRows = rows.filter(r=>!r.smgfavo);
+
+  const tbody = document.getElementById('table-body');
+  let html = '';
+
+  if (smgfavoRows.length && filterType !== 'non_smgfavo') {
+    html += `<tr class="group-header"><td colspan="8">Communes adhérentes SMGFAVO — ${smgfavoRows.length} communes</td></tr>`;
+    html += smgfavoRows.map(r => rowHTML(r)).join('');
+  }
+  if (nonRows.length && filterType !== 'smgfavo') {
+    html += `<tr class="group-header"><td colspan="8">Communes Vexin hors syndicat — ${nonRows.length} communes</td></tr>`;
+    html += nonRows.map(r => rowHTML(r)).join('');
+  }
+  if (!html) html = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--muted);font-size:12px;">Aucun résultat</td></tr>`;
+
+  tbody.innerHTML = html;
+  updateStats(rows);
+}
+
+function rowHTML(r) {
+  const dotClass = r.priorite==='haute'?'dot-high':r.priorite==='moyenne'?'dot-med':'dot-low';
+  let badges = r.smgfavo ? `<span class="badge badge-smgfavo">SMGFAVO</span>` : `<span class="badge badge-nonsmgfavo">Hors syndicat</span>`;
+  if (r.profil.includes('double')) badges += ` <span class="badge badge-double">Cons. dép.</span>`;
+  if (r.profil.includes('vexin')) badges += ` <span class="badge badge-vexin">Vexin</span>`;
+  if (r.profil.includes('urbain')) badges += ` <span class="badge badge-urbain">Urbain</span>`;
+
+  const opts = STATUTS.map(s=>`<option value="${s}" ${r.statut===s?'selected':''}>${STATUT_LABELS[s]}</option>`).join('');
+  const distClass = r.dist <= 5 ? 'near' : '';
+
+  return `<tr class="data-row" data-id="${r.i}">
+    <td><span class="priority-dot ${dotClass}"></span></td>
+    <td><div class="commune-name">${r.commune}</div></td>
+    <td><span class="maire-name">${r.maire}</span></td>
+    <td><span class="dist ${distClass}">${r.dist}</span></td>
+    <td>${badges}</td>
+    <td><select class="statut-select s-${r.statut}" onchange="updateStatut(${r.i},this)">${opts}</select></td>
+    <td><input type="date" class="date-input" value="${r.date}" onchange="updateDate(${r.i},this)"></td>
+    <td><input type="text" class="note-input" placeholder="Note…" value="${r.note}" onchange="updateNote(${r.i},this)"></td>
+  </tr>`;
+}
+
+function updateStatut(i, sel) {
+  const s = getRow(i);
+  s.statut = sel.value;
+  sel.className = `statut-select s-${sel.value}`;
+  if (!s.date) { s.date = new Date().toISOString().split('T')[0]; sel.closest('tr').querySelector('.date-input').value = s.date; }
+  state[i] = s; saveState();
+  updateStats();
+}
+function updateDate(i, inp) { const s=getRow(i); s.date=inp.value; state[i]=s; saveState(); }
+function updateNote(i, inp) { const s=getRow(i); s.note=inp.value; state[i]=s; saveState(); }
+
+function updateStats(rows) {
+  const all = DATA.map((_,i) => getRow(i));
+  const smgfavoCount = DATA.filter(d=>d.smgfavo).length;
+  const contacte = all.filter(r=>r.statut!=='a_contacter').length;
+  const positif = all.filter(r=>r.statut==='positif').length;
+  document.getElementById('total-count').textContent = DATA.length;
+  document.getElementById('smgfavo-count').textContent = smgfavoCount;
+  document.getElementById('contacte-count').textContent = contacte;
+  document.getElementById('positif-count').textContent = positif;
+  const pct = Math.round(contacte/DATA.length*100);
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('progress-pct').textContent = pct+'%';
+  document.getElementById('footer-info').textContent = `${DATA.length} communes · ${smgfavoCount} SMGFAVO · ${DATA.length-smgfavoCount} hors syndicat · rayon 13 km · Épiais-Rhus`;
+}
+
+function exportCSV() {
+  const headers = ['Commune','Maire','Distance km','SMGFAVO','Statut','Date contact','Notes'];
+  const rows = DATA.map((d,i) => {
+    const s = getRow(i);
+    return [d.commune,d.maire,d.dist,d.smgfavo?'Oui':'Non',STATUT_LABELS[s.statut],s.date,s.note].map(v=>`"${v}"`).join(',');
+  });
+  const csv = [headers.join(','),...rows].join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download = 'prospection_fuego_v2.csv';
+  a.click();
+}
+
+function resetAll() {
+  if (confirm('Réinitialiser toutes les données de suivi ?')) {
+    localStorage.removeItem('fuego_v2'); state = {}; renderTable();
+  }
+}
+
+renderTable();
+</script>
+</body>
+</html>

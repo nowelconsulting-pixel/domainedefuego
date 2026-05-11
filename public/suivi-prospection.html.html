@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prospection Domaine de Fuego</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#F5F2EC;--surface:#FEFCF8;--border:#D8D2C4;--text:#1C1A16;--muted:#7A7468;
+    --accent:#2C4A2E;--accent-light:#E8F0E8;--amber:#B5640A;--amber-light:#FDF0E0;
+    --red:#8B2020;--red-light:#FDEAEA;--blue:#1A3A5C;--blue-light:#E8EFF8;
+    --purple:#4A2E6E;--purple-light:#F0EBF8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Mono',monospace;background:var(--bg);color:var(--text);min-height:100vh;padding:2rem;}
+  header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1.5px solid var(--border);flex-wrap:wrap;gap:1rem;}
+  .logo-zone h1{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;}
+  .logo-zone h1 span{font-style:italic;color:var(--accent);}
+  .logo-zone p{font-size:10px;color:var(--muted);margin-top:4px;letter-spacing:.08em;text-transform:uppercase;}
+  .stats{display:flex;gap:1.25rem;align-items:flex-end;flex-wrap:wrap;}
+  .stat{text-align:right;}
+  .stat-num{font-family:'DM Serif Display',serif;font-size:26px;color:var(--text);line-height:1;}
+  .stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
+  .stat-sep{width:1px;height:36px;background:var(--border);}
+  .toolbar{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap;align-items:center;}
+  .filter-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;}
+  .filter-btn{font-family:'DM Mono',monospace;font-size:11px;padding:4px 10px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;border-radius:2px;transition:all .15s;}
+  .filter-btn:hover{background:var(--bg);color:var(--text);}
+  .filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .search-bar{margin-left:auto;font-family:'DM Mono',monospace;font-size:12px;padding:5px 10px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:2px;outline:none;width:180px;}
+  .search-bar:focus{border-color:var(--accent);}
+  table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);font-size:12px;}
+  thead tr{border-bottom:1.5px solid var(--border);}
+  th{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:9px 12px;text-align:left;white-space:nowrap;cursor:pointer;user-select:none;}
+  th:hover{color:var(--text);}
+  .group-header td{background:var(--bg);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:7px 12px;border-bottom:1px solid var(--border);border-top:1.5px solid var(--border);font-weight:500;}
+  td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  tr.data-row:hover td{background:var(--bg);}
+  .commune-name{font-weight:500;font-size:13px;}
+  .maire-name{color:var(--muted);font-size:11px;}
+  .dist{font-variant-numeric:tabular-nums;color:var(--muted);}
+  .dist.near{color:var(--accent);font-weight:500;}
+  .badge{display:inline-block;font-size:10px;padding:2px 6px;border-radius:2px;font-weight:500;margin-right:3px;white-space:nowrap;}
+  .badge-smgfavo{background:var(--accent-light);color:var(--accent);}
+  .badge-rayon{background:var(--blue-light);color:var(--blue);}
+  .badge-double{background:var(--purple-light);color:var(--purple);}
+  .badge-urbain{background:#F0EDE8;color:#6B6358;}
+  .statut-select{font-family:'DM Mono',monospace;font-size:11px;padding:3px 7px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:2px;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;min-width:115px;}
+  .statut-select.s-a_contacter{color:var(--muted);}
+  .statut-select.s-contacte{border-color:var(--amber);background:var(--amber-light);color:var(--amber);}
+  .statut-select.s-rdv{border-color:var(--blue);background:var(--blue-light);color:var(--blue);}
+  .statut-select.s-positif{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
+  .statut-select.s-negatif{border-color:var(--red);background:var(--red-light);color:var(--red);}
+  .statut-select.s-sans_reponse{color:var(--muted);}
+  .note-input{font-family:'DM Mono',monospace;font-size:11px;padding:3px 7px;border:1px solid transparent;background:transparent;color:var(--text);border-radius:2px;width:100%;outline:none;transition:border-color .15s;}
+  .note-input:hover{border-color:var(--border);background:var(--surface);}
+  .note-input:focus{border-color:var(--accent);background:var(--surface);}
+  .note-input::placeholder{color:var(--border);}
+  .date-input{font-family:'DM Mono',monospace;font-size:11px;padding:3px 7px;border:1px solid transparent;background:transparent;color:var(--muted);border-radius:2px;outline:none;width:108px;}
+  .date-input:hover{border-color:var(--border);background:var(--surface);}
+  .date-input:focus{border-color:var(--accent);background:var(--surface);color:var(--text);}
+
+  #map-toggle{font-family:'DM Mono',monospace;font-size:11px;padding:5px 14px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;border-radius:2px;transition:all .15s;margin-bottom:.75rem;display:inline-block;}
+  #map-toggle:hover{border-color:var(--accent);color:var(--accent);}
+  #map-container{height:460px;border:1px solid var(--border);border-radius:2px;overflow:hidden;display:none;margin-bottom:.6rem;}
+  #map-container.visible{display:block;}
+  .map-legend{display:flex;gap:14px;margin-bottom:1.5rem;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;flex-wrap:wrap;}
+  .leg-item{display:flex;align-items:center;gap:5px;}
+  .leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .progress-bar{height:3px;background:var(--border);border-radius:2px;margin-top:1.25rem;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s ease;}
+  .progress-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:5px;display:flex;justify-content:space-between;}
+  footer{margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+  .btn{font-family:'DM Mono',monospace;font-size:10px;padding:4px 10px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;border-radius:2px;transition:all .15s;}
+  .btn:hover{border-color:var(--accent);color:var(--accent);}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-zone">
+    <h1>Domaine de <span>Fuego</span></h1>
+    <p>Suivi prospection foncière — Val-d'Oise · toutes communes</p>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-num" id="total-count">—</div><div class="stat-label">Total</div></div>
+    <div class="stat-sep"></div>
+    <div class="stat"><div class="stat-num" id="contacte-count">0</div><div class="stat-label">Contactées</div></div>
+    <div class="stat-sep"></div>
+    <div class="stat"><div class="stat-num" id="rdv-count">0</div><div class="stat-label">RDV</div></div>
+    <div class="stat-sep"></div>
+    <div class="stat"><div class="stat-num" id="positif-count">0</div><div class="stat-label">Positives</div></div>
+    <div class="stat-sep"></div>
+    <div class="stat"><div class="stat-num" id="negatif-count">0</div><div class="stat-label">Négatives</div></div>
+  </div>
+</header>
+
+<button id="map-toggle" onclick="toggleMap()">▼ Afficher la carte du Val-d'Oise</button>
+<div id="map-container"><div id="leaflet-map" style="height:100%;width:100%;"></div></div>
+<div class="map-legend" id="map-legend" style="display:none;">
+  <span class="leg-item"><span class="leg-dot" style="background:#E07B2A;"></span>Contacté</span>
+  <span class="leg-item"><span class="leg-dot" style="background:#C0392B;"></span>Négatif</span>
+  <span class="leg-item"><span class="leg-dot" style="background:#2C7A4B;"></span>Positif</span>
+  <span class="leg-item"><span class="leg-dot" style="background:#1A3A5C;"></span>RDV fixé</span>
+  <span class="leg-item"><span class="leg-dot" style="background:#B0A898;"></span>À contacter</span>
+</div>
+<div class="toolbar">
+  <span class="filter-label">Statut :</span>
+  <button class="filter-btn active" onclick="setFilter('statut','tous',this)">Tous</button>
+  <button class="filter-btn" onclick="setFilter('statut','a_contacter',this)">À contacter</button>
+  <button class="filter-btn" onclick="setFilter('statut','contacte',this)">Contacté</button>
+  <button class="filter-btn" onclick="setFilter('statut','rdv',this)">RDV</button>
+  <button class="filter-btn" onclick="setFilter('statut','positif',this)">Positif</button>
+  <button class="filter-btn" onclick="setFilter('statut','negatif',this)">Négatif</button>
+  <button class="filter-btn" onclick="setFilter('statut','sans_reponse',this)">Sans réponse</button>
+  <span class="filter-label" style="margin-left:8px">Zone :</span>
+  <button class="filter-btn active" data-group="zone" onclick="setFilter('zone','tous',this)">Tous</button>
+  <button class="filter-btn" data-group="zone" onclick="setFilter('zone','rayon',this)">Rayon 13 km</button>
+  <button class="filter-btn" data-group="zone" onclick="setFilter('zone','hors',this)">Hors rayon</button>
+  <input class="search-bar" type="text" placeholder="Rechercher…" oninput="searchTable(this.value)">
+</div>
+
+<table id="main-table">
+  <thead>
+    <tr>
+      <th onclick="sortTable(0)">Commune</th>
+      <th onclick="sortTable(1)">Maire</th>
+      <th onclick="sortTable(2)">km</th>
+      <th>Tags</th>
+      <th onclick="sortTable(4)">Statut</th>
+      <th>Contact</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody id="table-body"></tbody>
+</table>
+
+<div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+<div class="progress-label"><span>Taux de contact</span><span id="progress-pct">0%</span></div>
+
+<footer>
+  <span id="footer-info">—</span>
+  <div style="display:flex;gap:8px">
+    <button class="btn" onclick="exportCSV()">↓ Export CSV</button>
+    <button class="btn" onclick="resetAll()">⟳ Réinitialiser</button>
+  </div>
+</footer>
+
+<script>
+// statut initial : 'contacte' sauf Boisemont = 'negatif', reste = 'a_contacter'
+const INIT = {
+  "Ableiges":"contacte","Arronville":"contacte","Asnières-sur-Oise":"contacte",
+  "Attainville":"contacte","Auvers-sur-Oise":"contacte","Avernes":"contacte",
+  "Banthelu":"contacte","Beaumont-sur-Oise":"contacte","Bernes-sur-Oise":"contacte",
+  "Berville":"contacte","Boisemont":"negatif","Boissy-l'Aillerie":"contacte",
+  "Bréançon":"contacte","Brignancourt":"contacte","Bruyères-sur-Oise":"contacte",
+  "Butry-sur-Oise":"contacte","Champagne-sur-Oise":"contacte","Chars":"contacte",
+  "Chauvry":"contacte","Cléry-en-Vexin":"contacte","Commeny":"contacte",
+  "Condécourt":"contacte","Cormeilles-en-Vexin":"contacte","Courcelles-sur-Viosne":"contacte",
+  "Épiais-Rhus":"contacte","Frémécourt":"contacte","Frépillon":"contacte",
+  "Frouville":"contacte","Grisy-les-Plâtres":"contacte","Guiry-en-Vexin":"contacte",
+  "Haravilliers":"contacte","Hédouville":"contacte","Hérouville-en-Vexin":"contacte",
+  "L'Isle-Adam":"contacte","Labbeville":"contacte","Le Bellay-en-Vexin":"contacte",
+  "Le Heaulme":"contacte","Le Perchay":"contacte","Livilliers":"contacte",
+  "Longuesse":"contacte","Maffliers":"contacte","Magny-en-Vexin":"contacte",
+  "Marines":"contacte","Maudétour-en-Vexin":"contacte","Menouville":"contacte",
+  "Menucourt":"contacte","Mériel":"contacte","Méry-sur-Oise":"contacte",
+  "Mours":"contacte","Moussy":"contacte","Nerville-la-Forêt":"contacte",
+  "Nesles-la-Vallée":"contacte","Neuilly-en-Vexin":"contacte","Nointel":"contacte",
+  "Noisy-sur-Oise":"contacte","Nucourt":"contacte","Parmain":"contacte",
+  "Persan":"contacte","Presles":"contacte","Ronquerolles":"contacte",
+  "Sagy":"contacte","Saint-Gervais":"contacte","Théméricourt":"contacte",
+  "Theuville":"contacte","Us":"contacte","Vallangoujard":"contacte",
+  "Valmondois":"contacte","Vigny":"contacte","Villiers-Adam":"contacte",
+  "Wy-dit-Joli-Village":"contacte"
+};
+
+// Rayon 13km depuis Épiais-Rhus
+const RAYON13 = new Set([
+  "Cormeilles-en-Vexin","Bréançon","Frémécourt","Boissy-l'Aillerie","Osny","Ennery",
+  "Marines","Courcelles-sur-Viosne","Ableiges","Berville","Arronville","Pontoise",
+  "Brignancourt","Saint-Ouen-l'Aumône","Auvers-sur-Oise","Cergy","Chars","Butry-sur-Oise",
+  "Méry-sur-Oise","Courdimanche","Vauréal","Éragny-sur-Oise","Mériel","Jouy-le-Moutier",
+  "Boisemont","Champagne-sur-Oise","Menucourt","Condécourt","Commeny","Pierrelaye",
+  "Grisy-les-Plâtres","Le Heaulme","Vallangoujard","Livilliers","Gadancourt",
+  "Théméricourt","Us","Puiseux-Pontoise","Haravilliers","Génicourt","Longuesse",
+  "Montgeroult","Vigny","Neuville-sur-Oise","Hodent","Hérouville-en-Vexin","Le Perchay"
+]);
+
+const CONSEILLERS = new Set(["Boissy-l'Aillerie","Méry-sur-Oise"]);
+
+const DATA = [
+  {commune:"Ableiges",maire:"Patrick PELLETIER",dist:7.1,smgfavo:true},
+  {commune:"Aincourt",maire:"Jean-Bernard TECHER",dist:null,smgfavo:true},
+  {commune:"Ambleville",maire:"Martine SOREL",dist:null,smgfavo:true},
+  {commune:"Amenucourt",maire:"Frédérique CAMBOURIEUX",dist:null,smgfavo:true},
+  {commune:"Andilly",maire:"Alexandre LEGAL",dist:null,smgfavo:true},
+  {commune:"Argenteuil",maire:"Georges MOTHRON",dist:null,smgfavo:true},
+  {commune:"Arnouville",maire:"Pascal DOLL",dist:null,smgfavo:true},
+  {commune:"Arronville",maire:"Frédéric GODIN",dist:7.5,smgfavo:true},
+  {commune:"Arthies",maire:"Bernard TETU",dist:null,smgfavo:true},
+  {commune:"Asnières-sur-Oise",maire:"Eric THERRY",dist:null,smgfavo:true},
+  {commune:"Attainville",maire:"Yves CITERNE",dist:null,smgfavo:true},
+  {commune:"Auvers-sur-Oise",maire:"Isabelle MEZIERES",dist:9.7,smgfavo:true},
+  {commune:"Avernes",maire:"Nicolas PASTERNAK",dist:null,smgfavo:true},
+  {commune:"Baillet-en-France",maire:"Delphine BONFANTI",dist:null,smgfavo:true},
+  {commune:"Banthelu",maire:"Bertrand FOUCAULT",dist:null,smgfavo:true},
+  {commune:"Beauchamp",maire:"Françoise NORDMANN",dist:null,smgfavo:true},
+  {commune:"Beaumont-sur-Oise",maire:"Jean-Michel APARICIO",dist:null,smgfavo:true},
+  {commune:"Bellefontaine",maire:"Celia DELAHAYE",dist:null,smgfavo:true},
+  {commune:"Belloy-en-France",maire:"Delphine DRAPEAU",dist:null,smgfavo:true},
+  {commune:"Bernes-sur-Oise",maire:"Olivier ANTY",dist:null,smgfavo:true},
+  {commune:"Berville",maire:"Isabelle JONCOUR DANEL",dist:7.4,smgfavo:true},
+  {commune:"Bessancourt",maire:"Laurianne DUGLE DANGUILHEN",dist:null,smgfavo:true},
+  {commune:"Bezons",maire:"Nessrine MENHAOUARA",dist:null,smgfavo:true},
+  {commune:"Boisemont",maire:"Stéphanie SAVILL",dist:12.5,smgfavo:true},
+  {commune:"Boissy-l'Aillerie",maire:"Paul DUBRAY",dist:5.0,smgfavo:true},
+  {commune:"Bonneuil-en-France",maire:"Abdellah BENOUARET",dist:null,smgfavo:true},
+  {commune:"Bouffémont",maire:"Karine OKONSKI",dist:null,smgfavo:true},
+  {commune:"Bray-et-Lû",maire:"Corine BEAUFILS",dist:null,smgfavo:true},
+  {commune:"Bréançon",maire:"Christophe BENOIST POUTEAU",dist:3.9,smgfavo:true},
+  {commune:"Brignancourt",maire:"Bertrand LACHAISE",dist:8.9,smgfavo:true},
+  {commune:"Bruyères-sur-Oise",maire:"Bernard LE BON",dist:null,smgfavo:true},
+  {commune:"Buhy",maire:"Jean-Pierre DORE",dist:null,smgfavo:true},
+  {commune:"Butry-sur-Oise",maire:"Claude NOEL",dist:10.4,smgfavo:true},
+  {commune:"Cergy",maire:"Jean-Paul JEANDON",dist:9.8,smgfavo:true},
+  {commune:"Champagne-sur-Oise",maire:"Stéphane CARTEADO",dist:12.5,smgfavo:true},
+  {commune:"Chars",maire:"Nicolas BELANGÉ",dist:10.2,smgfavo:true},
+  {commune:"Chaumontel",maire:"Sylvain SARAGOSA",dist:null,smgfavo:true},
+  {commune:"Chaussy",maire:"Michaël ROLLOIS",dist:null,smgfavo:true},
+  {commune:"Chauvry",maire:"Olivier ROBINOT",dist:null,smgfavo:false},
+  {commune:"Cléry-en-Vexin",maire:"René PANNIER",dist:null,smgfavo:true},
+  {commune:"Commeny",maire:"Damien RADET",dist:13.0,smgfavo:true},
+  {commune:"Condécourt",maire:"Michel FINET",dist:12.9,smgfavo:true},
+  {commune:"Cormeilles-en-Parisis",maire:"Yannick BOEDEC",dist:null,smgfavo:true},
+  {commune:"Cormeilles-en-Vexin",maire:"Vincent IBRELISLE",dist:3.2,smgfavo:true},
+  {commune:"Courcelles-sur-Viosne",maire:"Christophe ROCHE",dist:6.7,smgfavo:true},
+  {commune:"Courdimanche",maire:"Sophie MATHARAN",dist:10.9,smgfavo:true},
+  {commune:"Deuil-la-Barre",maire:"Muriel SCOLAN",dist:null,smgfavo:true},
+  {commune:"Domont",maire:"Frédéric BOURDIN",dist:null,smgfavo:true},
+  {commune:"Eaubonne",maire:"Marie-José BEAULANDE",dist:null,smgfavo:true},
+  {commune:"Enghien-les-Bains",maire:"Philippe SUEUR",dist:null,smgfavo:true},
+  {commune:"Ennery",maire:"Matthieu LAURENT",dist:6.0,smgfavo:true},
+  {commune:"Éragny-sur-Oise",maire:"Thibault HUMBERT",dist:11.2,smgfavo:true},
+  {commune:"Ermont",maire:"Xavier HAQUIN",dist:null,smgfavo:true},
+  {commune:"Épiais-Rhus",maire:"Brahim MOHA",dist:0.0,smgfavo:true},
+  {commune:"Ézanville",maire:"Eric BATTAGLIA",dist:null,smgfavo:true},
+  {commune:"Franconville",maire:"Xavier MELKI",dist:null,smgfavo:true},
+  {commune:"Frémainville",maire:"Angélique LAGO",dist:null,smgfavo:true},
+  {commune:"Frémécourt",maire:"Grégoire BOUILLIANT",dist:4.9,smgfavo:true},
+  {commune:"Frépillon",maire:"Martine BERNARD",dist:null,smgfavo:true},
+  {commune:"Frouville",maire:"Stéphan LAZAROFF",dist:null,smgfavo:false},
+  {commune:"Gadancourt",maire:"—",dist:5.3,smgfavo:false},
+  {commune:"Garges-lès-Gonesse",maire:"Benoit JIMENEZ",dist:null,smgfavo:true},
+  {commune:"Génicourt",maire:"Olivier DESLANDES",dist:7.7,smgfavo:false},
+  {commune:"Gonesse",maire:"Cédric SABOURET",dist:null,smgfavo:true},
+  {commune:"Grisy-les-Plâtres",maire:"Catherine CARPENTIER",dist:2.2,smgfavo:false},
+  {commune:"Groslay",maire:"François JEFFROY",dist:null,smgfavo:true},
+  {commune:"Guiry-en-Vexin",maire:"Dominique FLAMENT",dist:null,smgfavo:true},
+  {commune:"Haravilliers",maire:"Olivier BIRON",dist:7.3,smgfavo:false},
+  {commune:"Hédouville",maire:"Eric COUPPE",dist:null,smgfavo:true},
+  {commune:"Herblay-sur-Seine",maire:"Philippe ROULEAU",dist:null,smgfavo:true},
+  {commune:"Hérouville-en-Vexin",maire:"Eric BAERT",dist:12.2,smgfavo:false},
+  {commune:"Hodent",maire:"Eric BRETON",dist:11.7,smgfavo:false},
+  {commune:"Jouy-le-Moutier",maire:"Hervé FLORCZAK",dist:12.0,smgfavo:true},
+  {commune:"L'Isle-Adam",maire:"Sébastien PONIATOWSKI",dist:null,smgfavo:false},
+  {commune:"La Chapelle-en-Vexin",maire:"Laurent ASTRUC",dist:null,smgfavo:true},
+  {commune:"La Frette-sur-Seine",maire:"Philippe AUDEBERT",dist:null,smgfavo:true},
+  {commune:"La Roche-Guyon",maire:"Capucine FAIVRE",dist:null,smgfavo:true},
+  {commune:"Labbeville",maire:"Alain DEVILLEBICHOT",dist:null,smgfavo:false},
+  {commune:"Le Bellay-en-Vexin",maire:"Ludovic BAZOT",dist:null,smgfavo:true},
+  {commune:"Le Heaulme",maire:"Maurice DELAHAYE",dist:2.5,smgfavo:false},
+  {commune:"Le Perchay",maire:"Grégory LEOST",dist:12.2,smgfavo:false},
+  {commune:"Livilliers",maire:"François DANCONNIER",dist:4.7,smgfavo:false},
+  {commune:"Longuesse",maire:"Norbert LALLOYER",dist:8.7,smgfavo:false},
+  {commune:"Luzarches",maire:"Michel MANSOUX",dist:null,smgfavo:true},
+  {commune:"Maffliers",maire:"Jean-Christophe MAZURIER",dist:null,smgfavo:false},
+  {commune:"Magny-en-Vexin",maire:"Luc PUECH D'ALISSAC",dist:null,smgfavo:true},
+  {commune:"Marines",maire:"Michel DEJARDIN",dist:6.4,smgfavo:true},
+  {commune:"Maudétour-en-Vexin",maire:"Didier VERMEIRE",dist:null,smgfavo:false},
+  {commune:"Menouville",maire:"Christian PION",dist:null,smgfavo:false},
+  {commune:"Menucourt",maire:"Catherine RENAUD",dist:12.6,smgfavo:true},
+  {commune:"Mériel",maire:"Jérôme FRANÇOIS",dist:11.3,smgfavo:true},
+  {commune:"Méry-sur-Oise",maire:"Pierre-Edouard EON",dist:10.9,smgfavo:true},
+  {commune:"Montgeroult",maire:"Rémi LEPAPE",dist:8.8,smgfavo:false},
+  {commune:"Montigny-lès-Cormeilles",maire:"Miloud GOUAL",dist:null,smgfavo:true},
+  {commune:"Montmorency",maire:"Maxime THORY",dist:null,smgfavo:true},
+  {commune:"Mours",maire:"Olivier LESUEUR",dist:null,smgfavo:false},
+  {commune:"Moussy",maire:"Philippe HOUDAILLE",dist:null,smgfavo:false},
+  {commune:"Nerville-la-Forêt",maire:"Philippe VAN HYFTE",dist:null,smgfavo:false},
+  {commune:"Nesles-la-Vallée",maire:"Christophe BUATOIS",dist:null,smgfavo:true},
+  {commune:"Neuilly-en-Vexin",maire:"Jerome OLIVIER",dist:null,smgfavo:true},
+  {commune:"Neuville-sur-Oise",maire:"Sébastien DRUART",dist:11.5,smgfavo:false},
+  {commune:"Nointel",maire:"Martine LEGRAND",dist:null,smgfavo:false},
+  {commune:"Noisy-sur-Oise",maire:"Catherine BORGNE",dist:null,smgfavo:false},
+  {commune:"Nucourt",maire:"Ghislaine JOURNEE",dist:null,smgfavo:false},
+  {commune:"Osny",maire:"Laurent ACHITE-HENNI",dist:5.9,smgfavo:true},
+  {commune:"Parmain",maire:"Loïc TAILLANTER",dist:null,smgfavo:false},
+  {commune:"Persan",maire:"Valentin RATIEUVILLE",dist:null,smgfavo:true},
+  {commune:"Pierrelaye",maire:"Eric BOSC",dist:13.0,smgfavo:true},
+  {commune:"Pontoise",maire:"Stéphanie VON EUW",dist:8.5,smgfavo:true},
+  {commune:"Presles",maire:"Céline CAUDRON",dist:null,smgfavo:false},
+  {commune:"Puiseux-Pontoise",maire:"Thierry THOMASSIN",dist:7.1,smgfavo:false},
+  {commune:"Ronquerolles",maire:"Patrick PRÉMEL",dist:null,smgfavo:false},
+  {commune:"Sagy",maire:"Guy PARIS",dist:null,smgfavo:false},
+  {commune:"Saint-Gervais",maire:"Florence BINAUX LE CLECH",dist:null,smgfavo:false},
+  {commune:"Saint-Ouen-l'Aumône",maire:"Laurent LINQUETTE",dist:9.4,smgfavo:true},
+  {commune:"Sarcelles",maire:"Bassi KONATE",dist:null,smgfavo:true},
+  {commune:"Taverny",maire:"Florence PORTELLI",dist:null,smgfavo:true},
+  {commune:"Théméricourt",maire:"Denis SARGERET",dist:6.2,smgfavo:false},
+  {commune:"Theuville",maire:"Jérémy PENTHER",dist:null,smgfavo:false},
+  {commune:"Us",maire:"Jhony BOURGIN",dist:7.4,smgfavo:false},
+  {commune:"Vallangoujard",maire:"Philippe FABREGES",dist:3.5,smgfavo:false},
+  {commune:"Valmondois",maire:"Laurent DE GAULLE",dist:null,smgfavo:false},
+  {commune:"Vauréal",maire:"Raphaël LANTERI",dist:10.9,smgfavo:true},
+  {commune:"Vigny",maire:"Vanessa LEGAIGNEUR",dist:11.4,smgfavo:false},
+  {commune:"Villiers-Adam",maire:"Vincent BARRAILLER",dist:null,smgfavo:false},
+  {commune:"Wy-dit-Joli-Village",maire:"Laurent BOSSU",dist:null,smgfavo:false},
+];
+
+const STATUTS=["a_contacter","contacte","rdv","positif","negatif","sans_reponse"];
+const LABELS={a_contacter:"À contacter",contacte:"Contacté",rdv:"RDV fixé",positif:"Positif",negatif:"Négatif",sans_reponse:"Sans réponse"};
+
+// Load persisted state
+let state={};
+try{state=JSON.parse(localStorage.getItem('fuego_v4')||'{}');}catch(e){}
+
+// Pre-fill ONLY if nothing is stored yet (first load)
+const hasStoredData = Object.keys(state).length > 0;
+if(!hasStoredData){
+  DATA.forEach((d,i)=>{
+    const initStatut = INIT[d.commune]||'a_contacter';
+    const initDate = initStatut !== 'a_contacter' ? '2026-05-07' : '';
+    state[i]={statut:initStatut, date:initDate, note:''};
+  });
+  saveState();
+}
+
+function saveState(){localStorage.setItem('fuego_v4',JSON.stringify(state));}
+function getRow(i){return state[i]||{statut:'a_contacter',date:'',note:''};}
+
+let fStatut='tous',fZone='tous',fSearch='';
+let sCol=2,sAsc=true;
+
+function setFilter(group,val,btn){
+  if(group==='statut') fStatut=val;
+  if(group==='zone') fZone=val;
+  const grpSel = group==='zone'?'[data-group="zone"]':'.toolbar .filter-btn:not([data-group])';
+  document.querySelectorAll(grpSel).forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+function searchTable(v){fSearch=v;renderTable();}
+function sortTable(col){if(sCol===col)sAsc=!sAsc;else{sCol=col;sAsc=true;}renderTable();}
+
+function renderTable(){
+  let rows=DATA.map((d,i)=>({...d,i,...getRow(i)}));
+  if(fStatut!=='tous') rows=rows.filter(r=>r.statut===fStatut);
+  if(fZone==='rayon') rows=rows.filter(r=>RAYON13.has(r.commune));
+  if(fZone==='hors') rows=rows.filter(r=>!RAYON13.has(r.commune));
+  if(fSearch){const s=fSearch.toLowerCase();rows=rows.filter(r=>r.commune.toLowerCase().includes(s)||r.maire.toLowerCase().includes(s));}
+
+  rows.sort((a,b)=>{
+    let va,vb;
+    if(sCol===0){va=a.commune;vb=b.commune;}
+    else if(sCol===1){va=a.maire;vb=b.maire;}
+    else if(sCol===2){va=a.dist??999;vb=b.dist??999;}
+    else if(sCol===4){va=a.statut;vb=b.statut;}
+    else{va=0;vb=0;}
+    if(va<vb)return sAsc?-1:1;
+    if(va>vb)return sAsc?1:-1;
+    return 0;
+  });
+
+  // split groups
+  const inRayon=rows.filter(r=>RAYON13.has(r.commune));
+  const outRayon=rows.filter(r=>!RAYON13.has(r.commune));
+
+  let html='';
+  if(inRayon.length&&fZone!=='hors'){
+    html+=`<tr class="group-header"><td colspan="7">Zone prioritaire — rayon 13 km Épiais-Rhus (${inRayon.length})</td></tr>`;
+    html+=inRayon.map(r=>rowHTML(r)).join('');
+  }
+  if(outRayon.length&&fZone!=='rayon'){
+    html+=`<tr class="group-header"><td colspan="7">Hors rayon — Val-d'Oise (${outRayon.length})</td></tr>`;
+    html+=outRayon.map(r=>rowHTML(r)).join('');
+  }
+  if(!html) html=`<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">Aucun résultat</td></tr>`;
+  document.getElementById('table-body').innerHTML=html;
+  updateStats();
+}
+
+function rowHTML(r){
+  let badges='';
+  if(r.smgfavo) badges+=`<span class="badge badge-smgfavo">SMGFAVO</span>`;
+  if(RAYON13.has(r.commune)) badges+=` <span class="badge badge-rayon">≤13 km</span>`;
+  if(CONSEILLERS.has(r.commune)) badges+=` <span class="badge badge-double">Cons.dép.</span>`;
+  const opts=STATUTS.map(s=>`<option value="${s}" ${r.statut===s?'selected':''}>${LABELS[s]}</option>`).join('');
+  const distTxt=r.dist!=null?(r.dist===0?'⚑ centre':`${r.dist} km`):'—';
+  const distClass=r.dist!=null&&r.dist<=5?'near':'';
+  return `<tr class="data-row">
+    <td><div class="commune-name">${r.commune}</div></td>
+    <td><span class="maire-name">${r.maire}</span></td>
+    <td><span class="dist ${distClass}">${distTxt}</span></td>
+    <td>${badges}</td>
+    <td><select class="statut-select s-${r.statut}" onchange="updateStatut(${r.i},this)">${opts}</select></td>
+    <td><input type="date" class="date-input" value="${r.date}" onchange="updateDate(${r.i},this)"></td>
+    <td><input type="text" class="note-input" placeholder="Note…" value="${r.note}" onchange="updateNote(${r.i},this)"></td>
+  </tr>`;
+}
+
+function updateStatut(i,sel){
+  const s=getRow(i);s.statut=sel.value;sel.className=`statut-select s-${sel.value}`;
+  if(!s.date){s.date=new Date().toISOString().split('T')[0];sel.closest('tr').querySelector('.date-input').value=s.date;}
+  state[i]=s;saveState();updateStats();
+}
+function updateDate(i,inp){const s=getRow(i);s.date=inp.value;state[i]=s;saveState();}
+function updateNote(i,inp){const s=getRow(i);s.note=inp.value;state[i]=s;saveState();}
+
+function updateStats(){
+  const all=DATA.map((_,i)=>getRow(i));
+  const contacte=all.filter(r=>r.statut!=='a_contacter').length;
+  const rdv=all.filter(r=>r.statut==='rdv').length;
+  const positif=all.filter(r=>r.statut==='positif').length;
+  const negatif=all.filter(r=>r.statut==='negatif').length;
+  document.getElementById('total-count').textContent=DATA.length;
+  document.getElementById('contacte-count').textContent=contacte;
+  document.getElementById('rdv-count').textContent=rdv;
+  document.getElementById('positif-count').textContent=positif;
+  document.getElementById('negatif-count').textContent=negatif;
+  const pct=Math.round(contacte/DATA.length*100);
+  document.getElementById('progress-fill').style.width=pct+'%';
+  document.getElementById('progress-pct').textContent=pct+'%';
+  document.getElementById('footer-info').textContent=`${DATA.length} communes · ${contacte} contactées · ${positif} positives · ${negatif} négatives`;
+}
+
+function exportCSV(){
+  const headers=['Commune','Maire','Distance km','SMGFAVO','Rayon 13km','Statut','Date contact','Notes'];
+  const rows=DATA.map((d,i)=>{
+    const s=getRow(i);
+    return [d.commune,d.maire,d.dist??'',d.smgfavo?'Oui':'Non',RAYON13.has(d.commune)?'Oui':'Non',LABELS[s.statut],s.date,s.note].map(v=>`"${v}"`).join(',');
+  });
+  const csv=[headers.join(','),...rows].join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download='prospection_fuego_v3.csv';a.click();
+}
+
+function resetAll(){
+  if(confirm('Réinitialiser toutes les données de suivi ?')){
+    localStorage.removeItem('fuego_v4');
+    state={};
+    DATA.forEach((d,i)=>{
+      const initStatut=INIT[d.commune]||'a_contacter';
+      const initDate=initStatut!=='a_contacter'?'2026-05-07':'';
+      state[i]={statut:initStatut,date:initDate,note:''};
+    });
+    saveState();renderTable();
+  }
+}
+
+renderTable();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js">
+const COORDS={
+  "Ableiges":[49.0904,1.9818],"Aincourt":[49.0733,1.7713],"Ambleville":[49.1507,1.6974],
+  "Amenucourt":[49.1062,1.6418],"Andilly":[49.0086,2.3039],"Argenteuil":[48.9472,2.2467],
+  "Arnouville":[48.9859,2.4195],"Arronville":[49.1822,2.1146],"Arthies":[49.0948,1.7888],
+  "Asnières-sur-Oise":[49.1339,2.3607],"Attainville":[49.0579,2.3456],"Auvers-sur-Oise":[49.0709,2.1708],
+  "Avernes":[49.087,1.8719],"Baillet-en-France":[49.0584,2.2956],"Banthelu":[49.1271,1.8151],
+  "Beauchamp":[49.0158,2.1915],"Beaumont-sur-Oise":[49.1416,2.2846],"Bellefontaine":[49.0975,2.4659],
+  "Belloy-en-France":[49.0939,2.3717],"Bernes-sur-Oise":[49.166,2.3008],"Berville":[49.1902,2.0716],
+  "Bessancourt":[49.038,2.2164],"Bezons":[48.9257,2.2158],"Boisemont":[49.0185,2.0027],
+  "Boissy-l'Aillerie":[49.0839,2.0323],"Bonneuil-en-France":[48.9743,2.4315],"Bouffémont":[49.042,2.3064],
+  "Bray-et-Lû":[49.1395,1.6612],"Bréançon":[49.1422,2.0198],"Brignancourt":[49.1374,1.9438],
+  "Bruyères-sur-Oise":[49.1568,2.3302],"Buhy":[49.193,1.6925],"Butry-sur-Oise":[49.085,2.1954],
+  "Cergy":[49.0356,2.0603],"Champagne-sur-Oise":[49.1361,2.2351],"Chars":[49.1605,1.9374],
+  "Chaumontel":[49.1232,2.4271],"Chaussy":[49.1223,1.6935],"Chauvry":[49.033,2.342],
+  "Cléry-en-Vexin":[49.1327,1.8533],"Commeny":[49.1271,1.8866],"Condécourt":[49.0396,1.9415],
+  "Cormeilles-en-Parisis":[48.9735,2.2013],"Cormeilles-en-Vexin":[49.1164,2.022],
+  "Courcelles-sur-Viosne":[49.0775,2.0046],"Courdimanche":[49.0348,2.0012],
+  "Deuil-la-Barre":[48.9758,2.3273],"Domont":[49.0303,2.3262],"Eaubonne":[48.9921,2.2779],
+  "Enghien-les-Bains":[48.9709,2.3035],"Ennery":[49.0757,2.1046],"Éragny-sur-Oise":[49.0246,2.095],
+  "Ermont":[48.9891,2.2585],"Épiais-Rhus":[49.1234,2.0649],"Ézanville":[49.0381,2.3605],
+  "Franconville":[48.986,2.2296],"Frémainville":[49.0659,1.8667],"Frémécourt":[49.1203,1.9979],
+  "Frépillon":[49.0512,2.2058],"Frouville":[49.098,2.319],"Gadancourt":[49.136,1.995],
+  "Garges-lès-Gonesse":[48.9665,2.4094],"Génicourt":[49.054,2.074],"Gonesse":[48.9865,2.4498],
+  "Grisy-les-Plâtres":[49.130,2.093],"Groslay":[48.9858,2.3508],"Guiry-en-Vexin":[49.126,1.796],
+  "Haravilliers":[49.174,2.001],"Hédouville":[49.082,2.285],"Herblay-sur-Seine":[48.99,2.1655],
+  "Hérouville-en-Vexin":[49.084,1.909],"Hodent":[49.156,1.912],"Jouy-le-Moutier":[49.0157,2.0472],
+  "L'Isle-Adam":[49.107,2.223],"La Chapelle-en-Vexin":[49.1832,1.732],"La Frette-sur-Seine":[48.9799,2.1786],
+  "La Roche-Guyon":[49.0807,1.6291],"Labbeville":[49.124,2.191],"Le Bellay-en-Vexin":[49.098,1.808],
+  "Le Heaulme":[49.101,2.068],"Le Perchay":[49.107,1.899],"Livilliers":[49.082,2.051],
+  "Longuesse":[49.093,1.955],"Luzarches":[49.1127,2.422],"Maffliers":[49.044,2.326],
+  "Magny-en-Vexin":[49.1517,1.7871],"Marines":[49.1449,1.9836],"Maudétour-en-Vexin":[49.108,1.751],
+  "Menouville":[49.097,2.015],"Menucourt":[49.0253,1.9795],"Mériel":[49.0762,2.2028],
+  "Méry-sur-Oise":[49.0645,2.185],"Montgeroult":[49.073,1.972],"Montigny-lès-Cormeilles":[48.9874,2.1879],
+  "Montmorency":[48.9932,2.3247],"Mours":[49.137,2.241],"Moussy":[49.161,2.076],
+  "Nerville-la-Forêt":[49.049,2.297],"Nesles-la-Vallée":[49.101,2.179],"Neuilly-en-Vexin":[49.116,1.977],
+  "Neuville-sur-Oise":[49.020,2.072],"Nointel":[49.122,2.381],"Noisy-sur-Oise":[49.143,2.319],
+  "Nucourt":[49.117,1.865],"Osny":[49.07,2.0627],"Parmain":[49.117,2.207],
+  "Persan":[49.1522,2.2696],"Pierrelaye":[49.0229,2.1561],"Pontoise":[49.051,2.1006],
+  "Presles":[49.098,2.358],"Puiseux-Pontoise":[49.060,2.051],"Ronquerolles":[49.109,2.248],
+  "Sagy":[49.073,1.899],"Saint-Gervais":[49.142,2.064],"Saint-Ouen-l'Aumône":[49.0431,2.1053],
+  "Sarcelles":[48.9973,2.3785],"Taverny":[49.0274,2.2235],"Théméricourt":[49.107,1.983],
+  "Theuville":[49.141,2.041],"Us":[49.073,1.999],"Vallangoujard":[49.095,2.087],
+  "Valmondois":[49.091,2.198],"Vauréal":[49.0294,2.0232],"Vigny":[49.099,1.913],
+  "Villiers-Adam":[49.066,2.237],"Wy-dit-Joli-Village":[49.097,1.857]
+};
+
+const STATUT_COLORS={
+  a_contacter:'#B0A898',contacte:'#E07B2A',rdv:'#1A3A5C',
+  positif:'#2C7A4B',negatif:'#C0392B',sans_reponse:'#999'
+};
+
+let leafletMap=null,mapMarkers=[],mapVisible=false;
+
+function toggleMap(){
+  mapVisible=!mapVisible;
+  const cont=document.getElementById('map-container');
+  const leg=document.getElementById('map-legend');
+  const btn=document.getElementById('map-toggle');
+  cont.classList.toggle('visible',mapVisible);
+  leg.style.display=mapVisible?'flex':'none';
+  btn.textContent=mapVisible?'▲ Masquer la carte':'▼ Afficher la carte du Val-d'Oise';
+  if(mapVisible&&!leafletMap){
+    setTimeout(()=>{
+      leafletMap=L.map('leaflet-map',{zoomControl:true}).setView([49.07,2.12],10);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
+        attribution:'© OpenStreetMap © CARTO',maxZoom:18
+      }).addTo(leafletMap);
+      refreshMapMarkers();
+    },80);
+  } else if(mapVisible){
+    leafletMap.invalidateSize();
+    refreshMapMarkers();
+  }
+}
+
+function refreshMapMarkers(){
+  if(!leafletMap) return;
+  mapMarkers.forEach(m=>m.remove());
+  mapMarkers=[];
+  DATA.forEach((d,i)=>{
+    const coords=COORDS[d.commune];
+    if(!coords) return;
+    const s=getRow(i);
+    const color=STATUT_COLORS[s.statut]||'#B0A898';
+    const contacted=s.statut!=='a_contacter';
+    const marker=L.circleMarker(coords,{
+      radius:contacted?7:5,fillColor:color,color:'#fff',
+      weight:contacted?1.5:1,opacity:1,fillOpacity:contacted?0.92:0.55
+    });
+    marker.bindPopup(`<div style="font-family:monospace;font-size:12px;min-width:140px">
+      <strong>${d.commune}</strong><br>
+      <span style="color:#7A7468;font-size:11px">${d.maire}</span><br>
+      <span style="color:${color};font-weight:600">${LABELS[s.statut]}</span>
+      ${s.note?'<br><em style="font-size:10px;color:#7A7468">'+s.note+'</em>':''}
+    </div>`,{maxWidth:220});
+    marker.addTo(leafletMap);
+    mapMarkers.push(marker);
+  });
+}
+
+// Patch updateStatut pour rafraichir la carte
+const _origUpdateStatut=updateStatut;
+window.updateStatut=function(i,sel){
+  _origUpdateStatut(i,sel);
+  if(mapVisible) refreshMapMarkers();
+};
+
+</script>
+</body>
+</html>

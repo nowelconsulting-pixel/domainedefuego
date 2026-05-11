@@ -97,14 +97,14 @@
   </div>
 </header>
 
-<button id="map-toggle" onclick="toggleMap()">▼ Afficher la carte du Val-d'Oise</button>
+<button id="map-toggle" onclick="toggleMap()">&#9660; Afficher la carte du Val-d'Oise</button>
 <div id="map-container"><div id="leaflet-map" style="height:100%;width:100%;"></div></div>
 <div class="map-legend" id="map-legend" style="display:none;">
-  <span class="leg-item"><span class="leg-dot" style="background:#E07B2A;"></span>Contacté</span>
-  <span class="leg-item"><span class="leg-dot" style="background:#C0392B;"></span>Négatif</span>
+  <span class="leg-item"><span class="leg-dot" style="background:#E07B2A;"></span>Contact&#233;</span>
+  <span class="leg-item"><span class="leg-dot" style="background:#C0392B;"></span>N&#233;gatif</span>
   <span class="leg-item"><span class="leg-dot" style="background:#2C7A4B;"></span>Positif</span>
-  <span class="leg-item"><span class="leg-dot" style="background:#1A3A5C;"></span>RDV fixé</span>
-  <span class="leg-item"><span class="leg-dot" style="background:#B0A898;"></span>À contacter</span>
+  <span class="leg-item"><span class="leg-dot" style="background:#1A3A5C;"></span>RDV fix&#233;</span>
+  <span class="leg-item"><span class="leg-dot" style="background:#B0A898;"></span>&#192; contacter</span>
 </div>
 <div class="toolbar">
   <span class="filter-label">Statut :</span>
@@ -149,6 +149,62 @@
 </footer>
 
 <script>
+// ─── CARTE ────────────────────────────────────────────────────────────────────
+const COORDS={"Ableiges": [49.0904, 1.9818], "Aincourt": [49.0733, 1.7713], "Ambleville": [49.1507, 1.6974], "Amenucourt": [49.1062, 1.6418], "Andilly": [49.0086, 2.3039], "Argenteuil": [48.9472, 2.2467], "Arnouville": [48.9859, 2.4195], "Arronville": [49.1822, 2.1146], "Arthies": [49.0948, 1.7888], "Asnières-sur-Oise": [49.1339, 2.3607], "Attainville": [49.0579, 2.3456], "Auvers-sur-Oise": [49.0709, 2.1708], "Avernes": [49.087, 1.8719], "Baillet-en-France": [49.0584, 2.2956], "Banthelu": [49.1271, 1.8151], "Beauchamp": [49.0158, 2.1915], "Beaumont-sur-Oise": [49.1416, 2.2846], "Bellefontaine": [49.0975, 2.4659], "Belloy-en-France": [49.0939, 2.3717], "Bernes-sur-Oise": [49.166, 2.3008], "Berville": [49.1902, 2.0716], "Bessancourt": [49.038, 2.2164], "Bezons": [48.9257, 2.2158], "Boisemont": [49.0185, 2.0027], "Boissy-l'Aillerie": [49.0839, 2.0323], "Bonneuil-en-France": [48.9743, 2.4315], "Bouffémont": [49.042, 2.3064], "Bray-et-Lû": [49.1395, 1.6612], "Bréançon": [49.1422, 2.0198], "Brignancourt": [49.1374, 1.9438], "Bruyères-sur-Oise": [49.1568, 2.3302], "Buhy": [49.193, 1.6925], "Butry-sur-Oise": [49.085, 2.1954], "Cergy": [49.0356, 2.0603], "Champagne-sur-Oise": [49.1361, 2.2351], "Chars": [49.1605, 1.9374], "Chaumontel": [49.1232, 2.4271], "Chaussy": [49.1223, 1.6935], "Chauvry": [49.033, 2.342], "Cléry-en-Vexin": [49.1327, 1.8533], "Commeny": [49.1271, 1.8866], "Condécourt": [49.0396, 1.9415], "Cormeilles-en-Parisis": [48.9735, 2.2013], "Cormeilles-en-Vexin": [49.1164, 2.022], "Courcelles-sur-Viosne": [49.0775, 2.0046], "Courdimanche": [49.0348, 2.0012], "Deuil-la-Barre": [48.9758, 2.3273], "Domont": [49.0303, 2.3262], "Eaubonne": [48.9921, 2.2779], "Enghien-les-Bains": [48.9709, 2.3035], "Ennery": [49.0757, 2.1046], "Éragny-sur-Oise": [49.0246, 2.095], "Ermont": [48.9891, 2.2585], "Épiais-Rhus": [49.1234, 2.0649], "Ézanville": [49.0381, 2.3605], "Franconville": [48.986, 2.2296], "Frémainville": [49.0659, 1.8667], "Frémécourt": [49.1203, 1.9979], "Frépillon": [49.0512, 2.2058], "Frouville": [49.098, 2.319], "Gadancourt": [49.136, 1.995], "Garges-lès-Gonesse": [48.9665, 2.4094], "Génicourt": [49.054, 2.074], "Gonesse": [48.9865, 2.4498], "Grisy-les-Plâtres": [49.13, 2.093], "Groslay": [48.9858, 2.3508], "Guiry-en-Vexin": [49.126, 1.796], "Haravilliers": [49.174, 2.001], "Hédouville": [49.082, 2.285], "Herblay-sur-Seine": [48.99, 2.1655], "Hérouville-en-Vexin": [49.084, 1.909], "Hodent": [49.156, 1.912], "Jouy-le-Moutier": [49.0157, 2.0472], "L'Isle-Adam": [49.107, 2.223], "La Chapelle-en-Vexin": [49.1832, 1.732], "La Frette-sur-Seine": [48.9799, 2.1786], "La Roche-Guyon": [49.0807, 1.6291], "Labbeville": [49.124, 2.191], "Le Bellay-en-Vexin": [49.098, 1.808], "Le Heaulme": [49.101, 2.068], "Le Perchay": [49.107, 1.899], "Livilliers": [49.082, 2.051], "Longuesse": [49.093, 1.955], "Luzarches": [49.1127, 2.422], "Maffliers": [49.044, 2.326], "Magny-en-Vexin": [49.1517, 1.7871], "Marines": [49.1449, 1.9836], "Maudétour-en-Vexin": [49.108, 1.751], "Menouville": [49.097, 2.015], "Menucourt": [49.0253, 1.9795], "Mériel": [49.0762, 2.2028], "Méry-sur-Oise": [49.0645, 2.185], "Montgeroult": [49.073, 1.972], "Montigny-lès-Cormeilles": [48.9874, 2.1879], "Montmorency": [48.9932, 2.3247], "Mours": [49.137, 2.241], "Moussy": [49.161, 2.076], "Nerville-la-Forêt": [49.049, 2.297], "Nesles-la-Vallée": [49.101, 2.179], "Neuilly-en-Vexin": [49.116, 1.977], "Neuville-sur-Oise": [49.02, 2.072], "Nointel": [49.122, 2.381], "Noisy-sur-Oise": [49.143, 2.319], "Nucourt": [49.117, 1.865], "Osny": [49.07, 2.0627], "Parmain": [49.117, 2.207], "Persan": [49.1522, 2.2696], "Pierrelaye": [49.0229, 2.1561], "Pontoise": [49.051, 2.1006], "Presles": [49.098, 2.358], "Puiseux-Pontoise": [49.06, 2.051], "Ronquerolles": [49.109, 2.248], "Sagy": [49.073, 1.899], "Saint-Gervais": [49.142, 2.064], "Saint-Ouen-l'Aumône": [49.0431, 2.1053], "Sarcelles": [48.9973, 2.3785], "Taverny": [49.0274, 2.2235], "Théméricourt": [49.107, 1.983], "Theuville": [49.141, 2.041], "Us": [49.073, 1.999], "Vallangoujard": [49.095, 2.087], "Valmondois": [49.091, 2.198], "Vauréal": [49.0294, 2.0232], "Vigny": [49.099, 1.913], "Villiers-Adam": [49.066, 2.237], "Wy-dit-Joli-Village": [49.097, 1.857]};
+const STATUT_COLORS={a_contacter:"#B0A898",contacte:"#E07B2A",rdv:"#1A3A5C",positif:"#2C7A4B",negatif:"#C0392B",sans_reponse:"#999"};
+let leafletMap=null,mapMarkers=[],mapVisible=false;
+
+function loadLeafletAndInit(){
+  if(window.L){initMap();return;}
+  var s=document.createElement("script");
+  s.src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";
+  s.onload=initMap;
+  document.head.appendChild(s);
+}
+function initMap(){
+  var cont=document.getElementById("map-container");
+  cont.classList.add("visible");
+  setTimeout(function(){
+    leafletMap=L.map("leaflet-map",{zoomControl:true}).setView([49.07,2.12],10);
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",{
+      attribution:"&copy; OpenStreetMap &copy; CARTO",maxZoom:18
+    }).addTo(leafletMap);
+    refreshMapMarkers();
+  },80);
+}
+function refreshMapMarkers(){
+  if(!leafletMap) return;
+  mapMarkers.forEach(function(m){m.remove();});
+  mapMarkers=[];
+  DATA.forEach(function(d,i){
+    var coords=COORDS[d.commune];
+    if(!coords) return;
+    var s=getRow(i);
+    var color=STATUT_COLORS[s.statut]||"#B0A898";
+    var contacted=s.statut!=="a_contacter";
+    var m=L.circleMarker(coords,{
+      radius:contacted?7:5,fillColor:color,color:"#fff",
+      weight:contacted?1.5:1,opacity:1,fillOpacity:contacted?0.92:0.5
+    });
+    m.bindPopup("<div style=\"font-family:monospace;font-size:12px;min-width:140px\"><strong>"+d.commune+"</strong><br><span style=\"color:#7A7468;font-size:11px\">"+d.maire+"</span><br><span style=\"color:"+color+";font-weight:600\">"+LABELS[s.statut]+"</span>"+(s.note?"<br><em style=\"font-size:10px;color:#7A7468\">"+s.note+"</em>":"")+"</div>",{maxWidth:220});
+    m.addTo(leafletMap);
+    mapMarkers.push(m);
+  });
+}
+function toggleMap(){
+  mapVisible=!mapVisible;
+  var btn=document.getElementById("map-toggle");
+  var leg=document.getElementById("map-legend");
+  btn.textContent=mapVisible?"▲ Masquer la carte":"▼ Afficher la carte du Val-d\'Oise";
+  leg.style.display=mapVisible?"flex":"none";
+  if(mapVisible&&!leafletMap){loadLeafletAndInit();}
+  else if(mapVisible&&leafletMap){leafletMap.invalidateSize();refreshMapMarkers();}
+  else{document.getElementById("map-container").classList.remove("visible");}
+}
+var _ouSav=updateStatut;
+function updateStatut(i,sel){_ouSav(i,sel);if(mapVisible)refreshMapMarkers();}
+// ─── FIN CARTE ────────────────────────────────────────────────────────────────
+
 // statut initial : 'contacte' sauf Boisemont = 'negatif', reste = 'a_contacter'
 const INIT = {
   "Ableiges":"contacte","Arronville":"contacte","Asnières-sur-Oise":"contacte",
@@ -462,115 +518,6 @@ function resetAll(){
 }
 
 renderTable();
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js">
-const COORDS={
-  "Ableiges":[49.0904,1.9818],"Aincourt":[49.0733,1.7713],"Ambleville":[49.1507,1.6974],
-  "Amenucourt":[49.1062,1.6418],"Andilly":[49.0086,2.3039],"Argenteuil":[48.9472,2.2467],
-  "Arnouville":[48.9859,2.4195],"Arronville":[49.1822,2.1146],"Arthies":[49.0948,1.7888],
-  "Asnières-sur-Oise":[49.1339,2.3607],"Attainville":[49.0579,2.3456],"Auvers-sur-Oise":[49.0709,2.1708],
-  "Avernes":[49.087,1.8719],"Baillet-en-France":[49.0584,2.2956],"Banthelu":[49.1271,1.8151],
-  "Beauchamp":[49.0158,2.1915],"Beaumont-sur-Oise":[49.1416,2.2846],"Bellefontaine":[49.0975,2.4659],
-  "Belloy-en-France":[49.0939,2.3717],"Bernes-sur-Oise":[49.166,2.3008],"Berville":[49.1902,2.0716],
-  "Bessancourt":[49.038,2.2164],"Bezons":[48.9257,2.2158],"Boisemont":[49.0185,2.0027],
-  "Boissy-l'Aillerie":[49.0839,2.0323],"Bonneuil-en-France":[48.9743,2.4315],"Bouffémont":[49.042,2.3064],
-  "Bray-et-Lû":[49.1395,1.6612],"Bréançon":[49.1422,2.0198],"Brignancourt":[49.1374,1.9438],
-  "Bruyères-sur-Oise":[49.1568,2.3302],"Buhy":[49.193,1.6925],"Butry-sur-Oise":[49.085,2.1954],
-  "Cergy":[49.0356,2.0603],"Champagne-sur-Oise":[49.1361,2.2351],"Chars":[49.1605,1.9374],
-  "Chaumontel":[49.1232,2.4271],"Chaussy":[49.1223,1.6935],"Chauvry":[49.033,2.342],
-  "Cléry-en-Vexin":[49.1327,1.8533],"Commeny":[49.1271,1.8866],"Condécourt":[49.0396,1.9415],
-  "Cormeilles-en-Parisis":[48.9735,2.2013],"Cormeilles-en-Vexin":[49.1164,2.022],
-  "Courcelles-sur-Viosne":[49.0775,2.0046],"Courdimanche":[49.0348,2.0012],
-  "Deuil-la-Barre":[48.9758,2.3273],"Domont":[49.0303,2.3262],"Eaubonne":[48.9921,2.2779],
-  "Enghien-les-Bains":[48.9709,2.3035],"Ennery":[49.0757,2.1046],"Éragny-sur-Oise":[49.0246,2.095],
-  "Ermont":[48.9891,2.2585],"Épiais-Rhus":[49.1234,2.0649],"Ézanville":[49.0381,2.3605],
-  "Franconville":[48.986,2.2296],"Frémainville":[49.0659,1.8667],"Frémécourt":[49.1203,1.9979],
-  "Frépillon":[49.0512,2.2058],"Frouville":[49.098,2.319],"Gadancourt":[49.136,1.995],
-  "Garges-lès-Gonesse":[48.9665,2.4094],"Génicourt":[49.054,2.074],"Gonesse":[48.9865,2.4498],
-  "Grisy-les-Plâtres":[49.130,2.093],"Groslay":[48.9858,2.3508],"Guiry-en-Vexin":[49.126,1.796],
-  "Haravilliers":[49.174,2.001],"Hédouville":[49.082,2.285],"Herblay-sur-Seine":[48.99,2.1655],
-  "Hérouville-en-Vexin":[49.084,1.909],"Hodent":[49.156,1.912],"Jouy-le-Moutier":[49.0157,2.0472],
-  "L'Isle-Adam":[49.107,2.223],"La Chapelle-en-Vexin":[49.1832,1.732],"La Frette-sur-Seine":[48.9799,2.1786],
-  "La Roche-Guyon":[49.0807,1.6291],"Labbeville":[49.124,2.191],"Le Bellay-en-Vexin":[49.098,1.808],
-  "Le Heaulme":[49.101,2.068],"Le Perchay":[49.107,1.899],"Livilliers":[49.082,2.051],
-  "Longuesse":[49.093,1.955],"Luzarches":[49.1127,2.422],"Maffliers":[49.044,2.326],
-  "Magny-en-Vexin":[49.1517,1.7871],"Marines":[49.1449,1.9836],"Maudétour-en-Vexin":[49.108,1.751],
-  "Menouville":[49.097,2.015],"Menucourt":[49.0253,1.9795],"Mériel":[49.0762,2.2028],
-  "Méry-sur-Oise":[49.0645,2.185],"Montgeroult":[49.073,1.972],"Montigny-lès-Cormeilles":[48.9874,2.1879],
-  "Montmorency":[48.9932,2.3247],"Mours":[49.137,2.241],"Moussy":[49.161,2.076],
-  "Nerville-la-Forêt":[49.049,2.297],"Nesles-la-Vallée":[49.101,2.179],"Neuilly-en-Vexin":[49.116,1.977],
-  "Neuville-sur-Oise":[49.020,2.072],"Nointel":[49.122,2.381],"Noisy-sur-Oise":[49.143,2.319],
-  "Nucourt":[49.117,1.865],"Osny":[49.07,2.0627],"Parmain":[49.117,2.207],
-  "Persan":[49.1522,2.2696],"Pierrelaye":[49.0229,2.1561],"Pontoise":[49.051,2.1006],
-  "Presles":[49.098,2.358],"Puiseux-Pontoise":[49.060,2.051],"Ronquerolles":[49.109,2.248],
-  "Sagy":[49.073,1.899],"Saint-Gervais":[49.142,2.064],"Saint-Ouen-l'Aumône":[49.0431,2.1053],
-  "Sarcelles":[48.9973,2.3785],"Taverny":[49.0274,2.2235],"Théméricourt":[49.107,1.983],
-  "Theuville":[49.141,2.041],"Us":[49.073,1.999],"Vallangoujard":[49.095,2.087],
-  "Valmondois":[49.091,2.198],"Vauréal":[49.0294,2.0232],"Vigny":[49.099,1.913],
-  "Villiers-Adam":[49.066,2.237],"Wy-dit-Joli-Village":[49.097,1.857]
-};
-
-const STATUT_COLORS={
-  a_contacter:'#B0A898',contacte:'#E07B2A',rdv:'#1A3A5C',
-  positif:'#2C7A4B',negatif:'#C0392B',sans_reponse:'#999'
-};
-
-let leafletMap=null,mapMarkers=[],mapVisible=false;
-
-function toggleMap(){
-  mapVisible=!mapVisible;
-  const cont=document.getElementById('map-container');
-  const leg=document.getElementById('map-legend');
-  const btn=document.getElementById('map-toggle');
-  cont.classList.toggle('visible',mapVisible);
-  leg.style.display=mapVisible?'flex':'none';
-  btn.textContent=mapVisible?'▲ Masquer la carte':'▼ Afficher la carte du Val-d'Oise';
-  if(mapVisible&&!leafletMap){
-    setTimeout(()=>{
-      leafletMap=L.map('leaflet-map',{zoomControl:true}).setView([49.07,2.12],10);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
-        attribution:'© OpenStreetMap © CARTO',maxZoom:18
-      }).addTo(leafletMap);
-      refreshMapMarkers();
-    },80);
-  } else if(mapVisible){
-    leafletMap.invalidateSize();
-    refreshMapMarkers();
-  }
-}
-
-function refreshMapMarkers(){
-  if(!leafletMap) return;
-  mapMarkers.forEach(m=>m.remove());
-  mapMarkers=[];
-  DATA.forEach((d,i)=>{
-    const coords=COORDS[d.commune];
-    if(!coords) return;
-    const s=getRow(i);
-    const color=STATUT_COLORS[s.statut]||'#B0A898';
-    const contacted=s.statut!=='a_contacter';
-    const marker=L.circleMarker(coords,{
-      radius:contacted?7:5,fillColor:color,color:'#fff',
-      weight:contacted?1.5:1,opacity:1,fillOpacity:contacted?0.92:0.55
-    });
-    marker.bindPopup(`<div style="font-family:monospace;font-size:12px;min-width:140px">
-      <strong>${d.commune}</strong><br>
-      <span style="color:#7A7468;font-size:11px">${d.maire}</span><br>
-      <span style="color:${color};font-weight:600">${LABELS[s.statut]}</span>
-      ${s.note?'<br><em style="font-size:10px;color:#7A7468">'+s.note+'</em>':''}
-    </div>`,{maxWidth:220});
-    marker.addTo(leafletMap);
-    mapMarkers.push(marker);
-  });
-}
-
-// Patch updateStatut pour rafraichir la carte
-const _origUpdateStatut=updateStatut;
-window.updateStatut=function(i,sel){
-  _origUpdateStatut(i,sel);
-  if(mapVisible) refreshMapMarkers();
-};
-
 </script>
 </body>
 </html>

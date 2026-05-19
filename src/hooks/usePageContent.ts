@@ -24,7 +24,21 @@ export function savePageContent(slug: string, data: PageContentData): void {
   localStorage.setItem(`page_content_${slug}`, JSON.stringify(data));
 }
 
-/** Export all page_content_* localStorage keys merged into pages.json format. */
+// Maps system page IDs (used by SystemPageBlocks) to their slug in pages.json
+const SYSTEM_PAGE_ID_TO_SLUG: Record<string, string> = {
+  'sys-accueil':        'accueil',
+  'sys-presentation':   'presentation',
+  'sys-actualites':     'actualites',
+  'sys-devenir-membre': 'devenir-membre',
+  'sys-don':            'faire-un-don',
+  'sys-animaux':        'animaux',
+  'sys-adopter':        'adopter',
+  'sys-fa':             'famille-accueil',
+  'sys-contact':        'contact',
+  'sys-mentions-legales': 'mentions-legales',
+};
+
+/** Export all page_content_* and system_page_data blocks merged into pages.json format. */
 export function exportPagesJson(): void {
   const SLUGS = [
     'accueil', 'presentation', 'animaux', 'adopter', 'famille-accueil',
@@ -36,12 +50,29 @@ export function exportPagesJson(): void {
     if (stored) base = JSON.parse(stored);
   } catch { /* ignore */ }
   const result: Record<string, unknown> = { ...base };
+
+  // Merge page_content_<slug> overrides
   for (const s of SLUGS) {
     try {
       const raw = localStorage.getItem(`page_content_${s}`);
       if (raw) result[s] = { ...(result[s] as object ?? {}), ...JSON.parse(raw) };
     } catch { /* ignore */ }
   }
+
+  // Merge system_page_data blocks into their matching slug
+  try {
+    const raw = localStorage.getItem('system_page_data');
+    if (raw) {
+      const systemData = JSON.parse(raw) as Record<string, { blocks?: unknown[] }>;
+      for (const [pageId, slug] of Object.entries(SYSTEM_PAGE_ID_TO_SLUG)) {
+        const blocks = systemData[pageId]?.blocks;
+        if (Array.isArray(blocks) && blocks.length > 0) {
+          result[slug] = { ...(result[slug] as object ?? {}), blocks };
+        }
+      }
+    }
+  } catch { /* ignore */ }
+
   const blob = new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);

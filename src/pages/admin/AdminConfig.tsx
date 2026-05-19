@@ -151,6 +151,17 @@ export default function AdminConfig() {
     setTimeout(() => setMcSaved(false), 2000);
   };
 
+  const exportConfig = () => {
+    if (!form) return;
+    const blob = new Blob([JSON.stringify(form, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'config.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const exportAll = () => {
     const animaux = localStorage.getItem('animaux');
     const pages   = localStorage.getItem('pages');
@@ -195,6 +206,9 @@ export default function AdminConfig() {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Configuration</h1>
         <div className="flex gap-3">
+          <button onClick={exportConfig} className="flex items-center gap-2 px-4 py-2 text-sm border border-nv-green text-nv-green rounded-lg hover:bg-nv-green-light font-medium">
+            <Download size={16} />Exporter config.json
+          </button>
           <button onClick={exportAll} className="flex items-center gap-2 px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50">
             <Download size={16} />Tout exporter
           </button>

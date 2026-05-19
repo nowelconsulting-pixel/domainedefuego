@@ -2,8 +2,8 @@ import { ExternalLink, Heart, Home, Truck } from 'lucide-react';
 import { useConfig } from '../hooks/useData';
 import { usePageContent } from '../hooks/usePageContent';
 import SystemPageBlocks from '../components/SystemPageBlocks';
-import DonationImpact from '../components/blocks/DonationImpact';
-import type { DonationImpactBlock } from '../types/admin';
+import { renderBlock } from '../utils/blockRenderer';
+import type { Block } from '../types/admin';
 
 const iconMap: Record<string, React.ElementType> = { Heart, Home, Truck };
 
@@ -82,9 +82,7 @@ export default function FaireUnDon() {
 
         <SystemPageBlocks pageId="sys-don" />
 
-        {Array.isArray(pc.blocks) && (pc.blocks as DonationImpactBlock[]).map(b =>
-          b.type === 'donation-impact' ? <DonationImpact key={b.id} block={b} /> : null
-        )}
+        {Array.isArray(pc.blocks) && (pc.blocks as Block[]).map(b => renderBlock(b))}
 
         {/* Note fiscale */}
         <section className="bg-surface rounded-[20px] p-8 border-2 border-site-border text-center max-w-2xl mx-auto">

@@ -301,9 +301,22 @@ export function renderBlock(block: Block) {
 
     case 'donation-impact-info': {
       const isRichBlock = 'impacts' in block;
-      const infoBlock: DonationImpactInfoBlock = isRichBlock
-        ? (block as unknown as DonationImpactInfoBlock)
-        : { ...DEFAULT_DONATION_IMPACT_INFO_BLOCK, id: block.id };
+      let infoBlock: DonationImpactInfoBlock;
+      if (isRichBlock) {
+        infoBlock = block as unknown as DonationImpactInfoBlock;
+      } else {
+        let impacts = DEFAULT_DONATION_IMPACT_INFO_BLOCK.impacts;
+        try {
+          const parsed = JSON.parse((block.data.impacts as string) || 'null');
+          if (Array.isArray(parsed) && parsed.length > 0) impacts = parsed;
+        } catch { /**/ }
+        infoBlock = {
+          ...DEFAULT_DONATION_IMPACT_INFO_BLOCK,
+          id: block.id,
+          impacts,
+          ...(block.data.eyebrow ? { eyebrow: block.data.eyebrow as string } : {}),
+        };
+      }
       return <DonationImpactInfo key={block.id} block={infoBlock} />;
     }
 

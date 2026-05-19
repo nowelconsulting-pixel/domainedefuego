@@ -193,6 +193,94 @@ function FeaturedArticleBlockEditor({ block, onChange }: { block: Block; onChang
   );
 }
 
+interface ImpactCard { value: number; description: string; taxReductionRate: number; highlight: boolean; }
+
+const DEFAULT_IMPACT_CARDS: ImpactCard[] = [
+  { value: 90,  description: 'Je permets à un refuge de soigner un chien pendant 3 mois',                      taxReductionRate: 0.66, highlight: false },
+  { value: 120, description: 'Je permets à un refuge de nourrir un chat pendant 1 an',                          taxReductionRate: 0.66, highlight: true  },
+  { value: 200, description: 'Je permets à un refuge de nourrir et soigner un chien ou un chat pendant 6 mois', taxReductionRate: 0.66, highlight: false },
+];
+
+function DonationImpactInfoEditor({ block, onChange }: { block: Block; onChange: (b: Block) => void }) {
+  const [cards, setCards] = useState<ImpactCard[]>(() => {
+    try { return JSON.parse((block.data.impacts as string) || 'null') ?? DEFAULT_IMPACT_CARDS; }
+    catch { return DEFAULT_IMPACT_CARDS; }
+  });
+
+  const commit = (next: ImpactCard[]) => {
+    setCards(next);
+    onChange({ ...block, data: { ...block.data, impacts: JSON.stringify(next) } });
+  };
+
+  const setCard = (i: number, patch: Partial<ImpactCard>) => {
+    const next = cards.map((c, j) => j === i ? { ...c, ...patch } : c);
+    commit(next);
+  };
+
+  return (
+    <div className="space-y-3">
+      <div>
+        <label className="form-label">Titre (eyebrow)</label>
+        <input
+          className="form-input text-sm"
+          value={(block.data.eyebrow as string) || ''}
+          onChange={e => onChange({ ...block, data: { ...block.data, eyebrow: e.target.value } })}
+          placeholder="Votre soutien a un impact concret"
+        />
+      </div>
+      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Cards d'impact</p>
+      {cards.map((card, i) => (
+        <div key={i} className="border border-gray-200 rounded-lg p-3 space-y-2 bg-gray-50">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-gray-500 w-5">#{i + 1}</span>
+            <div className="flex gap-2 flex-1">
+              <div className="w-28">
+                <label className="text-xs text-gray-500">Montant (€)</label>
+                <input
+                  type="number"
+                  className="form-input text-sm"
+                  value={card.value}
+                  min={1}
+                  onChange={e => setCard(i, { value: parseInt(e.target.value) || 0 })}
+                />
+              </div>
+              <div className="w-24">
+                <label className="text-xs text-gray-500">Réduction (%)</label>
+                <input
+                  type="number"
+                  className="form-input text-sm"
+                  value={Math.round(card.taxReductionRate * 100)}
+                  min={0}
+                  max={100}
+                  onChange={e => setCard(i, { taxReductionRate: (parseInt(e.target.value) || 0) / 100 })}
+                />
+              </div>
+            </div>
+          </div>
+          <div>
+            <label className="text-xs text-gray-500">Description</label>
+            <input
+              className="form-input text-sm"
+              value={card.description}
+              onChange={e => setCard(i, { description: e.target.value })}
+              placeholder="Je permets à un refuge de..."
+            />
+          </div>
+          <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={card.highlight}
+              onChange={e => setCard(i, { highlight: e.target.checked })}
+              className="rounded border-gray-300"
+            />
+            Mettre en avant (bordure verte)
+          </label>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // ─── Main BlockEditor ────────────────────────────────────────────────────────
 
 export function BlockEditor({ block, onChange, onDelete, onMove, isFirst, isLast }: {
@@ -499,15 +587,7 @@ export function BlockEditor({ block, onChange, onDelete, onMove, isFirst, isLast
         )}
 
         {block.type === 'donation-impact-info' && (
-          <div className="space-y-3">
-            <p className="text-sm text-gray-500 italic">
-              Bloc informatif — affiche les 3 cards d'impact (90 €, 120 €, 200 €) avec déduction fiscale.
-              Aucun lien vers HelloAsso, aucune interaction.
-            </p>
-            <p className="text-xs text-nv-green bg-nv-green-light rounded-lg px-3 py-2">
-              💡 Montants et descriptions modifiables dans <code className="font-mono">pages.json</code>.
-            </p>
-          </div>
+          <DonationImpactInfoEditor block={block} onChange={onChange} />
         )}
 
         {block.type === 'form' && (() => {

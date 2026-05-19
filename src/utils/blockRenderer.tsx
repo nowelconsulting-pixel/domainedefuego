@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Star, ChevronDown, ChevronRight } from 'lucide-react';
 import type { Block, DonationCTABlock } from '../types/admin';
 import DonationBlock from '../components/blocks/DonationBlock';
+import { DEFAULT_DONATION_BLOCK } from '../components/blocks/DonationBlock/helpers';
 import FormContact from '../components/FormContact';
 import FormAdoption from '../components/FormAdoption';
 import FormFamilleAccueil from '../components/FormFamilleAccueil';
@@ -260,8 +261,23 @@ export function renderBlock(block: Block) {
       return null;
     }
 
-    case 'donation-cta':
-      return <DonationBlock key={block.id} block={block as unknown as DonationCTABlock} />;
+    case 'donation-cta': {
+      // Full DonationCTABlock from pages.json has nested objects (frequencies, amounts, etc.)
+      // Generic Block from the admin CMS only has data: Record<string, string> — merge with defaults
+      const isRichBlock = 'frequencies' in block;
+      const donationBlock: DonationCTABlock = isRichBlock
+        ? (block as unknown as DonationCTABlock)
+        : {
+            ...DEFAULT_DONATION_BLOCK,
+            id: block.id,
+            helloasso: {
+              ...DEFAULT_DONATION_BLOCK.helloasso,
+              ...(block.data.oneTimeUrl ? { oneTimeUrl: block.data.oneTimeUrl as string } : {}),
+              ...(block.data.monthlyUrl ? { monthlyUrl: block.data.monthlyUrl as string } : {}),
+            },
+          };
+      return <DonationBlock key={block.id} block={donationBlock} />;
+    }
 
     default:
       return null;

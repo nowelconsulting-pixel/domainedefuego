@@ -23,8 +23,9 @@ export const BLOCK_TYPES: { type: BlockType; label: string; emoji: string }[] = 
   { type: 'embed',            label: 'Embed HTML',            emoji: '🔧' },
   { type: 'featured-article', label: 'Article mis en avant',  emoji: '📰' },
   { type: 'form',             label: 'Formulaire',            emoji: '📋' },
-  { type: 'donation-cta',     label: 'Bloc CTA de dons',      emoji: '💝' },
-  { type: 'donation-impact',  label: 'Bloc don par impact',   emoji: '🐾' },
+  { type: 'donation-cta',          label: 'Bloc CTA de dons',          emoji: '💝' },
+  { type: 'donation-impact',       label: 'Bloc don par impact',        emoji: '🐾' },
+  { type: 'donation-impact-info',  label: 'Bloc impact (informatif)',   emoji: '📊' },
 ];
 
 export function newBlock(type: BlockType): Block {
@@ -493,6 +494,18 @@ export function BlockEditor({ block, onChange, onDelete, onMove, isFirst, isLast
             </div>
             <p className="text-xs text-nv-green bg-nv-green-light rounded-lg px-3 py-2">
               💡 Montants et descriptions d'impact modifiables dans <code className="font-mono">pages.json</code>.
+            </p>
+          </div>
+        )}
+
+        {block.type === 'donation-impact-info' && (
+          <div className="space-y-3">
+            <p className="text-sm text-gray-500 italic">
+              Bloc informatif — affiche les 3 cards d'impact (90 €, 120 €, 200 €) avec déduction fiscale.
+              Aucun lien vers HelloAsso, aucune interaction.
+            </p>
+            <p className="text-xs text-nv-green bg-nv-green-light rounded-lg px-3 py-2">
+              💡 Montants et descriptions modifiables dans <code className="font-mono">pages.json</code>.
             </p>
           </div>
         )}

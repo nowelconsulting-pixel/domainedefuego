@@ -193,7 +193,35 @@
     ],
     "show_fiscal": true,
     "fiscal_title": "Réduction fiscale",
-    "fiscal_text": "En tant qu'association loi 1901 reconnue d'intérêt général, vos dons peuvent ouvrir droit à une réduction d'impôt de 66% dans la limite de 20% du revenu imposable. Un reçu fiscal vous sera envoyé par HelloAsso."
+    "fiscal_text": "En tant qu'association loi 1901 reconnue d'intérêt général, vos dons peuvent ouvrir droit à une réduction d'impôt de 66% dans la limite de 20% du revenu imposable. Un reçu fiscal vous sera envoyé par HelloAsso.",
+    "blocks": [
+      {
+        "type": "donation-impact-info",
+        "id": "don-impact-info-faire-un-don",
+        "anchor": "impact-info",
+        "eyebrow": "Votre soutien a un impact concret",
+        "impacts": [
+          {
+            "value": 90,
+            "description": "Je permets au Domaine de soigner un chien pendant 3 mois",
+            "taxReductionRate": 0.66,
+            "highlight": false
+          },
+          {
+            "value": 120,
+            "description": "Je permets au Domaine de nourrir un chat pendant 1 an",
+            "taxReductionRate": 0.66,
+            "highlight": true
+          },
+          {
+            "value": 200,
+            "description": "Je permets au Domaine de nourrir et soigner un chien ou un chat pendant 6 mois",
+            "taxReductionRate": 0.66,
+            "highlight": false
+          }
+        ]
+      }
+    ]
   },
   "mentions-legales": {
     "hero_title": "Mentions légales",

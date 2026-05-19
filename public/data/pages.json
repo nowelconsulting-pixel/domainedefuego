@@ -193,64 +193,7 @@
     ],
     "show_fiscal": true,
     "fiscal_title": "Réduction fiscale",
-    "fiscal_text": "En tant qu'association loi 1901 reconnue d'intérêt général, vos dons peuvent ouvrir droit à une réduction d'impôt de 66% dans la limite de 20% du revenu imposable. Un reçu fiscal vous sera envoyé par HelloAsso.",
-    "blocks": [
-      {
-        "type": "donation-impact",
-        "id": "don-impact-faire-un-don",
-        "variant": "default",
-        "anchor": "impact-don",
-        "eyebrow": "Je donne pour les animaux",
-        "frequencies": [
-          {
-            "key": "once",
-            "label": "Une fois",
-            "isDefault": true
-          },
-          {
-            "key": "monthly",
-            "label": "Tous les mois"
-          }
-        ],
-        "impacts": [
-          {
-            "value": 90,
-            "description": "Je permets \u00e0 un refuge de soigner un chien pendant 3 mois",
-            "taxReductionRate": 0.66,
-            "highlight": false
-          },
-          {
-            "value": 120,
-            "description": "Je permets \u00e0 un refuge de nourrir un chat pendant 1 an",
-            "taxReductionRate": 0.66,
-            "highlight": true
-          },
-          {
-            "value": 200,
-            "description": "Je permets \u00e0 un refuge de nourrir et soigner un chien ou un chat pendant 6 mois",
-            "taxReductionRate": 0.66,
-            "highlight": false
-          }
-        ],
-        "freeAmount": {
-          "enabled": true,
-          "label": "Ou un montant \u00e0 ma convenance",
-          "placeholder": "Montant en \u20ac",
-          "minAmount": 1,
-          "maxAmount": 10000
-        },
-        "cta": {
-          "labelTemplate": "Je donne {amount} \u20ac",
-          "labelTemplateMonthly": "Je donne {amount} \u20ac / mois",
-          "labelFallback": "Je donne"
-        },
-        "helloasso": {
-          "oneTimeUrl": "https://www.helloasso.com/associations/domaine-de-fuego/formulaires/REMPLACER_PAR_ID_FORM_PONCTUEL",
-          "monthlyUrl": "https://www.helloasso.com/associations/domaine-de-fuego/formulaires/REMPLACER_PAR_ID_FORM_MENSUEL",
-          "amountQueryParam": "montant"
-        }
-      }
-    ]
+    "fiscal_text": "En tant qu'association loi 1901 reconnue d'intérêt général, vos dons peuvent ouvrir droit à une réduction d'impôt de 66% dans la limite de 20% du revenu imposable. Un reçu fiscal vous sera envoyé par HelloAsso."
   },
   "mentions-legales": {
     "hero_title": "Mentions légales",

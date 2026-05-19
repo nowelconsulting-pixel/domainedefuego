@@ -22,7 +22,7 @@ export type BlockType =
   | 'text' | 'image' | 'card' | 'cta' | 'gallery' | 'contact_form'
   | 'faq' | 'testimonial' | 'video' | 'separator' | 'columns2'
   | 'hero_banner' | 'stat' | 'team' | 'embed' | 'featured-article' | 'form'
-  | 'donation-cta';
+  | 'donation-cta' | 'donation-impact';
 
 export interface Block {
   id: string;
@@ -45,6 +45,19 @@ export interface DonationCTABlock {
   helloasso: { oneTimeUrl: string; monthlyUrl: string; amountQueryParam?: string | null };
   trust: { fiscalReceiptNote: string; securityNote: string };
   visual?: { background?: string; decorativeImage?: string | null; showSecurityBadge?: boolean };
+}
+
+export interface DonationImpactBlock {
+  type: 'donation-impact';
+  id: string;
+  variant?: 'default' | 'compact' | 'inline';
+  anchor?: string;
+  eyebrow?: string;
+  frequencies: Array<{ key: 'once' | 'monthly'; label: string; isDefault?: boolean }>;
+  impacts: Array<{ value: number; description: string; taxReductionRate: number; highlight?: boolean }>;
+  freeAmount?: { enabled: boolean; label: string; placeholder: string; minAmount: number; maxAmount: number };
+  cta: { labelTemplate: string; labelTemplateMonthly: string; labelFallback: string };
+  helloasso: { oneTimeUrl: string; monthlyUrl: string; amountQueryParam?: string | null };
 }
 
 export interface AdminPage {

@@ -196,48 +196,58 @@
     "fiscal_text": "En tant qu'association loi 1901 reconnue d'intérêt général, vos dons peuvent ouvrir droit à une réduction d'impôt de 66% dans la limite de 20% du revenu imposable. Un reçu fiscal vous sera envoyé par HelloAsso.",
     "blocks": [
       {
-        "type": "donation-cta",
-        "id": "don-block-faire-un-don",
+        "type": "donation-impact",
+        "id": "don-impact-faire-un-don",
         "variant": "default",
-        "anchor": "soutenir",
-        "eyebrow": "Soutenir le refuge",
-        "title": "Vous ne pouvez pas adopter ? Vous pouvez quand même changer une vie.",
-        "subtitle": "Chaque don aide à nourrir, soigner et protéger les animaux du Domaine. Avec vous, ils trouvent un foyer en attendant le leur.",
+        "anchor": "impact-don",
+        "eyebrow": "Je donne pour les animaux",
         "frequencies": [
-          { "key": "once", "label": "Un don", "isDefault": true },
-          { "key": "monthly", "label": "Soutien mensuel" }
+          {
+            "key": "once",
+            "label": "Une fois",
+            "isDefault": true
+          },
+          {
+            "key": "monthly",
+            "label": "Tous les mois"
+          }
         ],
-        "amounts": [
-          { "value": 10,  "label": "10 €",  "impact": "Un repas chaud pour cinq pensionnaires", "highlight": false },
-          { "value": 25,  "label": "25 €",  "impact": "Les vaccins de base d'un chiot ou chaton", "highlight": true },
-          { "value": 50,  "label": "50 €",  "impact": "Une semaine de soins courants",          "highlight": false },
-          { "value": 100, "label": "100 €", "impact": "Un sauvetage : prise en charge complète", "highlight": false }
+        "impacts": [
+          {
+            "value": 90,
+            "description": "Je permets à un refuge de soigner un chien pendant 3 mois",
+            "taxReductionRate": 0.66,
+            "highlight": false
+          },
+          {
+            "value": 120,
+            "description": "Je permets à un refuge de nourrir un chat pendant 1 an",
+            "taxReductionRate": 0.66,
+            "highlight": true
+          },
+          {
+            "value": 200,
+            "description": "Je permets à un refuge de nourrir et soigner un chien ou un chat pendant 6 mois",
+            "taxReductionRate": 0.66,
+            "highlight": false
+          }
         ],
         "freeAmount": {
           "enabled": true,
-          "label": "Autre montant",
-          "placeholder": "Votre montant en €",
+          "label": "Ou un montant à ma convenance",
+          "placeholder": "Montant en €",
           "minAmount": 1,
           "maxAmount": 10000
         },
         "cta": {
-          "labelTemplate": "Faire un don de {amount} €",
-          "labelTemplateMonthly": "Soutenir avec {amount} € par mois",
-          "labelFallback": "Faire un don"
+          "labelTemplate": "Je donne {amount} €",
+          "labelTemplateMonthly": "Je donne {amount} € / mois",
+          "labelFallback": "Je donne"
         },
         "helloasso": {
           "oneTimeUrl": "https://www.helloasso.com/associations/domaine-de-fuego/formulaires/REMPLACER_PAR_ID_FORM_PONCTUEL",
           "monthlyUrl": "https://www.helloasso.com/associations/domaine-de-fuego/formulaires/REMPLACER_PAR_ID_FORM_MENSUEL",
           "amountQueryParam": "montant"
-        },
-        "trust": {
-          "fiscalReceiptNote": "Reçu fiscal envoyé automatiquement — 66 % de votre don déductible de vos impôts.",
-          "securityNote": "Paiement 100 % sécurisé via HelloAsso. 100 % de votre don est reversé à l'association."
-        },
-        "visual": {
-          "background": "surface-warm",
-          "decorativeImage": null,
-          "showSecurityBadge": true
         }
       }
     ]

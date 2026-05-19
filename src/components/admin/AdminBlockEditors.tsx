@@ -24,6 +24,7 @@ export const BLOCK_TYPES: { type: BlockType; label: string; emoji: string }[] = 
   { type: 'featured-article', label: 'Article mis en avant',  emoji: '📰' },
   { type: 'form',             label: 'Formulaire',            emoji: '📋' },
   { type: 'donation-cta',     label: 'Bloc CTA de dons',      emoji: '💝' },
+  { type: 'donation-impact',  label: 'Bloc don par impact',   emoji: '🐾' },
 ];
 
 export function newBlock(type: BlockType): Block {
@@ -462,6 +463,36 @@ export function BlockEditor({ block, onChange, onDelete, onMove, isFirst, isLast
             </div>
             <p className="text-xs text-nv-green bg-nv-green-light rounded-lg px-3 py-2">
               💡 Les textes (titre, montants, impacts) sont définis dans <code className="font-mono">pages.json</code> et modifiables dans le code source.
+            </p>
+          </div>
+        )}
+
+        {block.type === 'donation-impact' && (
+          <div className="space-y-3">
+            <p className="text-sm text-gray-500 italic">
+              Bloc "Je donne pour les animaux" — cards d'impact (90 €, 120 €, 200 €) avec déduction fiscale calculée automatiquement.
+              Renseignez les URLs HelloAsso ci-dessous.
+            </p>
+            <div>
+              <label className="form-label">URL don ponctuel (HelloAsso)</label>
+              <input
+                className="form-input text-sm"
+                value={(block.data.oneTimeUrl as string) || ''}
+                onChange={e => setData('oneTimeUrl', e.target.value)}
+                placeholder="https://www.helloasso.com/associations/domaine-de-fuego/formulaires/..."
+              />
+            </div>
+            <div>
+              <label className="form-label">URL don mensuel (HelloAsso)</label>
+              <input
+                className="form-input text-sm"
+                value={(block.data.monthlyUrl as string) || ''}
+                onChange={e => setData('monthlyUrl', e.target.value)}
+                placeholder="https://www.helloasso.com/associations/domaine-de-fuego/formulaires/..."
+              />
+            </div>
+            <p className="text-xs text-nv-green bg-nv-green-light rounded-lg px-3 py-2">
+              💡 Montants et descriptions d'impact modifiables dans <code className="font-mono">pages.json</code>.
             </p>
           </div>
         )}

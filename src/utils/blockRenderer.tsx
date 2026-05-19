@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Star, ChevronDown, ChevronRight } from 'lucide-react';
-import type { Block, DonationCTABlock } from '../types/admin';
+import type { Block, DonationCTABlock, DonationImpactBlock } from '../types/admin';
 import DonationBlock from '../components/blocks/DonationBlock';
 import { DEFAULT_DONATION_BLOCK } from '../components/blocks/DonationBlock/helpers';
+import DonationImpact from '../components/blocks/DonationImpact';
+import { DEFAULT_DONATION_IMPACT_BLOCK } from '../components/blocks/DonationImpact/helpers';
 import FormContact from '../components/FormContact';
 import FormAdoption from '../components/FormAdoption';
 import FormFamilleAccueil from '../components/FormFamilleAccueil';
@@ -277,6 +279,22 @@ export function renderBlock(block: Block) {
             },
           };
       return <DonationBlock key={block.id} block={donationBlock} />;
+    }
+
+    case 'donation-impact': {
+      const isRichBlock = 'impacts' in block;
+      const impactBlock: DonationImpactBlock = isRichBlock
+        ? (block as unknown as DonationImpactBlock)
+        : {
+            ...DEFAULT_DONATION_IMPACT_BLOCK,
+            id: block.id,
+            helloasso: {
+              ...DEFAULT_DONATION_IMPACT_BLOCK.helloasso,
+              ...(block.data.oneTimeUrl ? { oneTimeUrl: block.data.oneTimeUrl as string } : {}),
+              ...(block.data.monthlyUrl ? { monthlyUrl: block.data.monthlyUrl as string } : {}),
+            },
+          };
+      return <DonationImpact key={block.id} block={impactBlock} />;
     }
 
     default:

@@ -21,12 +21,30 @@ export interface AdminSession {
 export type BlockType =
   | 'text' | 'image' | 'card' | 'cta' | 'gallery' | 'contact_form'
   | 'faq' | 'testimonial' | 'video' | 'separator' | 'columns2'
-  | 'hero_banner' | 'stat' | 'team' | 'embed' | 'featured-article' | 'form';
+  | 'hero_banner' | 'stat' | 'team' | 'embed' | 'featured-article' | 'form'
+  | 'donation-cta';
 
 export interface Block {
   id: string;
   type: BlockType;
   data: Record<string, string | string[]>;
+}
+
+export interface DonationCTABlock {
+  type: 'donation-cta';
+  id: string;
+  variant?: 'default' | 'compact' | 'inline';
+  anchor?: string;
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+  frequencies: Array<{ key: 'once' | 'monthly'; label: string; isDefault?: boolean }>;
+  amounts: Array<{ value: number; label: string; impact: string; highlight?: boolean }>;
+  freeAmount?: { enabled: boolean; label: string; placeholder: string; minAmount: number; maxAmount: number };
+  cta: { labelTemplate: string; labelTemplateMonthly: string; labelFallback: string };
+  helloasso: { oneTimeUrl: string; monthlyUrl: string; amountQueryParam?: string | null };
+  trust: { fiscalReceiptNote: string; securityNote: string };
+  visual?: { background?: string; decorativeImage?: string | null; showSecurityBadge?: boolean };
 }
 
 export interface AdminPage {

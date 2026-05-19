@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Star, ChevronDown, ChevronRight } from 'lucide-react';
-import type { Block } from '../types/admin';
+import type { Block, DonationCTABlock } from '../types/admin';
+import DonationBlock from '../components/blocks/DonationBlock';
 import FormContact from '../components/FormContact';
 import FormAdoption from '../components/FormAdoption';
 import FormFamilleAccueil from '../components/FormFamilleAccueil';
@@ -258,6 +259,9 @@ export function renderBlock(block: Block) {
       }
       return null;
     }
+
+    case 'donation-cta':
+      return <DonationBlock key={block.id} block={block as unknown as DonationCTABlock} />;
 
     default:
       return null;

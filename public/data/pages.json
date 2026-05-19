@@ -167,7 +167,7 @@
   "faire-un-don": {
     "hero_title": "Faire un don",
     "hero_subtitle": "Votre générosité permet à des centaines d'animaux de trouver une famille chaque année.",
-    "helloasso_url": "",
+    "helloasso_url": "https://www.helloasso.com/associations/domaine-de-fuego/formulaires/1",
     "intro_title": "Soutenez notre action",
     "intro_text": "Domaine de Fuego fonctionne grâce aux dons de particuliers comme vous. Aucune subvention publique ne vient financer nos actions — c'est votre générosité qui permet à des centaines d'animaux de trouver une famille chaque année.\n\nVotre don, qu'il soit ponctuel ou mensuel, a un impact direct et concret sur la vie des animaux que nous prenons en charge.",
     "helloasso_btn_label": "Faire un don via HelloAsso",
@@ -193,54 +193,7 @@
     ],
     "show_fiscal": true,
     "fiscal_title": "Réduction fiscale",
-    "fiscal_text": "En tant qu'association loi 1901 reconnue d'intérêt général, vos dons peuvent ouvrir droit à une réduction d'impôt de 66% dans la limite de 20% du revenu imposable. Un reçu fiscal vous sera envoyé par HelloAsso.",
-    "blocks": [
-      {
-        "type": "donation-cta",
-        "id": "don-block-faire-un-don",
-        "variant": "default",
-        "anchor": "soutenir",
-        "eyebrow": "Soutenir le refuge",
-        "title": "Vous ne pouvez pas adopter ? Vous pouvez quand même changer une vie.",
-        "subtitle": "Chaque don aide à nourrir, soigner et protéger les animaux du Domaine. Avec vous, ils trouvent un foyer en attendant le leur.",
-        "frequencies": [
-          { "key": "once", "label": "Un don", "isDefault": true },
-          { "key": "monthly", "label": "Soutien mensuel" }
-        ],
-        "amounts": [
-          { "value": 10,  "label": "10 €",  "impact": "Un repas chaud pour cinq pensionnaires", "highlight": false },
-          { "value": 25,  "label": "25 €",  "impact": "Les vaccins de base d'un chiot ou chaton", "highlight": true },
-          { "value": 50,  "label": "50 €",  "impact": "Une semaine de soins courants",          "highlight": false },
-          { "value": 100, "label": "100 €", "impact": "Un sauvetage : prise en charge complète", "highlight": false }
-        ],
-        "freeAmount": {
-          "enabled": true,
-          "label": "Autre montant",
-          "placeholder": "Votre montant en €",
-          "minAmount": 1,
-          "maxAmount": 10000
-        },
-        "cta": {
-          "labelTemplate": "Faire un don de {amount} €",
-          "labelTemplateMonthly": "Soutenir avec {amount} € par mois",
-          "labelFallback": "Faire un don"
-        },
-        "helloasso": {
-          "oneTimeUrl": "https://www.helloasso.com/associations/domaine-de-fuego/formulaires/REMPLACER_PAR_ID_FORM_PONCTUEL",
-          "monthlyUrl": "https://www.helloasso.com/associations/domaine-de-fuego/formulaires/REMPLACER_PAR_ID_FORM_MENSUEL",
-          "amountQueryParam": "montant"
-        },
-        "trust": {
-          "fiscalReceiptNote": "Reçu fiscal envoyé automatiquement — 66 % de votre don déductible de vos impôts.",
-          "securityNote": "Paiement 100 % sécurisé via HelloAsso. 100 % de votre don est reversé à l'association."
-        },
-        "visual": {
-          "background": "surface-warm",
-          "decorativeImage": null,
-          "showSecurityBadge": true
-        }
-      }
-    ]
+    "fiscal_text": "En tant qu'association loi 1901 reconnue d'intérêt général, vos dons peuvent ouvrir droit à une réduction d'impôt de 66% dans la limite de 20% du revenu imposable. Un reçu fiscal vous sera envoyé par HelloAsso."
   },
   "mentions-legales": {
     "hero_title": "Mentions légales",

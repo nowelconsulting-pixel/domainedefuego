@@ -2,7 +2,6 @@ import { useState } from 'react';
 import emailjs from '@emailjs/browser';
 import { ChevronRight, ChevronLeft, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useAnimaux } from '../hooks/useData';
-import { notifyAdmin } from '../lib/notifyAdmin';
 
 const STEPS = ['Identité', 'Logement', 'Situation', 'Projet'];
 
@@ -144,25 +143,6 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
       );
     } catch { /* email failed but candidature already saved */ }
-    try {
-      await notifyAdmin({
-        form_type:  'Adoption',
-        from_name:  `${data.prenom} ${data.nom}`,
-        from_email: data.email,
-        telephone:  data.telephone,
-        details: [
-          `Animal souhaité : ${data.animal_souhaite || 'Pas de préférence'}`,
-          `Adresse : ${data.adresse}, ${data.code_postal} ${data.ville}`,
-          `Logement : ${data.type_logement}, jardin : ${data.jardin}, statut : ${data.statut_occupant}`,
-          `Situation familiale : ${data.statut_familial}`,
-          `Enfants : ${data.enfants === 'Oui' ? `Oui (${data.enfants_ages})` : 'Non'}`,
-          `Autres animaux : ${data.autres_animaux === 'Oui' ? data.autres_animaux_detail : 'Non'}`,
-          `Heures seul/jour : ${data.heures_seul}`,
-          `Vacances : ${data.vacances}`,
-          `Motivation : ${data.pourquoi_adopter}`,
-        ].join('\n'),
-      });
-    } catch { /**/ }
     setSending(false);
     setSent(true);
   };

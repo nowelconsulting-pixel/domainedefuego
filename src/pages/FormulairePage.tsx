@@ -4,6 +4,7 @@ import { CheckCircle2, Send } from 'lucide-react';
 import emailjs from '@emailjs/browser';
 import type { CustomForm, FieldType } from './admin/AdminFormulaires';
 import { loadCustomForms } from './admin/AdminFormulaires';
+import { notifyAdmin } from '../lib/notifyAdmin';
 
 export default function FormulairePage() {
   const { slug } = useParams<{ slug: string }>();
@@ -85,6 +86,20 @@ export default function FormulairePage() {
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
       );
     } catch { /* email failed but submission already saved */ }
+    try {
+      const firstText  = form.fields.find(f => f.type === 'text');
+      const firstEmail = form.fields.find(f => f.type === 'email');
+      const firstTel   = form.fields.find(f => f.type === 'tel');
+      await notifyAdmin({
+        form_type:  form.title,
+        from_name:  firstText  ? String(values[firstText.id]  ?? 'Anonyme') : 'Anonyme',
+        from_email: firstEmail ? String(values[firstEmail.id] ?? '')        : '',
+        telephone:  firstTel   ? String(values[firstTel.id]   ?? '')        : '',
+        details: form.fields
+          .map(f => `${f.label} : ${values[f.id] ?? ''}`)
+          .join('\n'),
+      });
+    } catch { /**/ }
 
     setSending(false);
     setSent(true);
@@ -190,6 +205,20 @@ export function CustomFormEmbed({ slug }: { slug: string }) {
         { form_title: form.title, ...values },
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
       );
+    } catch { /**/ }
+    try {
+      const firstText  = form.fields.find(f => f.type === 'text');
+      const firstEmail = form.fields.find(f => f.type === 'email');
+      const firstTel   = form.fields.find(f => f.type === 'tel');
+      await notifyAdmin({
+        form_type:  form.title,
+        from_name:  firstText  ? String(values[firstText.id]  ?? 'Anonyme') : 'Anonyme',
+        from_email: firstEmail ? String(values[firstEmail.id] ?? '')        : '',
+        telephone:  firstTel   ? String(values[firstTel.id]   ?? '')        : '',
+        details: form.fields
+          .map(f => `${f.label} : ${values[f.id] ?? ''}`)
+          .join('\n'),
+      });
     } catch { /**/ }
     setSending(false);
     setSent(true);

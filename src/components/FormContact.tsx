@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import emailjs from '@emailjs/browser';
 import { CheckCircle2, AlertCircle, Send } from 'lucide-react';
+import { notifyAdmin } from '../lib/notifyAdmin';
 
 interface ContactData {
   nom: string; email: string; sujet: string; message: string;
@@ -88,6 +89,14 @@ export default function FormContact() {
         data as unknown as Record<string, unknown>,
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
       );
+    } catch { /**/ }
+    try {
+      await notifyAdmin({
+        form_type:  'Contact',
+        from_name:  data.nom,
+        from_email: data.email,
+        details:    `Sujet : ${data.sujet}\n\nMessage :\n${data.message}`,
+      });
     } catch { /**/ }
     setSending(false);
     setSent(true);

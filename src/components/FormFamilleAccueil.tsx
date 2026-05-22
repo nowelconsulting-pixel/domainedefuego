@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import emailjs from '@emailjs/browser';
 import { ChevronRight, ChevronLeft, CheckCircle2, AlertCircle } from 'lucide-react';
+import { notifyAdmin } from '../lib/notifyAdmin';
 
 const STEPS = ['Identité', 'Logement', 'Situation', 'Disponibilités'];
 
@@ -152,6 +153,24 @@ export default function FormFamilleAccueil() {
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
       );
     } catch { /* email failed but candidature already saved */ }
+    try {
+      await notifyAdmin({
+        form_type:  "Famille d'accueil",
+        from_name:  `${data.prenom} ${data.nom}`,
+        from_email: data.email,
+        telephone:  data.telephone,
+        details: [
+          `Adresse : ${data.adresse}, ${data.code_postal} ${data.ville}`,
+          `Logement : ${data.type_logement}, jardin : ${data.jardin}, statut : ${data.statut_occupant}`,
+          `Situation familiale : ${data.statut_familial}`,
+          `Enfants : ${data.enfants === 'Oui' ? `Oui (${data.enfants_ages})` : 'Non'}`,
+          `Autres animaux : ${data.autres_animaux === 'Oui' ? data.autres_animaux_detail : 'Non'}`,
+          `Types d'animaux acceptés : ${data.types_acceptes.join(', ')}`,
+          `Urgences : ${data.urgences}`,
+          `Expérience : ${data.experience || 'Non renseignée'}`,
+        ].join('\n'),
+      });
+    } catch { /**/ }
     setSending(false);
     setSent(true);
   };

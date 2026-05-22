@@ -15,17 +15,7 @@ export async function notifyAdmin(params: AdminNotifParams): Promise<void> {
   const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ADMIN;
   const publicKey  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
-  if (!serviceId || !templateId || !publicKey) {
-    if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        '[notifyAdmin] Notification admin ignorée — variables EmailJS manquantes.\n' +
-        'Vérifiez que VITE_EMAILJS_SERVICE_ID, VITE_EMAILJS_TEMPLATE_ADMIN et ' +
-        'VITE_EMAILJS_PUBLIC_KEY sont configurées dans votre environnement Hostinger.'
-      );
-    }
-    return;
-  }
+  if (!serviceId || !templateId || !publicKey) return;
 
   await emailjs.send(
     serviceId,

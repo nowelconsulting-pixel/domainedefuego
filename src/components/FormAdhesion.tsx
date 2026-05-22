@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CheckCircle2, Send } from 'lucide-react';
+import { notifyAdmin } from '../lib/notifyAdmin';
 
 interface FormData {
   prenom: string; nom: string; email: string; telephone: string;
@@ -60,6 +61,18 @@ export default function FormAdhesion() {
       localStorage.setItem('candidatures', JSON.stringify([candidature, ...existing]));
       const unread = parseInt(localStorage.getItem('candidatures_unread') || '0');
       localStorage.setItem('candidatures_unread', String(unread + 1));
+    } catch { /**/ }
+    try {
+      await notifyAdmin({
+        form_type:  'Adhésion',
+        from_name:  `${data.prenom} ${data.nom}`,
+        from_email: data.email,
+        telephone:  data.telephone,
+        details: [
+          `Adresse : ${[data.adresse, data.code_postal, data.ville].filter(Boolean).join(', ')}`,
+          `Motivation : ${data.motivation || 'Non renseignée'}`,
+        ].join('\n'),
+      });
     } catch { /**/ }
     setSending(false);
     setSent(true);

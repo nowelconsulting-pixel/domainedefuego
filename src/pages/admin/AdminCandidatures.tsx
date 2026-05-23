@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, MessageSquare, Download, ChevronDown, Archive, ArchiveRestore, Trash2, Inbox } from 'lucide-react';
+import { X, Download, ChevronDown, Archive, ArchiveRestore, Trash2, Inbox } from 'lucide-react';
 import { useCandidatures } from '../../hooks/useAdminData';
 import type { Candidature, CandidatureStatus } from '../../types/admin';
 

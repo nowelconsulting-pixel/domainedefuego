@@ -139,7 +139,24 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
       statut: 'nouvelle',
     });
     if (!error) {
-      try { await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_ADOPTION, { ...data, charte_acceptee: data.charte_acceptee ? 'Oui' : 'Non' }); } catch { /**/ }
+      try {
+        await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_ADMIN, {
+          date: new Date().toLocaleDateString('fr-FR'),
+          form_type: 'Adoption',
+          from_name: `${data.prenom} ${data.nom}`,
+          from_email: data.email,
+          telephone: data.telephone,
+          details: [
+            `Animal souhaité : ${data.animal_souhaite || 'Pas de préférence'}`,
+            `Logement : ${data.type_logement}, jardin : ${data.jardin}, statut : ${data.statut_occupant}`,
+            `Situation : ${data.statut_familial}${data.enfants === 'Oui' ? `, enfants : ${data.enfants_ages}` : ''}`,
+            `Autres animaux : ${data.autres_animaux === 'Oui' ? data.autres_animaux_detail : 'Non'}`,
+            `Seul : ${data.heures_seul}`,
+            `Vacances : ${data.vacances}`,
+            `Pourquoi adopter : ${data.pourquoi_adopter}`,
+          ].join('\n'),
+        });
+      } catch (err) { console.error('[EmailJS] FormAdoption:', err); }
     }
     setSending(false);
     setSent(true);

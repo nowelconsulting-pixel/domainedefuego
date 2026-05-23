@@ -72,7 +72,16 @@ export default function FormulairePage() {
       statut: 'nouvelle',
     });
     if (!error) {
-      try { await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_CONTACT, { form_title: form.title, ...values }); } catch { /**/ }
+      try {
+        await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_ADMIN, {
+          date: new Date().toLocaleDateString('fr-FR'),
+          form_type: form.title,
+          from_name: nom,
+          from_email: email,
+          telephone: '',
+          details: Object.entries(values).map(([k, v]) => `${k} : ${v}`).join('\n'),
+        });
+      } catch (err) { console.error('[EmailJS] FormulairePage:', err); }
     }
 
     setSending(false);
@@ -167,7 +176,16 @@ export function CustomFormEmbed({ slug }: { slug: string }) {
       statut: 'nouvelle',
     });
     if (!error) {
-      try { await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_CONTACT, { form_title: form.title, ...values }); } catch { /**/ }
+      try {
+        await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_ADMIN, {
+          date: new Date().toLocaleDateString('fr-FR'),
+          form_type: form.title,
+          from_name: nom,
+          from_email: email,
+          telephone: '',
+          details: Object.entries(values).map(([k, v]) => `${k} : ${v}`).join('\n'),
+        });
+      } catch (err) { console.error('[EmailJS] CustomFormEmbed:', err); }
     }
     setSending(false);
     setSent(true);

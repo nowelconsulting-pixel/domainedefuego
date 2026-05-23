@@ -56,7 +56,16 @@ export default function FormAdhesion() {
       statut: 'nouvelle',
     });
     if (!error) {
-      try { await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_CONTACT, { nom, email: data.email, motivation: data.motivation || '' }); } catch { /**/ }
+      try {
+        await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_ADMIN, {
+          date: new Date().toLocaleDateString('fr-FR'),
+          form_type: 'Adhésion',
+          from_name: nom,
+          from_email: data.email,
+          telephone: data.telephone,
+          details: `Adresse : ${data.adresse}, ${data.code_postal} ${data.ville}\nMotivation : ${data.motivation || '—'}`,
+        });
+      } catch (err) { console.error('[EmailJS] FormAdhesion:', err); }
     }
     setSending(false);
     setSent(true);

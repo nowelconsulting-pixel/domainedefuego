@@ -148,7 +148,23 @@ export default function FormFamilleAccueil() {
       statut: 'nouvelle',
     });
     if (!error) {
-      try { await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_FA, { ...data, types_acceptes: data.types_acceptes.join(', ') }); } catch { /**/ }
+      try {
+        await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_ADMIN, {
+          date: new Date().toLocaleDateString('fr-FR'),
+          form_type: "Famille d'accueil",
+          from_name: `${data.prenom} ${data.nom}`,
+          from_email: data.email,
+          telephone: data.telephone,
+          details: [
+            `Logement : ${data.type_logement}, jardin : ${data.jardin}, statut : ${data.statut_occupant}`,
+            `Situation : ${data.statut_familial}${data.enfants === 'Oui' ? `, enfants : ${data.enfants_ages}` : ''}`,
+            `Autres animaux : ${data.autres_animaux === 'Oui' ? data.autres_animaux_detail : 'Non'}`,
+            `Types acceptés : ${data.types_acceptes.join(', ')}`,
+            `Urgences : ${data.urgences}`,
+            `Expérience : ${data.experience || '—'}`,
+          ].join('\n'),
+        });
+      } catch (err) { console.error('[EmailJS] FormFamilleAccueil:', err); }
     }
     setSending(false);
     setSent(true);

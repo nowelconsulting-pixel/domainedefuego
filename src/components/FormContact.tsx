@@ -79,7 +79,16 @@ export default function FormContact() {
       statut: 'nouvelle',
     });
     if (!error) {
-      try { await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_CONTACT, data as unknown as Record<string, unknown>); } catch { /**/ }
+      try {
+        await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_ADMIN, {
+          date: new Date().toLocaleDateString('fr-FR'),
+          form_type: 'Contact',
+          from_name: data.nom,
+          from_email: data.email,
+          telephone: '',
+          details: `Sujet : ${data.sujet}\n\n${data.message}`,
+        });
+      } catch (err) { console.error('[EmailJS] FormContact:', err); }
     }
     setSending(false);
     setSent(true);

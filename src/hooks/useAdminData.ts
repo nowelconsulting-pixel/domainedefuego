@@ -76,6 +76,7 @@ type SoumissionRow = {
   nom: string | null;
   email: string | null;
   telephone: string | null;
+  message: string | null;
   donnees: Record<string, string> | null;
   notes: string | null;
 };
@@ -91,6 +92,7 @@ function rowToCandidat(row: SoumissionRow): Candidature {
     nom: row.nom ?? '',
     email: row.email ?? '',
     telephone: row.telephone ?? '',
+    message: row.message ?? undefined,
     data: row.donnees ?? {},
     notes: row.notes ?? '',
     createdAt: row.created_at,

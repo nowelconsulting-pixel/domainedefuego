@@ -157,7 +157,7 @@ export default function FormFamilleAccueil() {
           telephone: data.telephone,
           details: [
             `Logement : ${data.type_logement}, jardin : ${data.jardin}, statut : ${data.statut_occupant}`,
-            `Situation : ${data.statut_familial}${data.enfants === 'Oui' ? `, enfants : ${data.enfants_ages}` : ''}`,
+            `Situation : ${data.statut_familial}${data.enfants === 'Oui' ? `, âge(s) des enfants : ${data.enfants_ages}` : ''}`,
             `Autres animaux : ${data.autres_animaux === 'Oui' ? data.autres_animaux_detail : 'Non'}`,
             `Types acceptés : ${data.types_acceptes.join(', ')}`,
             `Urgences : ${data.urgences}`,

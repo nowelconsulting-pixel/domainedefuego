@@ -99,6 +99,7 @@ export interface Candidature {
   nom: string;
   email: string;
   telephone: string;
+  message?: string;
   data: Record<string, string>;
   notes: string;
   createdAt: string;

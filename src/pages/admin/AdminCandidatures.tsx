@@ -157,7 +157,7 @@ export default function AdminCandidatures() {
               <tr><td colSpan={6} className="text-center py-12 text-gray-400">Aucun message</td></tr>
             ) : (
               filtered.map(c => (
-                <tr key={c.id} className="hover:bg-gray-50">
+                <tr key={c.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => setSelected(c)}>
                   <td className="py-3 px-4 text-gray-400 text-xs whitespace-nowrap">{formatDate(c.createdAt)}</td>
                   <td className="py-3 px-4">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeBadgeClass(c)}`}>
@@ -167,9 +167,12 @@ export default function AdminCandidatures() {
                   <td className="py-3 px-4">
                     <div className="font-medium text-gray-900">{c.nom}</div>
                     <div className="text-xs text-gray-400">{c.email}</div>
+                    {c.message && (
+                      <div className="text-xs text-gray-400 mt-0.5 truncate max-w-[220px]">{c.message}</div>
+                    )}
                   </td>
                   <td className="py-3 px-4 text-gray-500 hidden md:table-cell">{c.animal ?? '—'}</td>
-                  <td className="py-3 px-4">
+                  <td className="py-3 px-4" onClick={e => e.stopPropagation()}>
                     <select
                       className={`px-2 py-1 rounded-full text-xs font-medium appearance-none pr-5 cursor-pointer ${STATUS_COLORS[c.status] ?? 'bg-gray-100 text-gray-700'}`}
                       value={c.status}
@@ -180,12 +183,8 @@ export default function AdminCandidatures() {
                       ))}
                     </select>
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-3 px-4" onClick={e => e.stopPropagation()}>
                     <div className="flex justify-end gap-1">
-                      <button onClick={() => setSelected(c)} title="Voir le message"
-                        className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700">
-                        <MessageSquare size={15} />
-                      </button>
                       {tab === 'inbox' ? (
                         <button onClick={() => archiveMsg(c)} title="Archiver"
                           className="p-2 rounded-lg hover:bg-yellow-50 text-gray-400 hover:text-yellow-600">
@@ -247,6 +246,15 @@ export default function AdminCandidatures() {
                 {selected.telephone && <div><div className="text-xs text-gray-400">Téléphone</div><div className="text-sm font-medium">{selected.telephone}</div></div>}
                 {selected.animal && <div><div className="text-xs text-gray-400">Animal souhaité</div><div className="text-sm font-medium">{selected.animal}</div></div>}
               </div>
+
+              {selected.message && (
+                <div>
+                  <h3 className="font-medium text-gray-900 mb-3">Message</h3>
+                  <div className="bg-gray-50 rounded-lg p-3 text-sm text-gray-800 whitespace-pre-wrap">
+                    {selected.message}
+                  </div>
+                </div>
+              )}
 
               {Object.keys(selected.data ?? {}).length > 0 && (
                 <div>

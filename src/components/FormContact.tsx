@@ -70,12 +70,14 @@ export default function FormContact() {
     if (!validate()) return;
     setSending(true);
     setError('');
+    const details = `Sujet : ${data.sujet}\n\n${data.message}`;
     const { error } = await supabase.from('soumissions').insert({
       type_formulaire: 'contact',
       nom: data.nom,
       email: data.email,
       telephone: '',
       message: data.message,
+      details,
       statut: 'nouvelle',
     });
     if (!error) {
@@ -91,7 +93,7 @@ export default function FormContact() {
           from_name: data.nom,
           from_email: data.email,
           telephone: '',
-          details: `Sujet : ${data.sujet}\n\n${data.message}`,
+          details,
         });
       } catch (err) { console.error('[EmailJS] FormContact:', err); }
     }

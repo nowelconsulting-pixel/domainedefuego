@@ -63,12 +63,14 @@ export default function FormulairePage() {
     const firstEmail = form.fields.find(f => f.type === 'email');
     const nom   = firstText  ? String(values[firstText.id]  ?? 'Anonyme') : 'Anonyme';
     const email = firstEmail ? String(values[firstEmail.id] ?? '')        : '';
+    const details = Object.entries(values).map(([k, v]) => `${k} : ${v}`).join('\n');
     const { error } = await supabase.from('soumissions').insert({
       type_formulaire: `custom_${form.slug}`,
       nom,
       email,
       telephone: '',
       message: '',
+      details,
       statut: 'nouvelle',
     });
     if (!error) {
@@ -79,7 +81,7 @@ export default function FormulairePage() {
           from_name: nom,
           from_email: email,
           telephone: '',
-          details: Object.entries(values).map(([k, v]) => `${k} : ${v}`).join('\n'),
+          details,
         });
       } catch (err) { console.error('[EmailJS] FormulairePage:', err); }
     }
@@ -167,12 +169,14 @@ export function CustomFormEmbed({ slug }: { slug: string }) {
     const firstEmail = form.fields.find(f => f.type === 'email');
     const nom   = firstText  ? String(values[firstText.id]  ?? 'Anonyme') : 'Anonyme';
     const email = firstEmail ? String(values[firstEmail.id] ?? '')        : '';
+    const details = Object.entries(values).map(([k, v]) => `${k} : ${v}`).join('\n');
     const { error } = await supabase.from('soumissions').insert({
       type_formulaire: `custom_${form.slug}`,
       nom,
       email,
       telephone: '',
       message: '',
+      details,
       statut: 'nouvelle',
     });
     if (!error) {
@@ -183,7 +187,7 @@ export function CustomFormEmbed({ slug }: { slug: string }) {
           from_name: nom,
           from_email: email,
           telephone: '',
-          details: Object.entries(values).map(([k, v]) => `${k} : ${v}`).join('\n'),
+          details,
         });
       } catch (err) { console.error('[EmailJS] CustomFormEmbed:', err); }
     }

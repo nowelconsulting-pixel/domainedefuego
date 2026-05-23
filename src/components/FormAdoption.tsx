@@ -130,12 +130,22 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
       },
       notes: '', createdAt: new Date().toISOString(),
     };
+    const details = [
+      `Animal souhaité : ${data.animal_souhaite || 'Pas de préférence'}`,
+      `Logement : ${data.type_logement}, jardin : ${data.jardin}, statut : ${data.statut_occupant}`,
+      `Situation : ${data.statut_familial}${data.enfants === 'Oui' ? `, enfants : ${data.enfants_ages}` : ''}`,
+      `Autres animaux : ${data.autres_animaux === 'Oui' ? data.autres_animaux_detail : 'Non'}`,
+      `Seul : ${data.heures_seul}`,
+      `Vacances : ${data.vacances}`,
+      `Pourquoi adopter : ${data.pourquoi_adopter}`,
+    ].join('\n');
     const { error } = await supabase.from('soumissions').insert({
       type_formulaire: 'adoption',
       nom: candidature.nom,
       email: candidature.email,
       telephone: candidature.telephone,
       message: data.pourquoi_adopter,
+      details,
       statut: 'nouvelle',
     });
     if (!error) {
@@ -146,15 +156,7 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
           from_name: `${data.prenom} ${data.nom}`,
           from_email: data.email,
           telephone: data.telephone,
-          details: [
-            `Animal souhaité : ${data.animal_souhaite || 'Pas de préférence'}`,
-            `Logement : ${data.type_logement}, jardin : ${data.jardin}, statut : ${data.statut_occupant}`,
-            `Situation : ${data.statut_familial}${data.enfants === 'Oui' ? `, enfants : ${data.enfants_ages}` : ''}`,
-            `Autres animaux : ${data.autres_animaux === 'Oui' ? data.autres_animaux_detail : 'Non'}`,
-            `Seul : ${data.heures_seul}`,
-            `Vacances : ${data.vacances}`,
-            `Pourquoi adopter : ${data.pourquoi_adopter}`,
-          ].join('\n'),
+          details,
         });
       } catch (err) { console.error('[EmailJS] FormAdoption:', err); }
     }

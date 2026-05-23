@@ -47,12 +47,14 @@ export default function FormAdhesion() {
     if (!validate()) return;
     setSending(true);
     const nom = `${data.prenom} ${data.nom}`;
+    const details = `Adresse : ${data.adresse}, ${data.code_postal} ${data.ville}\nMotivation : ${data.motivation || '—'}`;
     const { error } = await supabase.from('soumissions').insert({
       type_formulaire: 'adhesion',
       nom,
       email: data.email,
       telephone: data.telephone,
       message: data.motivation || '',
+      details,
       statut: 'nouvelle',
     });
     if (!error) {
@@ -63,7 +65,7 @@ export default function FormAdhesion() {
           from_name: nom,
           from_email: data.email,
           telephone: data.telephone,
-          details: `Adresse : ${data.adresse}, ${data.code_postal} ${data.ville}\nMotivation : ${data.motivation || '—'}`,
+          details,
         });
       } catch (err) { console.error('[EmailJS] FormAdhesion:', err); }
     }

@@ -139,12 +139,21 @@ export default function FormFamilleAccueil() {
       },
       notes: '', createdAt: new Date().toISOString(),
     };
+    const details = [
+      `Logement : ${data.type_logement}, jardin : ${data.jardin}, statut : ${data.statut_occupant}`,
+      `Situation : ${data.statut_familial}${data.enfants === 'Oui' ? `, âge(s) des enfants : ${data.enfants_ages}` : ''}`,
+      `Autres animaux : ${data.autres_animaux === 'Oui' ? data.autres_animaux_detail : 'Non'}`,
+      `Types acceptés : ${data.types_acceptes.join(', ')}`,
+      `Urgences : ${data.urgences}`,
+      `Expérience : ${data.experience || '—'}`,
+    ].join('\n');
     const { error } = await supabase.from('soumissions').insert({
       type_formulaire: 'fa',
       nom: candidature.nom,
       email: candidature.email,
       telephone: candidature.telephone,
       message: data.experience || '',
+      details,
       statut: 'nouvelle',
     });
     if (!error) {
@@ -155,14 +164,7 @@ export default function FormFamilleAccueil() {
           from_name: `${data.prenom} ${data.nom}`,
           from_email: data.email,
           telephone: data.telephone,
-          details: [
-            `Logement : ${data.type_logement}, jardin : ${data.jardin}, statut : ${data.statut_occupant}`,
-            `Situation : ${data.statut_familial}${data.enfants === 'Oui' ? `, âge(s) des enfants : ${data.enfants_ages}` : ''}`,
-            `Autres animaux : ${data.autres_animaux === 'Oui' ? data.autres_animaux_detail : 'Non'}`,
-            `Types acceptés : ${data.types_acceptes.join(', ')}`,
-            `Urgences : ${data.urgences}`,
-            `Expérience : ${data.experience || '—'}`,
-          ].join('\n'),
+          details,
         });
       } catch (err) { console.error('[EmailJS] FormFamilleAccueil:', err); }
     }

@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import emailjs from '@emailjs/browser';
 import { ChevronRight, ChevronLeft, CheckCircle2, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { notifyAdmin } from '../lib/notifyAdmin';
 
 const STEPS = ['Identité', 'Logement', 'Situation', 'Disponibilités'];
 
@@ -139,24 +139,17 @@ export default function FormFamilleAccueil() {
       },
       notes: '', createdAt: new Date().toISOString(),
     };
-    try {
-      await supabase.from('soumissions').insert({
-        type_formulaire: 'fa',
-        nom: candidature.nom,
-        email: candidature.email,
-        telephone: candidature.telephone,
-        message: data.experience || '',
-        statut: 'nouvelle',
-      });
-    } catch { /* ignore, email reste la sauvegarde */ }
-    try {
-      await emailjs.send(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        import.meta.env.VITE_EMAILJS_TEMPLATE_FA,
-        { ...data, types_acceptes: data.types_acceptes.join(', ') },
-        import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
-      );
-    } catch { /* email failed but candidature already saved */ }
+    const { error } = await supabase.from('soumissions').insert({
+      type_formulaire: 'fa',
+      nom: candidature.nom,
+      email: candidature.email,
+      telephone: candidature.telephone,
+      message: data.experience || '',
+      statut: 'nouvelle',
+    });
+    if (!error) {
+      try { await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_FA, { ...data, types_acceptes: data.types_acceptes.join(', ') }); } catch { /**/ }
+    }
     setSending(false);
     setSent(true);
   };

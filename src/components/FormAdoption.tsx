@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import emailjs from '@emailjs/browser';
 import { ChevronRight, ChevronLeft, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useAnimaux } from '../hooks/useData';
 import { supabase } from '../lib/supabase';
+import { notifyAdmin } from '../lib/notifyAdmin';
 
 const STEPS = ['Identité', 'Logement', 'Situation', 'Projet'];
 
@@ -130,24 +130,17 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
       },
       notes: '', createdAt: new Date().toISOString(),
     };
-    try {
-      await supabase.from('soumissions').insert({
-        type_formulaire: 'adoption',
-        nom: candidature.nom,
-        email: candidature.email,
-        telephone: candidature.telephone,
-        message: data.pourquoi_adopter,
-        statut: 'nouvelle',
-      });
-    } catch { /* ignore, email reste la sauvegarde */ }
-    try {
-      await emailjs.send(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        import.meta.env.VITE_EMAILJS_TEMPLATE_ADOPTION,
-        { ...data, charte_acceptee: data.charte_acceptee ? 'Oui' : 'Non' },
-        import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
-      );
-    } catch { /* email failed but candidature already saved */ }
+    const { error } = await supabase.from('soumissions').insert({
+      type_formulaire: 'adoption',
+      nom: candidature.nom,
+      email: candidature.email,
+      telephone: candidature.telephone,
+      message: data.pourquoi_adopter,
+      statut: 'nouvelle',
+    });
+    if (!error) {
+      try { await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_ADOPTION, { ...data, charte_acceptee: data.charte_acceptee ? 'Oui' : 'Non' }); } catch { /**/ }
+    }
     setSending(false);
     setSent(true);
   };

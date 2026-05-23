@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { CheckCircle2, Send } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { notifyAdmin } from '../lib/notifyAdmin';
 
 interface FormData {
   prenom: string; nom: string; email: string; telephone: string;
@@ -45,27 +46,18 @@ export default function FormAdhesion() {
     ev.preventDefault();
     if (!validate()) return;
     setSending(true);
-    try {
-      const candidature = {
-        id: `adhesion-${Date.now()}`, type: 'adhesion',
-        form_title: 'Adhésion', status: 'nouvelle',
-        nom: `${data.prenom} ${data.nom}`, email: data.email,
-        telephone: data.telephone,
-        data: {
-          adresse: [data.adresse, data.code_postal, data.ville].filter(Boolean).join(', '),
-          motivation: data.motivation,
-        },
-        notes: '', createdAt: new Date().toISOString(),
-      };
-      await supabase.from('soumissions').insert({
-        type_formulaire: 'adhesion',
-        nom: candidature.nom,
-        email: candidature.email,
-        telephone: candidature.telephone,
-        message: data.motivation || '',
-        statut: 'nouvelle',
-      });
-    } catch { /**/ }
+    const nom = `${data.prenom} ${data.nom}`;
+    const { error } = await supabase.from('soumissions').insert({
+      type_formulaire: 'adhesion',
+      nom,
+      email: data.email,
+      telephone: data.telephone,
+      message: data.motivation || '',
+      statut: 'nouvelle',
+    });
+    if (!error) {
+      try { await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_CONTACT, { nom, email: data.email, motivation: data.motivation || '' }); } catch { /**/ }
+    }
     setSending(false);
     setSent(true);
   };

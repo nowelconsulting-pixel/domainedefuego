@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { CheckCircle2, Send } from 'lucide-react';
-import emailjs from '@emailjs/browser';
 import type { CustomForm, FieldType } from './admin/AdminFormulaires';
 import { loadCustomForms } from './admin/AdminFormulaires';
 import { supabase } from '../lib/supabase';
+import { notifyAdmin } from '../lib/notifyAdmin';
 
 export default function FormulairePage() {
   const { slug } = useParams<{ slug: string }>();
@@ -59,37 +59,21 @@ export default function FormulairePage() {
     if (!validate()) return;
     setSending(true);
 
-    try {
-      const firstText  = form.fields.find(f => f.type === 'text');
-      const firstEmail = form.fields.find(f => f.type === 'email');
-      const candidature = {
-        id: `custom_${form.id}_${Date.now()}`,
-        type: `custom_${form.slug}`,
-        form_title: form.title,
-        status: 'nouvelle',
-        nom:   firstText  ? String(values[firstText.id]  ?? 'Anonyme') : 'Anonyme',
-        email: firstEmail ? String(values[firstEmail.id] ?? '')        : '',
-        data:  Object.fromEntries(form.fields.map(f => [f.label, values[f.id] ?? ''])),
-        notes: '', createdAt: new Date().toISOString(),
-      };
-      await supabase.from('soumissions').insert({
-        type_formulaire: candidature.type,
-        nom: candidature.nom,
-        email: candidature.email,
-        telephone: '',
-        message: '',
-        statut: 'nouvelle',
-      });
-    } catch { /* ignore */ }
-
-    try {
-      await emailjs.send(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        import.meta.env.VITE_EMAILJS_TEMPLATE_CONTACT,
-        { form_title: form.title, ...values },
-        import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
-      );
-    } catch { /* email failed but submission already saved */ }
+    const firstText  = form.fields.find(f => f.type === 'text');
+    const firstEmail = form.fields.find(f => f.type === 'email');
+    const nom   = firstText  ? String(values[firstText.id]  ?? 'Anonyme') : 'Anonyme';
+    const email = firstEmail ? String(values[firstEmail.id] ?? '')        : '';
+    const { error } = await supabase.from('soumissions').insert({
+      type_formulaire: `custom_${form.slug}`,
+      nom,
+      email,
+      telephone: '',
+      message: '',
+      statut: 'nouvelle',
+    });
+    if (!error) {
+      try { await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_CONTACT, { form_title: form.title, ...values }); } catch { /**/ }
+    }
 
     setSending(false);
     setSent(true);
@@ -170,36 +154,21 @@ export function CustomFormEmbed({ slug }: { slug: string }) {
     e.preventDefault();
     if (!validate()) return;
     setSending(true);
-    try {
-      const firstText  = form.fields.find(f => f.type === 'text');
-      const firstEmail = form.fields.find(f => f.type === 'email');
-      const candidature = {
-        id: `custom_${form.id}_${Date.now()}`,
-        type: `custom_${form.slug}`,
-        form_title: form.title,
-        status: 'nouvelle',
-        nom:   firstText  ? String(values[firstText.id]  ?? 'Anonyme') : 'Anonyme',
-        email: firstEmail ? String(values[firstEmail.id] ?? '')        : '',
-        data:  Object.fromEntries(form.fields.map(f => [f.label, values[f.id] ?? ''])),
-        notes: '', createdAt: new Date().toISOString(),
-      };
-      await supabase.from('soumissions').insert({
-        type_formulaire: candidature.type,
-        nom: candidature.nom,
-        email: candidature.email,
-        telephone: '',
-        message: '',
-        statut: 'nouvelle',
-      });
-    } catch { /**/ }
-    try {
-      await emailjs.send(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        import.meta.env.VITE_EMAILJS_TEMPLATE_CONTACT,
-        { form_title: form.title, ...values },
-        import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
-      );
-    } catch { /**/ }
+    const firstText  = form.fields.find(f => f.type === 'text');
+    const firstEmail = form.fields.find(f => f.type === 'email');
+    const nom   = firstText  ? String(values[firstText.id]  ?? 'Anonyme') : 'Anonyme';
+    const email = firstEmail ? String(values[firstEmail.id] ?? '')        : '';
+    const { error } = await supabase.from('soumissions').insert({
+      type_formulaire: `custom_${form.slug}`,
+      nom,
+      email,
+      telephone: '',
+      message: '',
+      statut: 'nouvelle',
+    });
+    if (!error) {
+      try { await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_CONTACT, { form_title: form.title, ...values }); } catch { /**/ }
+    }
     setSending(false);
     setSent(true);
   };

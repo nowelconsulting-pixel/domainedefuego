@@ -73,12 +73,10 @@ export default function FormContact() {
     try {
       await supabase.from('soumissions').insert({
         type_formulaire: 'contact',
-        form_title: 'Formulaire de contact',
         nom: data.nom,
         email: data.email,
         telephone: '',
         message: data.message,
-        donnees: { Sujet: data.sujet, Message: data.message },
         statut: 'nouvelle',
       });
     } catch { /**/ }

@@ -74,12 +74,10 @@ export default function FormulairePage() {
       };
       await supabase.from('soumissions').insert({
         type_formulaire: candidature.type,
-        form_title: candidature.form_title,
         nom: candidature.nom,
         email: candidature.email,
         telephone: '',
         message: '',
-        donnees: candidature.data,
         statut: 'nouvelle',
       });
     } catch { /* ignore */ }
@@ -187,12 +185,10 @@ export function CustomFormEmbed({ slug }: { slug: string }) {
       };
       await supabase.from('soumissions').insert({
         type_formulaire: candidature.type,
-        form_title: candidature.form_title,
         nom: candidature.nom,
         email: candidature.email,
         telephone: '',
         message: '',
-        donnees: candidature.data,
         statut: 'nouvelle',
       });
     } catch { /**/ }

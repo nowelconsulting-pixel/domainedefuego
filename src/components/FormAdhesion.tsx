@@ -59,12 +59,10 @@ export default function FormAdhesion() {
       };
       await supabase.from('soumissions').insert({
         type_formulaire: 'adhesion',
-        form_title: 'Adhésion',
         nom: candidature.nom,
         email: candidature.email,
         telephone: candidature.telephone,
         message: data.motivation || '',
-        donnees: candidature.data,
         statut: 'nouvelle',
       });
     } catch { /**/ }

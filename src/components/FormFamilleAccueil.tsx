@@ -142,12 +142,10 @@ export default function FormFamilleAccueil() {
     try {
       await supabase.from('soumissions').insert({
         type_formulaire: 'fa',
-        form_title: "Famille d'accueil",
         nom: candidature.nom,
         email: candidature.email,
         telephone: candidature.telephone,
         message: data.experience || '',
-        donnees: candidature.data,
         statut: 'nouvelle',
       });
     } catch { /* ignore, email reste la sauvegarde */ }

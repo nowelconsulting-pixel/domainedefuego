@@ -133,13 +133,10 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
     try {
       await supabase.from('soumissions').insert({
         type_formulaire: 'adoption',
-        form_title: 'Candidature adoption',
         nom: candidature.nom,
         email: candidature.email,
         telephone: candidature.telephone,
-        animal: candidature.animal ?? null,
         message: data.pourquoi_adopter,
-        donnees: candidature.data,
         statut: 'nouvelle',
       });
     } catch { /* ignore, email reste la sauvegarde */ }

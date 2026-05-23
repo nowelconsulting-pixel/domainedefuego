@@ -48,12 +48,12 @@ export default function AnimalCard({ animal }: AnimalCardProps) {
       className="group block rounded-[20px] overflow-hidden border-2 border-site-border bg-surface transition-all duration-200 hover:-translate-y-1 hover:border-nv-green hover:shadow-lg"
     >
       {/* Image */}
-      <div className="relative aspect-square w-full overflow-hidden">
+      <div className="relative aspect-square w-full overflow-hidden bg-[#F5F3EF]">
         <img
           src={photo}
           alt={animal.nom}
           loading="lazy"
-          className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+          className="absolute inset-0 w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
         />
 
         {/* Like button */}

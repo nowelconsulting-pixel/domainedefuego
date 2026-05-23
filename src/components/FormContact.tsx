@@ -80,6 +80,11 @@ export default function FormContact() {
     });
     if (!error) {
       try {
+        console.log('[DEBUG EmailJS]', {
+          service: import.meta.env.VITE_EMAILJS_SERVICE_ID,
+          template: import.meta.env.VITE_EMAILJS_TEMPLATE_ADMIN,
+          key: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+        });
         await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_ADMIN, {
           date: new Date().toLocaleDateString('fr-FR'),
           form_type: 'Contact',

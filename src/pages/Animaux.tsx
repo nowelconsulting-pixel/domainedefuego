@@ -99,38 +99,38 @@ export default function Animaux() {
           })()}
 
           {/* Filter groups — always visible on md+, collapsible on mobile */}
-          <div className={`${filtersOpen ? 'flex' : 'hidden'} md:flex flex-wrap items-center gap-3 pt-3 md:pt-0`}>
+          <div className={`${filtersOpen ? 'flex' : 'hidden'} md:flex items-center gap-3 overflow-x-auto pt-3 md:pt-0 pb-1`}>
             <SlidersHorizontal size={18} className="text-hint flex-shrink-0 hidden md:block" />
 
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-extrabold text-hint uppercase tracking-widest">Espèce</span>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <span className="text-xs font-extrabold text-hint uppercase tracking-widest whitespace-nowrap">Espèce</span>
               {(['Tous', 'Chien', 'Chat', 'Lapin', 'Autre'] as EspeceFilter[]).map(v => (
                 <FilterBtn key={v} value={v} current={espece} set={setEspece} />
               ))}
             </div>
 
-            <div className="hidden sm:block w-px h-6 bg-site-border" />
+            <div className="w-px h-6 bg-site-border flex-shrink-0" />
 
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-extrabold text-hint uppercase tracking-widest">Âge</span>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <span className="text-xs font-extrabold text-hint uppercase tracking-widest whitespace-nowrap">Âge</span>
               {(['Tous', 'Junior', 'Adulte', 'Senior'] as AgeFilter[]).map(v => (
                 <FilterBtn key={v} value={v} current={age} set={setAge} />
               ))}
             </div>
 
-            <div className="hidden sm:block w-px h-6 bg-site-border" />
+            <div className="w-px h-6 bg-site-border flex-shrink-0" />
 
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-extrabold text-hint uppercase tracking-widest">Sexe</span>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <span className="text-xs font-extrabold text-hint uppercase tracking-widest whitespace-nowrap">Sexe</span>
               {(['Tous', 'Mâle', 'Femelle'] as SexeFilter[]).map(v => (
                 <FilterBtn key={v} value={v} current={sexe} set={setSexe} />
               ))}
             </div>
 
-            <div className="hidden sm:block w-px h-6 bg-site-border" />
+            <div className="w-px h-6 bg-site-border flex-shrink-0" />
 
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-extrabold text-hint uppercase tracking-widest">Localisation</span>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <span className="text-xs font-extrabold text-hint uppercase tracking-widest whitespace-nowrap">Localisation</span>
               {(['Tous', 'Refuge', "Famille d'accueil"] as LocalisationFilter[]).map(v => (
                 <FilterBtn key={v} value={v} current={localisation} set={setLocalisation} />
               ))}

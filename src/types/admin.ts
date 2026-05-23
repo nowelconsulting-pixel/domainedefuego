@@ -100,6 +100,7 @@ export interface Candidature {
   email: string;
   telephone: string;
   message?: string;
+  details?: string;
   data: Record<string, string>;
   notes: string;
   createdAt: string;

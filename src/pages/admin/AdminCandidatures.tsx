@@ -256,6 +256,20 @@ export default function AdminCandidatures() {
                 </div>
               )}
 
+              {selected.details && (
+                <div>
+                  <h3 className="font-medium text-gray-900 mb-3">Détails du formulaire</h3>
+                  <div className="bg-gray-50 rounded-lg p-3 space-y-1">
+                    {(selected.details.includes('\n')
+                      ? selected.details.split('\n')
+                      : selected.details.split(', ')
+                    ).filter(Boolean).map((line, i) => (
+                      <div key={i} className="text-sm text-gray-800">{line}</div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {Object.keys(selected.data ?? {}).length > 0 && (
                 <div>
                   <h3 className="font-medium text-gray-900 mb-3">Détails</h3>

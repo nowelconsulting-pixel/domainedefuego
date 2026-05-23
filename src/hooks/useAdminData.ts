@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { AdminUser, AdminPage, Candidature } from '../types/admin';
+import type { AdminUser, AdminPage, Candidature, CandidatureStatus } from '../types/admin';
 import { getUsers, saveUsers } from '../utils/auth';
+import { supabase } from '../lib/supabase';
 
 // ─── Users ──────────────────────────────────────────────────────────────────
 
@@ -64,59 +65,72 @@ export function useAdminPages() {
 
 // ─── Candidatures ─────────────────────────────────────────────────────────────
 
-function loadCandidatures(): Candidature[] {
-  try {
-    const s = localStorage.getItem('candidatures');
-    return s ? JSON.parse(s) : [];
-  } catch { return []; }
+type SoumissionRow = {
+  id: string;
+  created_at: string;
+  type_formulaire: string | null;
+  form_title: string | null;
+  statut: string | null;
+  archived: boolean | null;
+  animal: string | null;
+  nom: string | null;
+  email: string | null;
+  telephone: string | null;
+  donnees: Record<string, string> | null;
+  notes: string | null;
+};
+
+function rowToCandidat(row: SoumissionRow): Candidature {
+  return {
+    id: row.id,
+    type: row.type_formulaire ?? '',
+    form_title: row.form_title ?? undefined,
+    status: (row.statut as CandidatureStatus) ?? 'nouvelle',
+    archived: row.archived ?? false,
+    animal: row.animal ?? undefined,
+    nom: row.nom ?? '',
+    email: row.email ?? '',
+    telephone: row.telephone ?? '',
+    data: row.donnees ?? {},
+    notes: row.notes ?? '',
+    createdAt: row.created_at,
+  };
 }
 
-function saveCandidatures(c: Candidature[]): void {
-  localStorage.setItem('candidatures', JSON.stringify(c));
+function patchToRow(patch: Partial<Candidature>): Record<string, unknown> {
+  const row: Record<string, unknown> = {};
+  if ('status'   in patch) row.statut   = patch.status;
+  if ('archived' in patch) row.archived = patch.archived;
+  if ('notes'    in patch) row.notes    = patch.notes;
+  return row;
 }
 
 export function useCandidatures() {
   const [candidatures, setCandidatures] = useState<Candidature[]>([]);
 
-  useEffect(() => { setCandidatures(loadCandidatures()); }, []);
-
-  const save = useCallback((updated: Candidature[]) => {
-    setCandidatures(updated);
-    saveCandidatures(updated);
+  useEffect(() => {
+    supabase
+      .from('soumissions')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .then(({ data }) => {
+        if (data) setCandidatures((data as SoumissionRow[]).map(rowToCandidat));
+      });
   }, []);
 
   const update = useCallback((id: string, patch: Partial<Candidature>) => {
-    setCandidatures(prev => {
-      const updated = prev.map(c => c.id === id ? { ...c, ...patch } : c);
-      saveCandidatures(updated);
-      return updated;
-    });
-  }, []);
-
-  const add = useCallback((c: Candidature) => {
-    setCandidatures(prev => {
-      const updated = [c, ...prev];
-      saveCandidatures(updated);
-      // Bump unread badge
-      const unread = parseInt(localStorage.getItem('candidatures_unread') || '0');
-      localStorage.setItem('candidatures_unread', String(unread + 1));
-      return updated;
-    });
+    setCandidatures(prev => prev.map(c => c.id === id ? { ...c, ...patch } : c));
+    supabase.from('soumissions').update(patchToRow(patch)).eq('id', id);
   }, []);
 
   const remove = useCallback((id: string) => {
-    setCandidatures(prev => {
-      const updated = prev.filter(c => c.id !== id);
-      saveCandidatures(updated);
-      return updated;
-    });
+    setCandidatures(prev => prev.filter(c => c.id !== id));
+    supabase.from('soumissions').delete().eq('id', id);
   }, []);
 
-  const markAllRead = useCallback(() => {
-    localStorage.setItem('candidatures_unread', '0');
-  }, []);
+  const markAllRead = useCallback(() => { /* statut géré via Supabase */ }, []);
 
-  const unread = parseInt(localStorage.getItem('candidatures_unread') || '0');
+  const unread = candidatures.filter(c => !c.archived && c.status === 'nouvelle').length;
 
-  return { candidatures, save, update, add, remove, markAllRead, unread };
+  return { candidatures, update, remove, markAllRead, unread };
 }

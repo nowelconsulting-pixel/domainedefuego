@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import emailjs from '@emailjs/browser';
 import { CheckCircle2, AlertCircle, Send } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 interface ContactData {
   nom: string; email: string; sujet: string; message: string;
@@ -70,16 +71,16 @@ export default function FormContact() {
     setSending(true);
     setError('');
     try {
-      const message = {
-        id: `contact-${Date.now()}`, type: 'contact', form_title: 'Formulaire de contact',
-        status: 'nouvelle', nom: data.nom, email: data.email, telephone: '',
-        data: { Sujet: data.sujet, Message: data.message },
-        notes: '', createdAt: new Date().toISOString(),
-      };
-      const existing = JSON.parse(localStorage.getItem('candidatures') || '[]');
-      localStorage.setItem('candidatures', JSON.stringify([message, ...existing]));
-      const unread = parseInt(localStorage.getItem('candidatures_unread') || '0');
-      localStorage.setItem('candidatures_unread', String(unread + 1));
+      await supabase.from('soumissions').insert({
+        type_formulaire: 'contact',
+        form_title: 'Formulaire de contact',
+        nom: data.nom,
+        email: data.email,
+        telephone: '',
+        message: data.message,
+        donnees: { Sujet: data.sujet, Message: data.message },
+        statut: 'nouvelle',
+      });
     } catch { /**/ }
     try {
       await emailjs.send(

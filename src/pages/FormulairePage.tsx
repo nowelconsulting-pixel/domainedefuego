@@ -4,6 +4,7 @@ import { CheckCircle2, Send } from 'lucide-react';
 import emailjs from '@emailjs/browser';
 import type { CustomForm, FieldType } from './admin/AdminFormulaires';
 import { loadCustomForms } from './admin/AdminFormulaires';
+import { supabase } from '../lib/supabase';
 
 export default function FormulairePage() {
   const { slug } = useParams<{ slug: string }>();
@@ -71,10 +72,16 @@ export default function FormulairePage() {
         data:  Object.fromEntries(form.fields.map(f => [f.label, values[f.id] ?? ''])),
         notes: '', createdAt: new Date().toISOString(),
       };
-      const existing = JSON.parse(localStorage.getItem('candidatures') || '[]');
-      localStorage.setItem('candidatures', JSON.stringify([candidature, ...existing]));
-      const unread = parseInt(localStorage.getItem('candidatures_unread') || '0');
-      localStorage.setItem('candidatures_unread', String(unread + 1));
+      await supabase.from('soumissions').insert({
+        type_formulaire: candidature.type,
+        form_title: candidature.form_title,
+        nom: candidature.nom,
+        email: candidature.email,
+        telephone: '',
+        message: '',
+        donnees: candidature.data,
+        statut: 'nouvelle',
+      });
     } catch { /* ignore */ }
 
     try {
@@ -178,10 +185,16 @@ export function CustomFormEmbed({ slug }: { slug: string }) {
         data:  Object.fromEntries(form.fields.map(f => [f.label, values[f.id] ?? ''])),
         notes: '', createdAt: new Date().toISOString(),
       };
-      const existing = JSON.parse(localStorage.getItem('candidatures') || '[]');
-      localStorage.setItem('candidatures', JSON.stringify([candidature, ...existing]));
-      const unread = parseInt(localStorage.getItem('candidatures_unread') || '0');
-      localStorage.setItem('candidatures_unread', String(unread + 1));
+      await supabase.from('soumissions').insert({
+        type_formulaire: candidature.type,
+        form_title: candidature.form_title,
+        nom: candidature.nom,
+        email: candidature.email,
+        telephone: '',
+        message: '',
+        donnees: candidature.data,
+        statut: 'nouvelle',
+      });
     } catch { /**/ }
     try {
       await emailjs.send(

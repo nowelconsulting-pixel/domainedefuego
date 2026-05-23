@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CheckCircle2, Send } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 interface FormData {
   prenom: string; nom: string; email: string; telephone: string;
@@ -56,10 +57,16 @@ export default function FormAdhesion() {
         },
         notes: '', createdAt: new Date().toISOString(),
       };
-      const existing = JSON.parse(localStorage.getItem('candidatures') || '[]');
-      localStorage.setItem('candidatures', JSON.stringify([candidature, ...existing]));
-      const unread = parseInt(localStorage.getItem('candidatures_unread') || '0');
-      localStorage.setItem('candidatures_unread', String(unread + 1));
+      await supabase.from('soumissions').insert({
+        type_formulaire: 'adhesion',
+        form_title: 'Adhésion',
+        nom: candidature.nom,
+        email: candidature.email,
+        telephone: candidature.telephone,
+        message: data.motivation || '',
+        donnees: candidature.data,
+        statut: 'nouvelle',
+      });
     } catch { /**/ }
     setSending(false);
     setSent(true);

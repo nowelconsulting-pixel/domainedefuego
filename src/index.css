@@ -117,15 +117,15 @@ body {
     @apply inline-flex items-center rounded-full font-extrabold text-[10px] uppercase tracking-[0.06em] px-3 py-1;
   }
   .badge-available {
-    background: rgba(79, 127, 106, 0.12);
+    background: rgba(255, 255, 255, 0.92);
     color: #3A6455;
   }
   .badge-reserved {
-    background: rgba(226, 169, 79, 0.15);
+    background: rgba(255, 255, 255, 0.92);
     color: #8A5E1A;
   }
   .badge-fostered {
-    background: rgba(111, 168, 166, 0.15);
+    background: rgba(255, 255, 255, 0.92);
     color: #2E6E6C;
   }
 

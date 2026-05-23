@@ -174,7 +174,11 @@ function AnimalForm({ initial, onSave, onCancel, isNew }: AnimalFormProps) {
         {/* Photos */}
         <section>
           <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Photos</h3>
-          <MediaUploader photos={form.photos} onChange={photos => set('photos', photos)} />
+          <MediaUploader
+            photos={form.photos}
+            onChange={photos => set('photos', photos)}
+            storageFolder={form.id ? `animaux/${form.id}` : undefined}
+          />
         </section>
 
         {/* Vidéo */}
@@ -246,14 +250,19 @@ export default function AdminAnimaux() {
       });
   }, [animaux, search, filterTab, sortBy]);
 
-  const openNew   = () => { setIsNew(true); setEditing({ ...EMPTY }); navigate('/admin/animaux/new'); };
+  const openNew   = () => {
+    const id = `animal-${Date.now()}`;
+    setIsNew(true);
+    setEditing({ ...EMPTY, id });
+    navigate('/admin/animaux/new');
+  };
   const openEdit  = (a: Animal) => { setIsNew(false); setEditing({ ...a }); };
   const closeForm = () => { setEditing(null); navigate('/admin/animaux'); };
 
   const handleSave = (form: FormAnimal) => {
     if (!animaux) return;
     if (isNew) {
-      const id = `${form.nom.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}-${Date.now()}`;
+      const id = form.id ?? `${form.nom.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}-${Date.now()}`;
       save([...animaux, { ...form, id } as Animal]);
     } else {
       save(animaux.map(a => a.id === form.id ? (form as Animal) : a));

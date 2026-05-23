@@ -79,7 +79,7 @@ export default function FormContact() {
       statut: 'nouvelle',
     });
     if (!error) {
-      try { await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_CONTACT, data as Record<string, unknown>); } catch { /**/ }
+      try { await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_CONTACT, data as unknown as Record<string, unknown>); } catch { /**/ }
     }
     setSending(false);
     setSent(true);

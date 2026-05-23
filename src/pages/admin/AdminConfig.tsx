@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Save, Download, Upload, CheckCircle2, Plus, Trash2, Construction } from 'lucide-react';
 import { useConfig } from '../../hooks/useData';
 import type { Config } from '../../types';
+import { supabase } from '../../lib/supabase';
 
 interface MaintenanceConfig {
   enabled: boolean;
@@ -162,8 +163,8 @@ export default function AdminConfig() {
     URL.revokeObjectURL(url);
   };
 
-  const exportAll = () => {
-    const animaux = localStorage.getItem('animaux');
+  const exportAll = async () => {
+    const { data: animaux } = await supabase.from('animaux').select('*');
     const pages   = localStorage.getItem('pages');
     const adminPg = localStorage.getItem('admin_pages');
     const PAGE_SLUGS = ['accueil','presentation','animaux','adopter','famille-accueil','faire-un-don','contact','mentions-legales','blog','devenir-membre'];
@@ -172,7 +173,7 @@ export default function AdminConfig() {
       try { const r = localStorage.getItem(`page_content_${s}`); if (r) pageContent[s] = JSON.parse(r); } catch { /* ignore */ }
     }
     const allData = {
-      config: form, animaux: animaux ? JSON.parse(animaux) : null,
+      config: form, animaux: animaux ?? [],
       pages: pages ? JSON.parse(pages) : null,
       page_content: Object.keys(pageContent).length ? pageContent : null,
       admin_pages: adminPg ? JSON.parse(adminPg) : null,
@@ -188,11 +189,13 @@ export default function AdminConfig() {
   const importAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]; if (!file) return;
     const reader = new FileReader();
-    reader.onload = evt => {
+    reader.onload = async evt => {
       try {
         const parsed = JSON.parse(evt.target?.result as string);
         if (parsed.config) { save(parsed.config); setForm(parsed.config); }
-        if (parsed.animaux)    localStorage.setItem('animaux',     JSON.stringify(parsed.animaux));
+        if (Array.isArray(parsed.animaux) && parsed.animaux.length > 0) {
+          await supabase.from('animaux').upsert(parsed.animaux);
+        }
         if (parsed.pages)      localStorage.setItem('pages',       JSON.stringify(parsed.pages));
         if (parsed.admin_pages)localStorage.setItem('admin_pages', JSON.stringify(parsed.admin_pages));
         alert('Import réussi ! Rechargez la page pour voir les changements.');
@@ -372,7 +375,7 @@ export default function AdminConfig() {
         </div>
 
         <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-5 text-sm text-yellow-800">
-          <strong>Sauvegarde :</strong> Les données sont en localStorage. Exportez régulièrement pour éviter toute perte.
+          <strong>Sauvegarde :</strong> Les animaux sont dans Supabase. La config et les pages sont en localStorage. Exportez régulièrement pour éviter toute perte.
         </div>
       </div>
     </div>

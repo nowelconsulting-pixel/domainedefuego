@@ -1,14 +1,28 @@
 import { useRef } from 'react';
 import { Upload, X, Star, ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react';
 import { compressImage, MAX_PHOTOS, MAX_PHOTO_SIZE_MB, formatBytes, totalBase64Size } from '../../utils/image';
+import { supabase } from '../../lib/supabase';
 
 interface Props {
   photos: string[];
   onChange: (photos: string[]) => void;
+  /** If set, photos are uploaded to Supabase Storage under this folder path */
+  storageFolder?: string;
 }
 
-export default function MediaUploader({ photos, onChange }: Props) {
+export default function MediaUploader({ photos, onChange, storageFolder }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const uploadToStorage = async (file: File): Promise<string> => {
+    const ext = file.name.split('.').pop() ?? 'jpg';
+    const path = `${storageFolder}/${crypto.randomUUID()}.${ext}`;
+    const { error } = await supabase.storage
+      .from('animaux-photos')
+      .upload(path, file, { contentType: file.type, upsert: false });
+    if (error) throw error;
+    const { data } = supabase.storage.from('animaux-photos').getPublicUrl(path);
+    return data.publicUrl;
+  };
 
   const handleFiles = async (files: FileList | null) => {
     if (!files) return;
@@ -22,8 +36,13 @@ export default function MediaUploader({ photos, onChange }: Props) {
         continue;
       }
       try {
-        const b64 = await compressImage(file);
-        results.push(b64);
+        if (storageFolder) {
+          const url = await uploadToStorage(file);
+          results.push(url);
+        } else {
+          const b64 = await compressImage(file);
+          results.push(b64);
+        }
       } catch {
         alert(`Impossible de traiter ${file.name}`);
       }
@@ -31,8 +50,16 @@ export default function MediaUploader({ photos, onChange }: Props) {
     onChange([...photos, ...results]);
   };
 
-  const remove = (i: number) => {
-    if (confirm('Supprimer cette photo ?')) onChange(photos.filter((_, idx) => idx !== i));
+  const remove = async (i: number) => {
+    if (!confirm('Supprimer cette photo ?')) return;
+    const url = photos[i];
+    if (storageFolder && url.includes('/animaux-photos/')) {
+      const match = url.split('/object/public/animaux-photos/')[1];
+      if (match) {
+        await supabase.storage.from('animaux-photos').remove([match]);
+      }
+    }
+    onChange(photos.filter((_, idx) => idx !== i));
   };
 
   const moveLeft = (i: number) => {
@@ -56,7 +83,8 @@ export default function MediaUploader({ photos, onChange }: Props) {
     onChange([main, ...arr]);
   };
 
-  const usedBytes = totalBase64Size(photos);
+  const base64Photos = photos.filter(p => p.startsWith('data:'));
+  const usedBytes = totalBase64Size(base64Photos);
   const usedMb = (usedBytes / (1024 * 1024)).toFixed(1);
   const pct = Math.min(100, (usedBytes / (10 * 1024 * 1024)) * 100);
 
@@ -86,8 +114,8 @@ export default function MediaUploader({ photos, onChange }: Props) {
         />
       </div>
 
-      {/* Storage indicator */}
-      {photos.length > 0 && (
+      {/* Storage indicator — only relevant for base64 photos */}
+      {photos.length > 0 && !storageFolder && (
         <div>
           <div className="flex justify-between text-xs text-gray-400 mb-1">
             <span>Stockage utilisé : {formatBytes(usedBytes)}</span>

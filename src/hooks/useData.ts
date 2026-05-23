@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { Animal, Config, Pages } from '../types';
+import { supabase } from '../lib/supabase';
 
 export interface Article {
   id: string; title: string; slug: string; excerpt: string;
@@ -46,7 +47,44 @@ function useJsonData<T>(localStorageKey: string, url: string) {
 }
 
 export function useAnimaux() {
-  return useJsonData<Animal[]>('animaux', '/data/animaux.json');
+  const [data, setData] = useState<Animal[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const dataRef = useRef<Animal[] | null>(null);
+
+  useEffect(() => {
+    supabase
+      .from('animaux')
+      .select('*')
+      .then(({ data: rows, error: err }) => {
+        if (err) { setError(err.message); setLoading(false); return; }
+        const list = (rows ?? []) as Animal[];
+        setData(list);
+        dataRef.current = list;
+        setLoading(false);
+      });
+  }, []);
+
+  const save = async (newData: Animal[]) => {
+    const oldData = dataRef.current ?? [];
+    setData(newData);
+    dataRef.current = newData;
+
+    const toUpsert = newData.filter(n => {
+      const old = oldData.find(o => o.id === n.id);
+      return !old || JSON.stringify(old) !== JSON.stringify(n);
+    });
+    const toDelete = oldData.filter(o => !newData.some(n => n.id === o.id));
+
+    if (toUpsert.length > 0) {
+      await supabase.from('animaux').upsert(toUpsert);
+    }
+    for (const item of toDelete) {
+      await supabase.from('animaux').delete().eq('id', item.id);
+    }
+  };
+
+  return { data, loading, error, save };
 }
 
 export function useConfig() {

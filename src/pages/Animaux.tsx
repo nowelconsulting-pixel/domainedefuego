@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { SlidersHorizontal } from 'lucide-react';
+import { SlidersHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
 import AnimalCard from '../components/AnimalCard';
 import { useAnimaux } from '../hooks/useData';
 import { usePageContent } from '../hooks/usePageContent';
@@ -18,6 +18,7 @@ export default function Animaux() {
   const [age, setAge] = useState<AgeFilter>('Tous');
   const [sexe, setSexe] = useState<SexeFilter>('Tous');
   const [localisation, setLocalisation] = useState<LocalisationFilter>('Tous');
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const filtered = useMemo(() => {
     if (!animaux) return [];
@@ -73,9 +74,33 @@ export default function Animaux() {
 
       {/* Filters */}
       <div className="sticky top-[70px] z-10 bg-surface border-b-2 border-site-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center gap-3 flex-wrap">
-            <SlidersHorizontal size={18} className="text-hint flex-shrink-0" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+
+          {/* Mobile toggle */}
+          {(() => {
+            const activeCount = [espece, age, sexe, localisation].filter(v => v !== 'Tous').length;
+            return (
+              <button
+                onClick={() => setFiltersOpen(o => !o)}
+                className="md:hidden flex items-center gap-2 w-full text-sm font-semibold text-forest py-1"
+              >
+                <SlidersHorizontal size={16} className="text-hint flex-shrink-0" />
+                <span>Filtres</span>
+                {activeCount > 0 && (
+                  <span className="bg-nv-green text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    {activeCount}
+                  </span>
+                )}
+                <span className="ml-auto text-hint">
+                  {filtersOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                </span>
+              </button>
+            );
+          })()}
+
+          {/* Filter groups — always visible on md+, collapsible on mobile */}
+          <div className={`${filtersOpen ? 'flex' : 'hidden'} md:flex flex-wrap items-center gap-3 pt-3 md:pt-0`}>
+            <SlidersHorizontal size={18} className="text-hint flex-shrink-0 hidden md:block" />
 
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs font-extrabold text-hint uppercase tracking-widest">Espèce</span>
@@ -106,11 +131,12 @@ export default function Animaux() {
 
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs font-extrabold text-hint uppercase tracking-widest">Localisation</span>
-              {(['Tous', 'Refuge', 'Famille d\'accueil'] as LocalisationFilter[]).map(v => (
+              {(['Tous', 'Refuge', "Famille d'accueil"] as LocalisationFilter[]).map(v => (
                 <FilterBtn key={v} value={v} current={localisation} set={setLocalisation} />
               ))}
             </div>
           </div>
+
         </div>
       </div>
 

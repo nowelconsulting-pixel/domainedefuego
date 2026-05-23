@@ -53,7 +53,7 @@ export default function AnimalCard({ animal }: AnimalCardProps) {
           src={photo}
           alt={animal.nom}
           loading="lazy"
-          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+          className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
         />
 
         {/* Like button */}

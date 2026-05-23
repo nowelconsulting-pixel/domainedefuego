@@ -148,6 +148,7 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
       details,
       statut: 'nouvelle',
     });
+    if (error) console.error('[Supabase] FormAdoption insert:', error);
     if (!error) {
       try {
         await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_ADMIN, {

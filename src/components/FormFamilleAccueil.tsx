@@ -156,6 +156,7 @@ export default function FormFamilleAccueil() {
       details,
       statut: 'nouvelle',
     });
+    if (error) console.error('[Supabase] FormFamilleAccueil insert:', error);
     if (!error) {
       try {
         await notifyAdmin(import.meta.env.VITE_EMAILJS_TEMPLATE_ADMIN, {

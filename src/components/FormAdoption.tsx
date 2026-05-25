@@ -140,6 +140,7 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
       `Pourquoi adopter : ${data.pourquoi_adopter}`,
     ].join('\n');
     console.log('[INSERT]', { nom: candidature.nom, email: candidature.email, telephone: candidature.telephone, message: data.pourquoi_adopter, details });
+    console.log('[DEBUG details]', typeof details, details);
     const { error } = await supabase.from('soumissions').insert({
       type_formulaire: 'adoption',
       nom: candidature.nom,

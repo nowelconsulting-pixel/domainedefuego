@@ -108,6 +108,7 @@ export default function FormAdoption({ defaultAnimal = '' }: { defaultAnimal?: s
   const prev = () => setStep(s => Math.max(s - 1, 0));
 
   const sendEmail = async () => {
+    console.log('[DEBUG entry] sendEmail called');
     if (!validateStep(3)) return;
     if (!data.charte_acceptee) {
       setErrors(e => ({ ...e, charte_acceptee: 'Vous devez accepter la charte' }));

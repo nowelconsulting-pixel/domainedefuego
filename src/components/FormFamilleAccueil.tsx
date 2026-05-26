@@ -122,6 +122,7 @@ export default function FormFamilleAccueil() {
   };
 
   const sendEmail = async () => {
+    console.log('[DEBUG entry] sendEmail called');
     if (!validateStep(3)) return;
     setSending(true);
     setError('');
@@ -147,6 +148,8 @@ export default function FormFamilleAccueil() {
       `Urgences : ${data.urgences}`,
       `Expérience : ${data.experience || '—'}`,
     ].join('\n');
+    console.log('[INSERT FA]', { nom: candidature.nom, email: candidature.email, telephone: candidature.telephone, message: data.experience || '', details });
+    console.log('[DEBUG FA details]', typeof details, details);
     const { error } = await supabase.from('soumissions').insert({
       type_formulaire: 'fa',
       nom: candidature.nom,

@@ -154,9 +154,10 @@ export default function Accueil() {
         if (!block) return null;
         const d = block.data as FeaturedArticleData;
         const published = articles.filter(a => a.published);
-        const article = d.auto !== 'false'
-          ? published.sort((a, b) => b.published_at.localeCompare(a.published_at))[0]
-          : published.find(a => a.id === d.article_id);
+        const article = published.find(a => a.featured)
+          ?? (d.auto !== 'false'
+            ? published.sort((a, b) => b.published_at.localeCompare(a.published_at))[0]
+            : published.find(a => a.id === d.article_id));
         if (!article) return null;
         return (
           <section className="bg-[#FAFAF7] py-24">
@@ -171,9 +172,9 @@ export default function Accueil() {
                 </Link>
               </div>
               <div className="grid lg:grid-cols-2 gap-10 items-center max-w-5xl">
-                <div className="rounded-[20px] overflow-hidden aspect-[4/3] border-2 border-site-border bg-gray-100">
+                <div className="rounded-[20px] overflow-hidden h-[280px] border-2 border-site-border bg-[#F5F3EF] flex items-center justify-center">
                   {article.cover_url && (
-                    <img src={resolveImageUrl(article.cover_url)} alt={article.title} className="w-full h-full object-cover" loading="lazy" />
+                    <img src={resolveImageUrl(article.cover_url)} alt={article.title} className="w-full h-full object-contain object-center" loading="lazy" />
                   )}
                 </div>
                 <div>
@@ -203,9 +204,8 @@ export default function Accueil() {
         const sortedPublished = articles
           .filter(a => a.published)
           .sort((a, b) => b.published_at.localeCompare(a.published_at));
-        const featuredId = d
-          ? (d.auto !== 'false' ? sortedPublished[0]?.id : d.article_id)
-          : null;
+        const featuredId = sortedPublished.find(a => a.featured)?.id
+          ?? (d?.auto !== 'false' ? sortedPublished[0]?.id : d?.article_id);
         const recent = sortedPublished.filter(a => a.id !== featuredId).slice(0, 3);
         if (recent.length === 0) return null;
         return (
@@ -219,8 +219,14 @@ export default function Accueil() {
               </div>
               <div className="divide-y divide-[#E8E4DC]">
                 {recent.map(a => (
-                  <div key={a.id} className="flex items-center justify-between py-3.5 gap-6">
-                    <div className="min-w-0">
+                  <div key={a.id} className="flex items-center gap-4 py-3.5">
+                    <div className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-[#F5F3EF] flex items-center justify-center">
+                      {a.cover_url
+                        ? <img src={resolveImageUrl(a.cover_url)} alt="" className="w-full h-full object-contain object-center" loading="lazy" />
+                        : <div className="w-full h-full" />
+                      }
+                    </div>
+                    <div className="flex-1 min-w-0">
                       <p className="font-semibold text-forest text-sm leading-snug">{a.title}</p>
                       {a.published_at && (
                         <p className="text-xs text-hint mt-0.5">

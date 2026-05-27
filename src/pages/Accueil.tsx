@@ -227,7 +227,7 @@ export default function Accueil() {
                       }
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-forest text-sm leading-snug">{a.title}</p>
+                      <Link to={`/actualites/${a.slug}`} className="font-semibold text-forest text-sm leading-snug hover:text-nv-green transition-colors">{a.title}</Link>
                       {a.published_at && (
                         <p className="text-xs text-hint mt-0.5">
                           {new Date(a.published_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}

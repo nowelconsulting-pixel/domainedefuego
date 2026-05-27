@@ -172,11 +172,11 @@ export default function Accueil() {
                 </Link>
               </div>
               <div className="grid lg:grid-cols-2 gap-10 items-center max-w-5xl">
-                <div className="rounded-[20px] overflow-hidden h-[280px] border-2 border-site-border bg-[#F5F3EF] flex items-center justify-center">
+                <Link to={`/actualites/${article.slug}`} className="rounded-[20px] overflow-hidden h-[280px] border-2 border-site-border bg-[#F5F3EF] flex items-center justify-center">
                   {article.cover_url && (
                     <img src={resolveImageUrl(article.cover_url)} alt={article.title} className="w-full h-full object-contain object-center" loading="lazy" />
                   )}
-                </div>
+                </Link>
                 <div>
                   {article.published_at && (
                     <div className="flex items-center gap-2 text-xs text-hint mb-3">
@@ -185,7 +185,7 @@ export default function Accueil() {
                       {article.author && <><span>·</span><span>{article.author}</span></>}
                     </div>
                   )}
-                  <h3 className="text-2xl font-black text-forest mb-3 leading-tight">{article.title}</h3>
+                  <Link to={`/actualites/${article.slug}`} className="text-2xl font-black text-forest mb-3 leading-tight hover:text-nv-green transition-colors block">{article.title}</Link>
                   {article.excerpt && <p className="text-muted leading-relaxed mb-6">{article.excerpt}</p>}
                   <Link to={`/actualites/${article.slug}`} className="btn-primary">
                     {d.cta_text || "Lire l'article"} <ArrowRight size={16} />

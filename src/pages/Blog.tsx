@@ -47,13 +47,13 @@ export default function Blog() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {published.map(article => (
               <div key={article.id} className="bg-surface rounded-[20px] border-2 border-site-border overflow-hidden flex flex-col group hover:-translate-y-1 hover:border-nv-green hover:shadow-lg transition-all duration-200">
-                <div className="h-[280px] overflow-hidden bg-[#F5F3EF] flex items-center justify-center">
+                <Link to={`/actualites/${article.slug}`} className="h-[280px] overflow-hidden bg-[#F5F3EF] flex items-center justify-center">
                   {article.cover_url && (
                     <img src={resolveImageUrl(article.cover_url)} alt={article.title} className="w-full h-full object-contain object-center" loading="lazy" />
                   )}
-                </div>
+                </Link>
                 <div className="p-5 flex flex-col flex-1">
-                  <h2 className="font-extrabold text-forest mb-2 leading-snug">{article.title}</h2>
+                  <Link to={`/actualites/${article.slug}`} className="font-extrabold text-forest mb-2 leading-snug hover:text-nv-green transition-colors">{article.title}</Link>
                   <p className="text-muted text-sm leading-relaxed mb-3 flex-1">{article.excerpt}</p>
                   <div className="flex items-center gap-1 text-xs text-hint mb-4">
                     <Calendar size={13} />

@@ -8,13 +8,13 @@
   "adresse": "Domaine de Fuego — Osny",
   "email_contact": "contact@domainedefuego.fr",
   "chiffres": {
-    "animaux_adoptes": 0,
+    "animaux_adoptes": 1,
     "familles_accueil": 3,
     "annees_existence": 0,
     "custom": [
       {
         "label": "Dons collectés",
-        "value": 300
+        "value": 500
       }
     ]
   }

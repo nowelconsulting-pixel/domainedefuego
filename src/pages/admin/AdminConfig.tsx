@@ -139,9 +139,9 @@ export default function AdminConfig() {
     });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form) return;
-    save(form);
+    await save(form);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -192,7 +192,7 @@ export default function AdminConfig() {
     reader.onload = async evt => {
       try {
         const parsed = JSON.parse(evt.target?.result as string);
-        if (parsed.config) { save(parsed.config); setForm(parsed.config); }
+        if (parsed.config) { await save(parsed.config); setForm(parsed.config); }
         if (Array.isArray(parsed.animaux) && parsed.animaux.length > 0) {
           await supabase.from('animaux').upsert(parsed.animaux);
         }
@@ -375,7 +375,7 @@ export default function AdminConfig() {
         </div>
 
         <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-5 text-sm text-yellow-800">
-          <strong>Sauvegarde :</strong> Les animaux sont dans Supabase. La config et les pages sont en localStorage. Exportez régulièrement pour éviter toute perte.
+          <strong>Sauvegarde :</strong> Les animaux, articles et la config sont dans Supabase. Les pages sont en localStorage. Exportez régulièrement pour éviter toute perte.
         </div>
       </div>
     </div>

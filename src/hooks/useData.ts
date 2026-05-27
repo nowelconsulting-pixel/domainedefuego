@@ -83,7 +83,29 @@ export function useAnimaux() {
 }
 
 export function useConfig() {
-  return useJsonData<Config>('config', '/data/config.json');
+  const [data, setData] = useState<Config | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    supabase
+      .from('config')
+      .select('data')
+      .eq('id', 1)
+      .single()
+      .then(({ data: row, error: err }) => {
+        if (err) { setError(err.message); setLoading(false); return; }
+        setData((row?.data ?? null) as Config | null);
+        setLoading(false);
+      });
+  }, []);
+
+  const save = async (newConfig: Config) => {
+    setData(newConfig);
+    await supabase.from('config').update({ data: newConfig }).eq('id', 1);
+  };
+
+  return { data, loading, error, save };
 }
 
 export function usePages() {

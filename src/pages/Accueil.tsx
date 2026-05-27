@@ -196,6 +196,53 @@ export default function Accueil() {
         );
       })()}
 
+      {/* AUTRES ACTUALITÉS — liste compacte */}
+      {(() => {
+        const block = loadFeaturedArticleBlock();
+        const d = block?.data as FeaturedArticleData | undefined;
+        const sortedPublished = articles
+          .filter(a => a.published)
+          .sort((a, b) => b.published_at.localeCompare(a.published_at));
+        const featuredId = d
+          ? (d.auto !== 'false' ? sortedPublished[0]?.id : d.article_id)
+          : null;
+        const recent = sortedPublished.filter(a => a.id !== featuredId).slice(0, 3);
+        if (recent.length === 0) return null;
+        return (
+          <section className="bg-[#FAFAF7] border-t border-[#E8E4DC] py-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center justify-between mb-5">
+                <p className="text-xs font-extrabold uppercase tracking-widest text-gray-400">Autres actualités</p>
+                <Link to="/actualites" className="text-nv-green text-sm font-bold hover:text-forest transition-colors flex items-center gap-1 group">
+                  Toutes les actualités <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+              </div>
+              <div className="divide-y divide-[#E8E4DC]">
+                {recent.map(a => (
+                  <div key={a.id} className="flex items-center justify-between py-3.5 gap-6">
+                    <div className="min-w-0">
+                      <p className="font-semibold text-forest text-sm leading-snug">{a.title}</p>
+                      {a.published_at && (
+                        <p className="text-xs text-hint mt-0.5">
+                          {new Date(a.published_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                          {a.author && <> · {a.author}</>}
+                        </p>
+                      )}
+                    </div>
+                    <Link
+                      to={`/actualites/${a.slug}`}
+                      className="text-nv-green text-sm font-semibold hover:text-forest transition-colors whitespace-nowrap flex items-center gap-1 flex-shrink-0"
+                    >
+                      Lire <ArrowRight size={13} />
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      })()}
+
       {/* TÉMOIGNAGES */}
       {(pc.show_temoignages !== false) && (() => {
         const temoignages = pc.temoignages as Array<{ texte: string; auteur: string; lieu?: string; animal?: string; photo_url?: string }> | undefined;

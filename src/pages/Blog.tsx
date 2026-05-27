@@ -47,9 +47,9 @@ export default function Blog() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {published.map(article => (
               <div key={article.id} className="bg-surface rounded-[20px] border-2 border-site-border overflow-hidden flex flex-col group hover:-translate-y-1 hover:border-nv-green hover:shadow-lg transition-all duration-200">
-                <div className="aspect-video overflow-hidden bg-gray-100">
+                <div className="h-[280px] overflow-hidden bg-[#F5F3EF] flex items-center justify-center">
                   {article.cover_url && (
-                    <img src={resolveImageUrl(article.cover_url)} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <img src={resolveImageUrl(article.cover_url)} alt={article.title} className="w-full h-full object-contain object-center" loading="lazy" />
                   )}
                 </div>
                 <div className="p-5 flex flex-col flex-1">

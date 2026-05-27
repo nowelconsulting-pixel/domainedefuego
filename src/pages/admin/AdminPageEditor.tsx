@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useArticles } from '../../hooks/useArticles';
 import { ArrowLeft, Save, Eye, Trash2, Plus, X, Download } from 'lucide-react';
 import RichTextEditor from '../../components/admin/RichTextEditor';
 import { BlockEditor, BLOCK_TYPES, newBlock } from '../../components/admin/AdminBlockEditors';
@@ -238,6 +239,7 @@ interface ContentEditorProps {
 
 function ContentEditor({ schema, data, onChange }: ContentEditorProps) {
   const set = (key: string, value: unknown) => onChange({ ...data, [key]: value });
+  const { articles: allArticles } = useArticles();
 
   const setArrayItem = (arrayKey: string, idx: number, itemKey: string, value: string) => {
     const arr = [...((data[arrayKey] as Record<string, unknown>[]) || [])];
@@ -311,14 +313,7 @@ function ContentEditor({ schema, data, onChange }: ContentEditorProps) {
         }
 
         if (field.type === 'article_select') {
-          let articles: { id: string; title: string }[] = [];
-          try {
-            const stored = localStorage.getItem('articles');
-            if (stored) {
-              articles = (JSON.parse(stored) as Array<{ id: string; title: string; published: boolean }>)
-                .filter(a => a.published);
-            }
-          } catch { /* ignore */ }
+          const articles = allArticles.filter(a => a.published);
           return (
             <div key={field.key}>
               <label className="form-label">{field.label}</label>

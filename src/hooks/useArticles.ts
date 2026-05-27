@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { supabase } from '../lib/supabase';
 
 export interface Article {
   id: string;
@@ -13,66 +14,44 @@ export interface Article {
   featured: boolean;
 }
 
-const LS_KEY = 'articles';
-
 export function useArticles() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const dataRef = useRef<Article[]>([]);
 
   useEffect(() => {
-    const stored = localStorage.getItem(LS_KEY);
-    if (stored) {
-      try {
-        setArticles(JSON.parse(stored));
-        setLoading(false);
-        return;
-      } catch {
-        // fall through to fetch
-      }
-    }
-    fetch('/data/articles.json')
-      .then(res => {
-        if (!res.ok) throw new Error('Network error');
-        return res.json();
-      })
-      .then((json: Article[]) => {
-        setArticles(json);
-        setLoading(false);
-      })
-      .catch(() => {
-        setArticles([]);
+    supabase
+      .from('articles')
+      .select('*')
+      .then(({ data: rows, error: err }) => {
+        if (err) { setError(err.message); setLoading(false); return; }
+        const list = (rows ?? []).map(r => ({ ...r, published_at: r.published_at ?? '' })) as Article[];
+        setArticles(list);
+        dataRef.current = list;
         setLoading(false);
       });
   }, []);
 
-  const save = (newList: Article[]) => {
+  const save = async (newList: Article[]) => {
+    const oldData = dataRef.current;
     setArticles(newList);
-    localStorage.setItem(LS_KEY, JSON.stringify(newList));
+    dataRef.current = newList;
+
+    const toUpsert = newList.filter(n => {
+      const old = oldData.find(o => o.id === n.id);
+      return !old || JSON.stringify(old) !== JSON.stringify(n);
+    });
+    const toDelete = oldData.filter(o => !newList.some(n => n.id === o.id));
+
+    if (toUpsert.length > 0) {
+      const toUpsertDb = toUpsert.map(a => ({ ...a, published_at: a.published_at || null }));
+      await supabase.from('articles').upsert(toUpsertDb);
+    }
+    for (const item of toDelete) {
+      await supabase.from('articles').delete().eq('id', item.id);
+    }
   };
 
-  return { articles, loading, save };
-}
-
-export function saveArticle(article: Article): void {
-  let list: Article[] = [];
-  try {
-    const stored = localStorage.getItem(LS_KEY);
-    list = stored ? JSON.parse(stored) : [];
-  } catch { /* ignore */ }
-  const idx = list.findIndex(a => a.id === article.id);
-  if (idx >= 0) {
-    list[idx] = article;
-  } else {
-    list.push(article);
-  }
-  localStorage.setItem(LS_KEY, JSON.stringify(list));
-}
-
-export function deleteArticle(id: string): void {
-  let list: Article[] = [];
-  try {
-    const stored = localStorage.getItem(LS_KEY);
-    list = stored ? JSON.parse(stored) : [];
-  } catch { /* ignore */ }
-  localStorage.setItem(LS_KEY, JSON.stringify(list.filter(a => a.id !== id)));
+  return { articles, loading, error, save };
 }

@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, ChevronDown, Newspaper, Check, Quote } from 'lucide-react';
 import AnimalCard from '../components/AnimalCard';
-import { useAnimaux, useConfig, useArticles } from '../hooks/useData';
+import { useAnimaux, useConfig } from '../hooks/useData';
+import { useArticles } from '../hooks/useArticles';
 import { usePageContent } from '../hooks/usePageContent';
 import pageDefaults from '../data/pageDefaults';
 import { resolveImageUrl } from '../utils/image';
@@ -23,7 +24,7 @@ function loadFeaturedArticleBlock(): SimpleBlock | null {
 export default function Accueil() {
   const { data: animaux }  = useAnimaux();
   const { data: config }   = useConfig();
-  const { data: articles } = useArticles();
+  const { articles } = useArticles();
   const pc = usePageContent('accueil');
 
   const derniers = animaux?.filter(a => a.statut === 'Disponible').slice(0, 3) ?? [];
@@ -152,7 +153,7 @@ export default function Accueil() {
         const block = loadFeaturedArticleBlock();
         if (!block) return null;
         const d = block.data as FeaturedArticleData;
-        const published = (articles ?? []).filter(a => a.published);
+        const published = articles.filter(a => a.published);
         const article = d.auto !== 'false'
           ? published.sort((a, b) => b.published_at.localeCompare(a.published_at))[0]
           : published.find(a => a.id === d.article_id);

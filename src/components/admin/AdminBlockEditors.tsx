@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Plus, Trash2, GripVertical, X } from 'lucide-react';
+import { useArticles } from '../../hooks/useArticles';
 import RichTextEditor from './RichTextEditor';
 import ImageInput from './ImageInput';
 import type { Block, BlockType } from '../../types/admin';
@@ -147,14 +148,11 @@ function TeamBlockEditor({ block, onChange }: { block: Block; onChange: (b: Bloc
 // ─── Featured article block editor ───────────────────────────────────────────
 
 function FeaturedArticleBlockEditor({ block, onChange }: { block: Block; onChange: (b: Block) => void }) {
+  const { articles: allArticles } = useArticles();
   const setData = (k: string, v: string) => onChange({ ...block, data: { ...block.data, [k]: v } });
   const isAuto = (block.data.auto as string) !== 'false';
 
-  let articles: { id: string; title: string }[] = [];
-  try {
-    const stored = localStorage.getItem('articles');
-    if (stored) articles = (JSON.parse(stored) as { id: string; title: string; published: boolean }[]).filter(a => a.published);
-  } catch { /**/ }
+  const articles = allArticles.filter(a => a.published);
 
   return (
     <div className="space-y-3">

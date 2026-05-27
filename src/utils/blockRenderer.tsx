@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useArticles } from '../hooks/useArticles';
 import { Star, ChevronDown, ChevronRight } from 'lucide-react';
 import type { Block, DonationCTABlock, DonationImpactBlock, DonationImpactInfoBlock } from '../types/admin';
 import DonationBlock from '../components/blocks/DonationBlock';
@@ -63,6 +64,54 @@ const STAT_COLORS: Record<string, string> = {
   green:  'bg-green-600 text-white',
   purple: 'bg-purple-600 text-white',
 };
+
+function FeaturedArticleBlock({ block }: { block: Block }) {
+  const { articles } = useArticles();
+  const published = articles.filter(a => a.published);
+  const isAuto = (block.data.auto as string) !== 'false';
+  const article = isAuto
+    ? published.sort((a, b) => b.published_at.localeCompare(a.published_at))[0]
+    : published.find(a => a.id === (block.data.article_id as string));
+  const sectionTitle = (block.data.section_title as string) || 'Dernière actualité';
+  const ctaText = (block.data.cta_text as string) || "Lire l'article";
+  const fallbackUrl = (block.data.fallback_url as string) || '/actualites';
+  if (!article) {
+    return (
+      <div className="my-8 text-center">
+        <p className="text-gray-400 italic">Aucun article publié à afficher.</p>
+        <Link to={fallbackUrl} className="text-coral-500 text-sm hover:underline mt-2 inline-block">Voir le blog →</Link>
+      </div>
+    );
+  }
+  return (
+    <div className="my-8">
+      {sectionTitle && <h2 className="text-2xl font-bold text-gray-900 mb-6">{sectionTitle}</h2>}
+      <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col md:flex-row">
+        <div className="md:w-2/5 flex-shrink-0">
+          {article.cover_url
+            ? <img src={article.cover_url} alt={article.title} className="w-full h-56 md:h-full object-cover" loading="lazy" />
+            : <div className="w-full h-56 md:h-full bg-gray-100" />
+          }
+        </div>
+        <div className="p-6 flex flex-col justify-between flex-1">
+          <div>
+            {article.published_at && (
+              <p className="text-xs text-gray-400 mb-2">
+                {new Date(article.published_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                {article.author && <> · {article.author}</>}
+              </p>
+            )}
+            <h3 className="text-xl font-bold text-gray-900 mb-3">{article.title}</h3>
+            {article.excerpt && <p className="text-gray-600 leading-relaxed line-clamp-3">{article.excerpt}</p>}
+          </div>
+          <div className="mt-4">
+            <Link to={`/actualites/${article.slug}`} className="btn-primary inline-flex">{ctaText}</Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function renderBlock(block: Block) {
   switch (block.type) {
@@ -204,54 +253,8 @@ export function renderBlock(block: Block) {
     case 'embed':
       return <div key={block.id} className="my-6" dangerouslySetInnerHTML={{ __html: (block.data.code as string) || '' }} />;
 
-    case 'featured-article': {
-      let articles: { id: string; title: string; slug: string; excerpt: string; cover_url: string; author: string; published_at: string; published: boolean }[] = [];
-      try { const stored = localStorage.getItem('articles'); if (stored) articles = JSON.parse(stored); } catch { /**/ }
-      const published = articles.filter(a => a.published);
-      const isAuto = (block.data.auto as string) !== 'false';
-      const article = isAuto
-        ? published.sort((a, b) => b.published_at.localeCompare(a.published_at))[0]
-        : published.find(a => a.id === (block.data.article_id as string));
-      const sectionTitle = (block.data.section_title as string) || 'Dernière actualité';
-      const ctaText = (block.data.cta_text as string) || "Lire l'article";
-      const fallbackUrl = (block.data.fallback_url as string) || '/actualites';
-      if (!article) {
-        return (
-          <div key={block.id} className="my-8 text-center">
-            <p className="text-gray-400 italic">Aucun article publié à afficher.</p>
-            <Link to={fallbackUrl} className="text-coral-500 text-sm hover:underline mt-2 inline-block">Voir le blog →</Link>
-          </div>
-        );
-      }
-      return (
-        <div key={block.id} className="my-8">
-          {sectionTitle && <h2 className="text-2xl font-bold text-gray-900 mb-6">{sectionTitle}</h2>}
-          <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col md:flex-row">
-            <div className="md:w-2/5 flex-shrink-0">
-              {article.cover_url
-                ? <img src={article.cover_url} alt={article.title} className="w-full h-56 md:h-full object-cover" loading="lazy" />
-                : <div className="w-full h-56 md:h-full bg-gray-100" />
-              }
-            </div>
-            <div className="p-6 flex flex-col justify-between flex-1">
-              <div>
-                {article.published_at && (
-                  <p className="text-xs text-gray-400 mb-2">
-                    {new Date(article.published_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
-                    {article.author && <> · {article.author}</>}
-                  </p>
-                )}
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{article.title}</h3>
-                {article.excerpt && <p className="text-gray-600 leading-relaxed line-clamp-3">{article.excerpt}</p>}
-              </div>
-              <div className="mt-4">
-                <Link to={`/actualites/${article.slug}`} className="btn-primary inline-flex">{ctaText}</Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
+    case 'featured-article':
+      return <FeaturedArticleBlock key={block.id} block={block} />;
 
     case 'form': {
       const formType = (block.data.form_type as string) || '';

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, Eye } from 'lucide-react';
 import RichTextEditor from '../../components/admin/RichTextEditor';
 import ImageInput from '../../components/admin/ImageInput';
-import { useArticles, saveArticle } from '../../hooks/useArticles';
+import { useArticles } from '../../hooks/useArticles';
 import type { Article } from '../../hooks/useArticles';
 
 function slugify(s: string) {
@@ -36,7 +36,7 @@ const BLANK: Article = {
 export default function AdminArticleEditor() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { articles } = useArticles();
+  const { articles, save } = useArticles();
   const [article, setArticle] = useState<Article | null>(null);
   const [slugEdited, setSlugEdited] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -85,7 +85,8 @@ export default function AdminArticleEditor() {
         ? new Date().toISOString().slice(0, 10)
         : article.published_at,
     };
-    saveArticle(updated);
+    const exists = articles.some(a => a.id === updated.id);
+    save(exists ? articles.map(a => a.id === updated.id ? updated : a) : [...articles, updated]);
     setSaved(true);
     setTimeout(() => { setSaved(false); navigate('/admin/blog'); }, 900);
   };

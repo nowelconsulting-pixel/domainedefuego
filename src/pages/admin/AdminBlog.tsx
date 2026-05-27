@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Edit2, Star, Trash2, Eye, EyeOff, Download } from 'lucide-react';
-import { useArticles, saveArticle, deleteArticle } from '../../hooks/useArticles';
+import { useArticles } from '../../hooks/useArticles';
 import type { Article } from '../../hooks/useArticles';
 
 function resolveLocal(url: string): string {
@@ -37,18 +37,15 @@ export default function AdminBlog() {
     if (!article.published && !article.published_at) {
       updated.published_at = new Date().toISOString().slice(0, 10);
     }
-    saveArticle(updated);
     save(articles.map(a => a.id === article.id ? updated : a));
   };
 
   const toggleFeatured = (article: Article) => {
     const updated = { ...article, featured: !article.featured };
-    saveArticle(updated);
     save(articles.map(a => a.id === article.id ? updated : a));
   };
 
   const handleDelete = (id: string) => {
-    deleteArticle(id);
     save(articles.filter(a => a.id !== id));
     setConfirm(null);
   };

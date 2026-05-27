@@ -220,12 +220,12 @@ export default function Accueil() {
               <div className="divide-y divide-[#E8E4DC]">
                 {recent.map(a => (
                   <div key={a.id} className="flex items-center gap-4 py-3.5">
-                    <div className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-[#F5F3EF] flex items-center justify-center">
+                    <Link to={`/actualites/${a.slug}`} className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-[#F5F3EF] flex items-center justify-center">
                       {a.cover_url
                         ? <img src={resolveImageUrl(a.cover_url)} alt="" className="w-full h-full object-contain object-center" loading="lazy" />
                         : <div className="w-full h-full" />
                       }
-                    </div>
+                    </Link>
                     <div className="flex-1 min-w-0">
                       <Link to={`/actualites/${a.slug}`} className="font-semibold text-forest text-sm leading-snug hover:text-nv-green transition-colors">{a.title}</Link>
                       {a.published_at && (

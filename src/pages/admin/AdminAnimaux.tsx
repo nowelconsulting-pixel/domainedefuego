@@ -1,10 +1,11 @@
 import { useState, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Plus, Edit2, Archive, ArchiveRestore, X, Save, Copy, Search, ChevronDown } from 'lucide-react';
+import { Plus, Edit2, Archive, ArchiveRestore, X, Save, Copy, Search, ChevronDown, Trash2 } from 'lucide-react';
 import { useAnimaux } from '../../hooks/useData';
 import type { Animal } from '../../types';
 import MediaUploader from '../../components/admin/MediaUploader';
 import VideoInput from '../../components/admin/VideoInput';
+import { supabase } from '../../lib/supabase';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -231,6 +232,7 @@ export default function AdminAnimaux() {
   const [sortBy, setSortBy]         = useState<'nom'|'espece'|'date'>('date');
   const [editingAnimal, setEditing] = useState<FormAnimal | null>(null);
   const [isNew, setIsNew]           = useState(false);
+  const [deleteToast, setDeleteToast] = useState('');
 
   const isFormOpen = action === 'new' || editingAnimal !== null;
 
@@ -306,6 +308,27 @@ export default function AdminAnimaux() {
     save(animaux.map(a => a.id === id ? { ...a, statut: 'Disponible' as const } : a));
   };
 
+  const supprimer = async (animal: Animal) => {
+    if (!animaux) return;
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer définitivement « ${animal.nom} » ?\nCette action est irréversible.`)) return;
+
+    // Delete photos from Supabase Storage
+    const { data: files } = await supabase.storage
+      .from('animaux-photos')
+      .list(`animaux/${animal.id}`);
+    if (files && files.length > 0) {
+      await supabase.storage
+        .from('animaux-photos')
+        .remove(files.map(f => `animaux/${animal.id}/${f.name}`));
+    }
+
+    // Remove from list — useAnimaux.save() handles the Supabase row delete
+    await save(animaux.filter(a => a.id !== animal.id));
+
+    setDeleteToast(`« ${animal.nom} » a été supprimé définitivement.`);
+    setTimeout(() => setDeleteToast(''), 5000);
+  };
+
   const exportData = () => {
     const resolveLocal = (u: string) =>
       u.startsWith('local:') ? (localStorage.getItem(u.slice('local:'.length)) ?? '') : u;
@@ -347,6 +370,12 @@ export default function AdminAnimaux() {
 
   return (
     <div className="p-8">
+      {deleteToast && (
+        <div className="mb-5 flex items-center gap-2 px-4 py-3 bg-green-50 border border-green-200 rounded-xl text-sm text-green-700">
+          <Trash2 size={15} className="flex-shrink-0" />
+          {deleteToast}
+        </div>
+      )}
       {/* Header */}
       <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
         <h1 className="text-2xl font-bold text-gray-900">
@@ -480,6 +509,10 @@ export default function AdminAnimaux() {
                           className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700">
                           <Edit2 size={15} />
                         </button>
+                        <button onClick={() => supprimer(animal)} title="Supprimer définitivement"
+                          className="flex items-center gap-1 px-2 py-1.5 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-600 text-xs">
+                          <Trash2 size={14} />Supprimer
+                        </button>
                       </>
                     ) : (
                       <>
@@ -495,6 +528,12 @@ export default function AdminAnimaux() {
                           className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-orange-500">
                           <Archive size={15} />
                         </button>
+                        {animal.statut === 'Brouillon' && (
+                          <button onClick={() => supprimer(animal)} title="Supprimer définitivement"
+                            className="flex items-center gap-1 px-2 py-1.5 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-600 text-xs">
+                            <Trash2 size={14} />Supprimer
+                          </button>
+                        )}
                       </>
                     )}
                   </div>

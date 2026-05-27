@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, MapPin } from 'lucide-react';
 import type { Animal } from '../types';
-import { getAgeLabel } from '../types';
+import { getAgeLabel, getPlaceholder } from '../types';
 
 interface AnimalCardProps {
   animal: Animal;
@@ -33,7 +33,7 @@ export default function AnimalCard({ animal }: AnimalCardProps) {
   };
 
   const ageLabel = getAgeLabel(animal.naissance);
-  const photo = animal.photos[0] || 'https://images.unsplash.com/photo-1548681528-6a5c45b66b42?w=400&q=80';
+  const photo = animal.photos[0] || getPlaceholder(animal.espece);
 
   const badgeCls =
     animal.statut === 'Disponible'

@@ -5,7 +5,7 @@ import {
   Dog, Cat, Baby, CheckCircle2, XCircle, Euro
 } from 'lucide-react';
 import { useAnimaux } from '../hooks/useData';
-import { getAgeLabel } from '../types';
+import { getAgeLabel, getPlaceholder } from '../types';
 import { resolveImageUrl } from '../utils/image';
 
 export default function AnimalDetail() {
@@ -24,7 +24,7 @@ export default function AnimalDetail() {
 
   const animal = animaux?.find(a => a.id === id);
 
-  if (!animal || animal.statut === 'Archivé') {
+  if (!animal || animal.statut === 'Archivé' || animal.statut === 'Brouillon') {
     return (
       <div className="min-h-screen bg-page flex flex-col items-center justify-center gap-4 text-center px-4">
         <div className="text-6xl">🐾</div>
@@ -68,17 +68,19 @@ export default function AnimalDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
           {/* Gallery */}
           <div>
-            <div className="rounded-[20px] overflow-hidden bg-surface border-2 border-site-border aspect-[4/3]">
+            <div className="rounded-[20px] overflow-hidden bg-[#F5F3EF] border-2 border-site-border h-[400px]">
               {animal.photos.length > 0 ? (
                 <img
                   src={resolveImageUrl(animal.photos[activePhoto])}
                   alt={`${animal.nom} - photo ${activePhoto + 1}`}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain object-center"
                 />
               ) : (
-                <div className="w-full h-full bg-page flex items-center justify-center text-hint text-6xl">
-                  🐾
-                </div>
+                <img
+                  src={getPlaceholder(animal.espece)}
+                  alt={animal.espece}
+                  className="w-full h-full object-contain object-center opacity-50"
+                />
               )}
             </div>
             {animal.photos.length > 1 && (
@@ -154,45 +156,53 @@ export default function AnimalDetail() {
               </div>
             </div>
 
-            {/* Ententes */}
-            <div className="bg-surface rounded-[20px] p-6 border-2 border-site-border">
-              <h2 className="font-bold text-forest mb-4">Ententes</h2>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  {animal.entente_chiens ? (
-                    <CheckCircle2 size={18} className="text-nv-green" />
-                  ) : (
-                    <XCircle size={18} className="text-red-400" />
+            {/* Ententes — only show if at least one value is known */}
+            {(animal.entente_chiens !== null || animal.entente_chats !== null || animal.entente_enfants !== null) && (
+              <div className="bg-surface rounded-[20px] p-6 border-2 border-site-border">
+                <h2 className="font-bold text-forest mb-4">Ententes</h2>
+                <div className="space-y-2">
+                  {animal.entente_chiens !== null && (
+                    <div className="flex items-center gap-2">
+                      {animal.entente_chiens ? (
+                        <CheckCircle2 size={18} className="text-nv-green" />
+                      ) : (
+                        <XCircle size={18} className="text-red-400" />
+                      )}
+                      <Dog size={16} className="text-hint" />
+                      <span className={`text-sm ${animal.entente_chiens ? 'text-forest' : 'text-hint'}`}>
+                        Entente avec les chiens
+                      </span>
+                    </div>
                   )}
-                  <Dog size={16} className="text-hint" />
-                  <span className={`text-sm ${animal.entente_chiens ? 'text-forest' : 'text-hint'}`}>
-                    Entente avec les chiens
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  {animal.entente_chats ? (
-                    <CheckCircle2 size={18} className="text-nv-green" />
-                  ) : (
-                    <XCircle size={18} className="text-red-400" />
+                  {animal.entente_chats !== null && (
+                    <div className="flex items-center gap-2">
+                      {animal.entente_chats ? (
+                        <CheckCircle2 size={18} className="text-nv-green" />
+                      ) : (
+                        <XCircle size={18} className="text-red-400" />
+                      )}
+                      <Cat size={16} className="text-hint" />
+                      <span className={`text-sm ${animal.entente_chats ? 'text-forest' : 'text-hint'}`}>
+                        Entente avec les chats
+                      </span>
+                    </div>
                   )}
-                  <Cat size={16} className="text-hint" />
-                  <span className={`text-sm ${animal.entente_chats ? 'text-forest' : 'text-hint'}`}>
-                    Entente avec les chats
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  {animal.entente_enfants ? (
-                    <CheckCircle2 size={18} className="text-nv-green" />
-                  ) : (
-                    <XCircle size={18} className="text-red-400" />
+                  {animal.entente_enfants !== null && (
+                    <div className="flex items-center gap-2">
+                      {animal.entente_enfants ? (
+                        <CheckCircle2 size={18} className="text-nv-green" />
+                      ) : (
+                        <XCircle size={18} className="text-red-400" />
+                      )}
+                      <Baby size={16} className="text-hint" />
+                      <span className={`text-sm ${animal.entente_enfants ? 'text-forest' : 'text-hint'}`}>
+                        Entente avec les enfants
+                      </span>
+                    </div>
                   )}
-                  <Baby size={16} className="text-hint" />
-                  <span className={`text-sm ${animal.entente_enfants ? 'text-forest' : 'text-hint'}`}>
-                    Entente avec les enfants
-                  </span>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Frais + Association */}
             <div className="bg-surface rounded-[20px] p-6 border-2 border-site-border">

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="#F5F3EF"/>
+  <!-- Large paw (dog) - center -->
+  <circle cx="100" cy="120" r="22" fill="#C8A870" opacity="0.85"/>
+  <circle cx="74" cy="93" r="11" fill="#C8A870" opacity="0.85"/>
+  <circle cx="93" cy="86" r="11" fill="#C8A870" opacity="0.85"/>
+  <circle cx="113" cy="86" r="11" fill="#C8A870" opacity="0.85"/>
+  <circle cx="128" cy="95" r="11" fill="#C8A870" opacity="0.85"/>
+  <!-- Small paw (cat) - bottom right -->
+  <circle cx="148" cy="154" r="13" fill="#DDD0B6" opacity="0.9"/>
+  <circle cx="133" cy="137" r="6.5" fill="#DDD0B6" opacity="0.9"/>
+  <circle cx="143" cy="132" r="6.5" fill="#DDD0B6" opacity="0.9"/>
+  <circle cx="155" cy="132" r="6.5" fill="#DDD0B6" opacity="0.9"/>
+  <circle cx="163" cy="139" r="6.5" fill="#DDD0B6" opacity="0.9"/>
+  <!-- Tiny paw (rabbit/autre) - top left -->
+  <circle cx="48" cy="60" r="10" fill="#B8D4B0" opacity="0.9"/>
+  <circle cx="35" cy="46" r="5" fill="#B8D4B0" opacity="0.9"/>
+  <circle cx="44" cy="41" r="5" fill="#B8D4B0" opacity="0.9"/>
+  <circle cx="55" cy="41" r="5" fill="#B8D4B0" opacity="0.9"/>
+  <circle cx="63" cy="47" r="5" fill="#B8D4B0" opacity="0.9"/>
+</svg>

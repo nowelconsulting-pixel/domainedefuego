@@ -7,11 +7,11 @@ export interface Animal {
   sexe: 'Mâle' | 'Femelle';
   departement: string;
   localisation: 'Refuge' | 'Famille d\'accueil';
-  statut: 'Disponible' | 'Réservé' | 'Adopté' | 'Archivé';
+  statut: 'Disponible' | 'Réservé' | 'Adopté' | 'Archivé' | 'Brouillon';
   description: string;
-  entente_chiens: boolean;
-  entente_chats: boolean;
-  entente_enfants: boolean;
+  entente_chiens: boolean | null;
+  entente_chats: boolean | null;
+  entente_enfants: boolean | null;
   vaccine: boolean;
   sterilise: boolean;
   identifie: boolean;
@@ -52,6 +52,12 @@ export interface Pages {
     texte: string;
     utilisations: { titre: string; description: string; icone: string }[];
   };
+}
+
+export function getPlaceholder(espece: Animal['espece']): string {
+  if (espece === 'Chat') return '/images/placeholder-chat.svg';
+  if (espece === 'Chien') return '/images/placeholder-chien.svg';
+  return '/images/placeholder-autre.svg';
 }
 
 export function getAge(naissance: number): string {

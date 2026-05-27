@@ -12,14 +12,15 @@ type FormAnimal = Omit<Animal, 'id'> & { id?: string };
 
 const EMPTY: FormAnimal = {
   nom: '', espece: 'Chien', race: '', naissance: new Date().getFullYear() - 2,
-  sexe: 'Mâle', departement: '', localisation: 'Refuge', statut: 'Disponible', description: '',
-  entente_chiens: false, entente_chats: false, entente_enfants: false,
+  sexe: 'Mâle', departement: '', localisation: 'Refuge', statut: 'Brouillon', description: '',
+  entente_chiens: null, entente_chats: null, entente_enfants: null,
   vaccine: false, sterilise: false, identifie: false,
   participation_frais: 0, association_nom: '', association_ville: '',
   photos: [], video_youtube: '',
 };
 
 const STATUT_COLORS: Record<string, string> = {
+  'Brouillon':  'bg-indigo-100 text-indigo-700',
   'Disponible': 'bg-green-100 text-green-700',
   'Réservé':    'bg-orange-100 text-orange-700',
   'Adopté':     'bg-gray-100 text-gray-500',
@@ -31,7 +32,7 @@ const LOCALISATION_COLORS: Record<string, string> = {
   'Famille d\'accueil': 'bg-purple-100 text-purple-700',
 };
 
-const ALL_STATUTS: Animal['statut'][] = ['Disponible', 'Réservé', 'Adopté', 'Archivé'];
+const ALL_STATUTS: Animal['statut'][] = ['Brouillon', 'Disponible', 'Réservé', 'Adopté', 'Archivé'];
 const ALL_LOCALISATIONS: Animal['localisation'][] = ['Refuge', 'Famille d\'accueil'];
 
 // ─── Form Field ───────────────────────────────────────────────────────────────
@@ -158,15 +159,26 @@ function AnimalForm({ initial, onSave, onCancel, isNew }: AnimalFormProps) {
                 </label>
               ))}
             </div>
-            <div className="space-y-2">
+            <div className="space-y-3">
               <p className="text-xs font-medium text-gray-600 mb-2">Ententes</p>
-              {([['entente_chiens','Avec les chiens'], ['entente_chats','Avec les chats'], ['entente_enfants','Avec les enfants']] as const).map(([k, label]) => (
-                <label key={k} className="flex items-center gap-2 cursor-pointer text-sm">
-                  <input type="checkbox" className="w-4 h-4 accent-coral-500"
-                    checked={form[k] as boolean} onChange={e => set(k, e.target.checked)} />
-                  {label}
-                </label>
-              ))}
+              {(['entente_chiens', 'entente_chats', 'entente_enfants'] as const).map((k, i) => {
+                const labels = ['Avec les chiens', 'Avec les chats', 'Avec les enfants'];
+                return (
+                  <div key={k}>
+                    <p className="text-xs text-gray-500 mb-1">{labels[i]}</p>
+                    <div className="flex gap-4">
+                      {([['oui', 'Oui', true], ['non', 'Non', false], ['nsp', 'Je ne sais pas', null]] as [string, string, boolean | null][]).map(([val, txt, raw]) => (
+                        <label key={val} className="flex items-center gap-1.5 cursor-pointer text-xs">
+                          <input type="radio" name={`${k}-${i}`} className="accent-coral-500"
+                            checked={form[k] === raw}
+                            onChange={() => setForm(prev => ({ ...prev, [k]: raw }))} />
+                          {txt}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -207,7 +219,7 @@ function AnimalForm({ initial, onSave, onCancel, isNew }: AnimalFormProps) {
 
 // ─── Main list component ─────────────────────────────────────────────────────
 
-type FilterTab = 'Tous' | 'Disponible' | 'Réservé' | 'Adopté' | 'Archives';
+type FilterTab = 'Tous' | 'Brouillon' | 'Disponible' | 'Réservé' | 'Adopté' | 'Archives';
 
 export default function AdminAnimaux() {
   const { data: animaux, save } = useAnimaux();
@@ -224,6 +236,7 @@ export default function AdminAnimaux() {
 
   const TABS: { value: FilterTab; label: string }[] = [
     { value: 'Tous', label: 'Tous' },
+    { value: 'Brouillon', label: 'Brouillon' },
     { value: 'Disponible', label: 'Disponible' },
     { value: 'Réservé', label: 'Réservé' },
     { value: 'Adopté', label: 'Adopté' },
@@ -235,7 +248,7 @@ export default function AdminAnimaux() {
     return animaux
       .filter(a => {
         if (filterTab === 'Archives') return a.statut === 'Archivé';
-        if (filterTab === 'Tous') return a.statut !== 'Archivé';
+        if (filterTab === 'Tous') return a.statut !== 'Archivé' && a.statut !== 'Brouillon';
         return a.statut === filterTab;
       })
       .filter(a => {
@@ -261,7 +274,8 @@ export default function AdminAnimaux() {
 
   const handleSave = (form: FormAnimal) => {
     if (!animaux) return;
-    if (isNew) {
+    const isAddNew = action === 'new' || !form.id || !animaux.some(a => a.id === form.id);
+    if (isAddNew) {
       const id = form.id ?? `${form.nom.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}-${Date.now()}`;
       save([...animaux, { ...form, id } as Animal]);
     } else {
@@ -368,6 +382,11 @@ export default function AdminAnimaux() {
                 ({animaux?.filter(a => a.statut === 'Archivé').length ?? 0})
               </span>
             )}
+            {tab.value === 'Brouillon' && (
+              <span className="ml-1.5 text-xs text-indigo-400">
+                ({animaux?.filter(a => a.statut === 'Brouillon').length ?? 0})
+              </span>
+            )}
           </button>
         ))}
       </div>
@@ -401,6 +420,11 @@ export default function AdminAnimaux() {
       {filterTab === 'Archives' && (
         <div className="mb-4 p-4 bg-gray-50 rounded-xl border border-gray-200 text-sm text-gray-600">
           Les animaux archivés n'apparaissent pas sur le site public. Utilisez "Désarchiver" pour les remettre en disponible.
+        </div>
+      )}
+      {filterTab === 'Brouillon' && (
+        <div className="mb-4 p-4 bg-indigo-50 rounded-xl border border-indigo-200 text-sm text-indigo-700">
+          Les animaux en brouillon ne sont pas visibles sur le site public. Changez leur statut en "Disponible" pour les publier.
         </div>
       )}
 

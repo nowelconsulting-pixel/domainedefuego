@@ -1,4 +1,4 @@
-export const MAX_PHOTO_SIZE_MB = 2;
+export const MAX_PHOTO_SIZE_MB = 5;
 export const MAX_PHOTOS = 10;
 export const COMPRESS_MAX_WIDTH = 1400;
 export const COMPRESS_QUALITY = 0.82;

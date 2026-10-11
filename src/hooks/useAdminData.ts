@@ -129,7 +129,14 @@ export function useCandidatures() {
 
   const remove = useCallback((id: string) => {
     setCandidatures(prev => prev.filter(c => c.id !== id));
-    supabase.from('soumissions').delete().eq('id', id);
+    supabase.from('soumissions').delete().eq('id', id).then(({ error }) => {
+      if (error) {
+        console.error('Suppression échouée en base :', error.message);
+        alert('La suppression a échoué (base de données). Le message va réapparaître.');
+        supabase.from('soumissions').select('*').order('created_at', { ascending: false })
+          .then(({ data }) => { if (data) setCandidatures((data as SoumissionRow[]).map(rowToCandidat)); });
+      }
+    });
   }, []);
 
   const markAllRead = useCallback(() => { /* statut géré via Supabase */ }, []);

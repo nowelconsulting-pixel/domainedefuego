@@ -3,6 +3,7 @@ import { PawPrint, Home, Clock, CheckCircle2, Plus, Inbox } from 'lucide-react';
 import { useAnimaux } from '../../hooks/useData';
 import { useCandidatures } from '../../hooks/useAdminData';
 import { getSession } from '../../utils/auth';
+import { getCandidatureTypeLabel, getCandidatureTypeBadgeClass } from '../../utils/candidature';
 
 const STATUS_COLORS: Record<string, string> = {
   'nouvelle':  'bg-blue-100 text-blue-700',
@@ -26,6 +27,7 @@ export default function AdminDashboard() {
   const total       = animaux?.length ?? 0;
 
   const recent5 = [...candidatures]
+    .filter(c => !c.archived)
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 5);
 
@@ -68,7 +70,7 @@ export default function AdminDashboard() {
           <div className="flex justify-between items-center px-6 py-4 border-b border-gray-100">
             <h2 className="font-semibold text-gray-900 flex items-center gap-2">
               <Inbox size={18} className="text-coral-500" />
-              Dernières candidatures
+              Demandes à traiter
             </h2>
             <Link
               to="/admin/candidatures"
@@ -80,15 +82,17 @@ export default function AdminDashboard() {
           </div>
           <div className="divide-y divide-gray-50">
             {recent5.length === 0 ? (
-              <p className="text-center py-8 text-gray-400 text-sm">Aucune candidature pour le moment</p>
+              <p className="text-center py-8 text-gray-400 text-sm">Aucune demande à traiter</p>
             ) : (
               recent5.map(c => (
                 <div key={c.id} className="px-6 py-3 flex items-center justify-between">
                   <div>
                     <div className="text-sm font-medium text-gray-900">{c.nom}</div>
-                    <div className="text-xs text-gray-400">
-                      {c.type === 'adoption' ? 'Adoption' : 'Famille d\'accueil'}
-                      {c.animal ? ` · ${c.animal}` : ''}
+                    <div className="text-xs text-gray-400 flex items-center gap-1.5 mt-0.5">
+                      <span className={`px-1.5 py-0.5 rounded-full font-medium ${getCandidatureTypeBadgeClass(c)}`}>
+                        {getCandidatureTypeLabel(c)}
+                      </span>
+                      {c.animal ? <span>{c.animal}</span> : null}
                     </div>
                   </div>
                   <span className={`text-xs px-2 py-1 rounded-full font-medium ${STATUS_COLORS[c.status]}`}>

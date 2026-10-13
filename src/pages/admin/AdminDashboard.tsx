@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { PawPrint, Home, Clock, CheckCircle2, Plus, Inbox } from 'lucide-react';
+import { PawPrint, Clock, CheckCircle2, Plus, Inbox } from 'lucide-react';
 import { useAnimaux } from '../../hooks/useData';
 import { useCandidatures } from '../../hooks/useAdminData';
 import { getSession } from '../../utils/auth';
@@ -24,7 +24,6 @@ export default function AdminDashboard() {
   const disponibles = animaux?.filter(a => a.statut === 'Disponible').length ?? 0;
   const reserves    = animaux?.filter(a => a.statut === 'Réservé').length ?? 0;
   const adoptes     = animaux?.filter(a => a.statut === 'Adopté').length ?? 0;
-  const total       = animaux?.length ?? 0;
 
   const recent5 = [...candidatures]
     .filter(c => !c.archived)
@@ -57,11 +56,10 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         <Stat icon={PawPrint} value={disponibles} label="Disponibles"  color="bg-green-500"  />
         <Stat icon={Clock}     value={reserves}   label="Réservés"     color="bg-orange-400" />
         <Stat icon={CheckCircle2} value={adoptes} label="Adoptés"      color="bg-gray-400"   />
-        <Stat icon={Home}      value={total}      label="Total"        color="bg-coral-500"  />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

@@ -250,7 +250,7 @@ export default function AdminAnimaux() {
     return animaux
       .filter(a => {
         if (filterTab === 'Archives') return a.statut === 'Archivé';
-        if (filterTab === 'Tous') return a.statut !== 'Archivé' && a.statut !== 'Brouillon';
+        if (filterTab === 'Tous') return a.statut !== 'Archivé' && a.statut !== 'Brouillon' && a.statut !== 'Adopté';
         return a.statut === filterTab;
       })
       .filter(a => {

@@ -220,7 +220,7 @@ function AnimalForm({ initial, onSave, onCancel, isNew }: AnimalFormProps) {
 
 // ─── Main list component ─────────────────────────────────────────────────────
 
-type FilterTab = 'Tous' | 'Brouillon' | 'Disponible' | 'Réservé' | 'Adopté' | 'Archives';
+type FilterTab = 'Disponible' | 'Réservé' | 'Adopté' | 'Brouillon' | 'Archives';
 
 export default function AdminAnimaux() {
   const { data: animaux, save } = useAnimaux();
@@ -228,7 +228,7 @@ export default function AdminAnimaux() {
   const { action } = useParams<{ action?: string }>();
 
   const [search, setSearch]         = useState('');
-  const [filterTab, setFilterTab]   = useState<FilterTab>('Tous');
+  const [filterTab, setFilterTab]   = useState<FilterTab>('Disponible');
   const [sortBy, setSortBy]         = useState<'nom'|'espece'|'date'>('date');
   const [editingAnimal, setEditing] = useState<FormAnimal | null>(null);
   const [isNew, setIsNew]           = useState(false);
@@ -237,22 +237,20 @@ export default function AdminAnimaux() {
   const isFormOpen = action === 'new' || editingAnimal !== null;
 
   const TABS: { value: FilterTab; label: string }[] = [
-    { value: 'Tous', label: 'Tous' },
-    { value: 'Brouillon', label: 'Brouillon' },
     { value: 'Disponible', label: 'Disponible' },
     { value: 'Réservé', label: 'Réservé' },
     { value: 'Adopté', label: 'Adopté' },
+    { value: 'Brouillon', label: 'Brouillon' },
     { value: 'Archives', label: 'Archives' },
   ];
+
+  const countFor = (tab: FilterTab) =>
+    animaux?.filter(a => a.statut === (tab === 'Archives' ? 'Archivé' : tab)).length ?? 0;
 
   const filtered = useMemo(() => {
     if (!animaux) return [];
     return animaux
-      .filter(a => {
-        if (filterTab === 'Archives') return a.statut === 'Archivé';
-        if (filterTab === 'Tous') return a.statut !== 'Archivé' && a.statut !== 'Brouillon' && a.statut !== 'Adopté';
-        return a.statut === filterTab;
-      })
+      .filter(a => filterTab === 'Archives' ? a.statut === 'Archivé' : a.statut === filterTab)
       .filter(a => {
         if (!search) return true;
         return a.nom.toLowerCase().includes(search.toLowerCase()) ||
@@ -406,16 +404,7 @@ export default function AdminAnimaux() {
             }`}
           >
             {tab.label}
-            {tab.value === 'Archives' && (
-              <span className="ml-1.5 text-xs text-gray-400">
-                ({animaux?.filter(a => a.statut === 'Archivé').length ?? 0})
-              </span>
-            )}
-            {tab.value === 'Brouillon' && (
-              <span className="ml-1.5 text-xs text-indigo-400">
-                ({animaux?.filter(a => a.statut === 'Brouillon').length ?? 0})
-              </span>
-            )}
+            <span className="ml-1.5 text-xs text-gray-400">({countFor(tab.value)})</span>
           </button>
         ))}
       </div>

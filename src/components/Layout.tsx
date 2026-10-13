@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import { useConfig } from '../hooks/useData';
 
 function PreviewBanner() {
   const quit = () => {
@@ -18,9 +19,9 @@ function PreviewBanner() {
 }
 
 export default function Layout() {
-  const stored = localStorage.getItem('site_maintenance');
-  const isMaintenance = stored !== null
-    ? stored === 'true'
+  const { data: config } = useConfig();
+  const isMaintenance = config
+    ? config.maintenance?.enabled ?? false
     : import.meta.env.VITE_MAINTENANCE_MODE === 'true';
   const isPreview = isMaintenance && localStorage.getItem('preview_access') === 'true';
 

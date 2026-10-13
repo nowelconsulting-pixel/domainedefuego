@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 
 import Layout from './components/Layout';
 import MaintenancePage from './pages/MaintenancePage';
+import { useConfig } from './hooks/useData';
 import Accueil from './pages/Accueil';
 import Animaux from './pages/Animaux';
 import AnimalDetail from './pages/AnimalDetail';
@@ -43,12 +44,6 @@ if (typeof localStorage !== 'undefined' && localStorage.getItem('_schema_v') !==
 }
 // ──────────────────────────────────────────────────────────────────────────
 
-function readMaintenance() {
-  const stored = localStorage.getItem('site_maintenance');
-  if (stored !== null) return stored === 'true';
-  return import.meta.env.VITE_MAINTENANCE_MODE === 'true';
-}
-
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
@@ -57,17 +52,15 @@ function ScrollToTop() {
 
 function AppContent() {
   const { pathname } = useLocation();
-  const [isMaintenance, setIsMaintenance] = useState(readMaintenance);
+  const { data: config } = useConfig();
   const [hasPreviewAccess, setHasPreviewAccess] = useState(
     () => localStorage.getItem('preview_access') === 'true',
   );
 
   useEffect(() => {
-    const sync = () => {
-      setIsMaintenance(readMaintenance());
-      setHasPreviewAccess(localStorage.getItem('preview_access') === 'true');
-    };
-    // storage fires in OTHER tabs; maintenance_changed fires in the SAME tab
+    // "maintenance_changed" fires in the same tab (preview access granted/revoked);
+    // "storage" fires in other tabs when preview_access changes.
+    const sync = () => setHasPreviewAccess(localStorage.getItem('preview_access') === 'true');
     window.addEventListener('storage', sync);
     window.addEventListener('maintenance_changed', sync);
     return () => {
@@ -75,6 +68,12 @@ function AppContent() {
       window.removeEventListener('maintenance_changed', sync);
     };
   }, []);
+
+  // Tant que la config Supabase n'est pas encore chargée, on se base sur la
+  // variable d'environnement pour éviter un flash du site publié.
+  const isMaintenance = config
+    ? config.maintenance?.enabled ?? false
+    : import.meta.env.VITE_MAINTENANCE_MODE === 'true';
 
   if (isMaintenance && !hasPreviewAccess && !pathname.startsWith('/admin')) {
     return <MaintenancePage />;

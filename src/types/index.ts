@@ -37,6 +37,13 @@ export interface Config {
     annees_existence: number;
     custom: { label: string; value: number }[];
   };
+  maintenance?: {
+    enabled: boolean;
+    title: string;
+    subtitle: string;
+    show_don_btn: boolean;
+    preview_code: string;
+  };
 }
 
 export interface Pages {

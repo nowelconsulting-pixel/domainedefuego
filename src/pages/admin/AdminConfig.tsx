@@ -4,51 +4,15 @@ import { useConfig } from '../../hooks/useData';
 import type { Config } from '../../types';
 import { supabase } from '../../lib/supabase';
 
-interface MaintenanceConfig {
-  enabled: boolean;
-  title: string;
-  subtitle: string;
-  show_don_btn: boolean;
-  preview_code: string;
-}
+type MaintenanceConfig = NonNullable<Config['maintenance']>;
 
-const DEFAULT_PREVIEW_CODE = 'Bigdodo33$';
-
-function loadMaintenanceConfig(): MaintenanceConfig {
-  if (localStorage.getItem('site_maintenance') === null) {
-    localStorage.setItem(
-      'site_maintenance',
-      import.meta.env.VITE_MAINTENANCE_MODE === 'true' ? 'true' : 'false',
-    );
-  }
-  const enabled = localStorage.getItem('site_maintenance') === 'true';
-  try {
-    const raw = localStorage.getItem('maintenance_config');
-    if (raw) {
-      const s = JSON.parse(raw) as Partial<MaintenanceConfig>;
-      return {
-        enabled,
-        title:        s.title        || 'Le site arrive bientôt 🐾',
-        subtitle:     s.subtitle     || "Nous préparons actuellement la plateforme d'adoption.\nMerci pour votre patience.",
-        show_don_btn: s.show_don_btn ?? true,
-        preview_code: s.preview_code || DEFAULT_PREVIEW_CODE,
-      };
-    }
-  } catch { /**/ }
-  return {
-    enabled,
-    title: 'Le site arrive bientôt 🐾',
-    subtitle: "Nous préparons actuellement la plateforme d'adoption.\nMerci pour votre patience.",
-    show_don_btn: true,
-    preview_code: DEFAULT_PREVIEW_CODE,
-  };
-}
-
-function saveMaintenanceConfig(mc: MaintenanceConfig) {
-  localStorage.setItem('maintenance_config', JSON.stringify(mc));
-  localStorage.setItem('site_maintenance', mc.enabled ? 'true' : 'false');
-  window.dispatchEvent(new Event('maintenance_changed'));
-}
+const DEFAULT_MAINTENANCE: MaintenanceConfig = {
+  enabled: false,
+  title: 'Le site arrive bientôt 🐾',
+  subtitle: "Nous préparons actuellement la plateforme d'adoption.\nMerci pour votre patience.",
+  show_don_btn: true,
+  preview_code: 'Bigdodo33$',
+};
 
 // ─── Field defined OUTSIDE component to prevent remount on re-render ─────────
 interface FieldProps {
@@ -77,7 +41,6 @@ export default function AdminConfig() {
   const { data: config, save } = useConfig();
   const [form, setForm] = useState<Config | null>(null);
   const [saved, setSaved] = useState(false);
-  const [mc, setMc] = useState<MaintenanceConfig>(loadMaintenanceConfig);
   const [mcSaved, setMcSaved] = useState(false);
 
   useEffect(() => {
@@ -88,11 +51,17 @@ export default function AdminConfig() {
           ...config.chiffres,
           custom: config.chiffres.custom ?? [],
         },
+        maintenance: { ...DEFAULT_MAINTENANCE, ...config.maintenance },
       });
     }
   }, [config]);
 
   if (!form) return <div className="p-8 text-gray-400">Chargement...</div>;
+
+  const mc = form.maintenance ?? DEFAULT_MAINTENANCE;
+  const setMc = (patch: Partial<MaintenanceConfig>) => {
+    setForm(prev => prev && { ...prev, maintenance: { ...(prev.maintenance ?? DEFAULT_MAINTENANCE), ...patch } });
+  };
 
   const set = (path: string, value: string | number) => {
     setForm(prev => {
@@ -141,15 +110,26 @@ export default function AdminConfig() {
 
   const handleSave = async () => {
     if (!form) return;
-    await save(form);
+    const { error: saveError } = await save(form);
+    if (saveError) { alert(`L'enregistrement a échoué (base de données) : ${saveError.message}`); return; }
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
 
-  const handleSaveMaintenance = () => {
-    saveMaintenanceConfig(mc);
+  const handleSaveMaintenance = async () => {
+    if (!form) return;
+    const { error: saveError } = await save(form);
+    if (saveError) { alert(`L'enregistrement a échoué (base de données) : ${saveError.message}`); return; }
     setMcSaved(true);
     setTimeout(() => setMcSaved(false), 2000);
+  };
+
+  const toggleMaintenanceEnabled = async () => {
+    if (!form) return;
+    const updated = { ...form, maintenance: { ...mc, enabled: !mc.enabled } };
+    setForm(updated);
+    const { error: saveError } = await save(updated);
+    if (saveError) alert(`L'activation/désactivation a échoué (base de données) : ${saveError.message}`);
   };
 
   const exportConfig = () => {
@@ -326,11 +306,7 @@ export default function AdminConfig() {
             </div>
             <button
               type="button"
-              onClick={() => {
-                const updated = { ...mc, enabled: !mc.enabled };
-                setMc(updated);
-                saveMaintenanceConfig(updated); // immediate effect — no need to click Enregistrer
-              }}
+              onClick={toggleMaintenanceEnabled}
               className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${mc.enabled ? 'bg-amber-500' : 'bg-gray-200'}`}
             >
               <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ${mc.enabled ? 'translate-x-5' : 'translate-x-0'}`} />
@@ -346,25 +322,25 @@ export default function AdminConfig() {
           <div>
             <label className="form-label">Titre de la page</label>
             <input className="form-input" value={mc.title}
-              onChange={e => setMc(p => ({ ...p, title: e.target.value }))}
+              onChange={e => setMc({ title: e.target.value })}
               placeholder="Le site arrive bientôt 🐾" />
           </div>
           <div>
             <label className="form-label">Sous-titre</label>
             <textarea className="form-input" rows={3} value={mc.subtitle}
-              onChange={e => setMc(p => ({ ...p, subtitle: e.target.value }))}
+              onChange={e => setMc({ subtitle: e.target.value })}
               placeholder="Nous préparons actuellement la plateforme..." />
           </div>
           <div className="flex items-center gap-3">
             <input type="checkbox" id="show_don_btn" checked={mc.show_don_btn}
-              onChange={e => setMc(p => ({ ...p, show_don_btn: e.target.checked }))}
+              onChange={e => setMc({ show_don_btn: e.target.checked })}
               className="rounded border-gray-300" />
             <label htmlFor="show_don_btn" className="text-sm text-gray-700">Afficher le bouton "Faire un don"</label>
           </div>
           <div>
             <label className="form-label">Code d'accès preview</label>
             <input className="form-input" type="text" value={mc.preview_code}
-              onChange={e => setMc(p => ({ ...p, preview_code: e.target.value }))}
+              onChange={e => setMc({ preview_code: e.target.value })}
               placeholder="Ex: MonCode2024!" />
             <p className="text-xs text-gray-400 mt-1">Ce code permet à certaines personnes d'accéder au site même en mode maintenance.</p>
           </div>

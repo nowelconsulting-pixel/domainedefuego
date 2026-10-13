@@ -102,7 +102,12 @@ export function useConfig() {
 
   const save = async (newConfig: Config) => {
     setData(newConfig);
-    await supabase.from('config').update({ data: newConfig }).eq('id', 1);
+    const { error: saveError } = await supabase.from('config').update({ data: newConfig }).eq('id', 1);
+    if (saveError) {
+      const { data: row } = await supabase.from('config').select('data').eq('id', 1).single();
+      if (row) setData(row.data as Config);
+    }
+    return { error: saveError };
   };
 
   return { data, loading, error, save };

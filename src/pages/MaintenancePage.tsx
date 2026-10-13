@@ -4,17 +4,9 @@ import { Mail } from 'lucide-react';
 import { useConfig } from '../hooks/useData';
 import { FacebookIcon, InstagramIcon, LinkedInIcon } from '../components/SocialIcons';
 
-function loadMaintenanceContent() {
-  try {
-    const raw = localStorage.getItem('maintenance_config');
-    if (raw) return JSON.parse(raw) as { title?: string; subtitle?: string; show_don_btn?: boolean; preview_code?: string };
-  } catch { /**/ }
-  return {};
-}
-
 export default function MaintenancePage() {
   const { data: config } = useConfig();
-  const mc = loadMaintenanceContent();
+  const mc: Partial<NonNullable<typeof config>['maintenance']> = config?.maintenance ?? {};
   const secretCode = mc.preview_code || 'Bigdodo33$';
   const [showInput, setShowInput] = useState(false);
   const [code, setCode] = useState('');

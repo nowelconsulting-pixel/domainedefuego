@@ -124,7 +124,14 @@ export function useCandidatures() {
 
   const update = useCallback((id: string, patch: Partial<Candidature>) => {
     setCandidatures(prev => prev.map(c => c.id === id ? { ...c, ...patch } : c));
-    supabase.from('soumissions').update(patchToRow(patch)).eq('id', id);
+    supabase.from('soumissions').update(patchToRow(patch)).eq('id', id).then(({ error }) => {
+      if (error) {
+        console.error('Mise à jour échouée en base :', error.message);
+        alert('La modification a échoué (base de données). Elle risque de ne pas être conservée.');
+        supabase.from('soumissions').select('*').order('created_at', { ascending: false })
+          .then(({ data }) => { if (data) setCandidatures((data as SoumissionRow[]).map(rowToCandidat)); });
+      }
+    });
   }, []);
 
   const remove = useCallback((id: string) => {

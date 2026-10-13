@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Save, Download, Upload, CheckCircle2, Plus, Trash2, Construction } from 'lucide-react';
-import { useConfig } from '../../hooks/useData';
+import { useConfig, useAnimaux } from '../../hooks/useData';
 import type { Config } from '../../types';
 import { supabase } from '../../lib/supabase';
 
@@ -39,6 +39,8 @@ function Field({ label, value, type = 'text', placeholder, onChange }: FieldProp
 
 export default function AdminConfig() {
   const { data: config, save } = useConfig();
+  const { data: animaux } = useAnimaux();
+  const animauxAdoptesCount = animaux?.filter(a => a.statut === 'Adopté').length ?? 0;
   const [form, setForm] = useState<Config | null>(null);
   const [saved, setSaved] = useState(false);
   const [mcSaved, setMcSaved] = useState(false);
@@ -108,9 +110,17 @@ export default function AdminConfig() {
     });
   };
 
+  // "Animaux adoptés" est calculé en direct depuis le sous-menu Animaux —
+  // on écrase systématiquement la valeur avant d'écrire en base, pour que la
+  // config ne garde jamais une valeur figée désynchronisée de la réalité.
+  const withLiveCounts = (f: Config): Config => ({
+    ...f,
+    chiffres: { ...f.chiffres, animaux_adoptes: animauxAdoptesCount },
+  });
+
   const handleSave = async () => {
     if (!form) return;
-    const { error: saveError } = await save(form);
+    const { error: saveError } = await save(withLiveCounts(form));
     if (saveError) { alert(`L'enregistrement a échoué (base de données) : ${saveError.message}`); return; }
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
@@ -118,7 +128,7 @@ export default function AdminConfig() {
 
   const handleSaveMaintenance = async () => {
     if (!form) return;
-    const { error: saveError } = await save(form);
+    const { error: saveError } = await save(withLiveCounts(form));
     if (saveError) { alert(`L'enregistrement a échoué (base de données) : ${saveError.message}`); return; }
     setMcSaved(true);
     setTimeout(() => setMcSaved(false), 2000);
@@ -128,7 +138,7 @@ export default function AdminConfig() {
     if (!form) return;
     const updated = { ...form, maintenance: { ...mc, enabled: !mc.enabled } };
     setForm(updated);
-    const { error: saveError } = await save(updated);
+    const { error: saveError } = await save(withLiveCounts(updated));
     if (saveError) alert(`L'activation/désactivation a échoué (base de données) : ${saveError.message}`);
   };
 
@@ -232,8 +242,13 @@ export default function AdminConfig() {
 
           <div className="space-y-4">
             <h3 className="text-sm font-medium text-gray-600">Indicateurs fixes</h3>
-            <Field label="Animaux adoptés" value={form.chiffres.animaux_adoptes} type="number"
-              onChange={v => set('chiffres.animaux_adoptes', v)} />
+            <div>
+              <label className="form-label">Animaux adoptés</label>
+              <div className="form-input bg-gray-50 text-gray-500 flex items-center">{animauxAdoptesCount}</div>
+              <p className="text-xs text-gray-400 mt-1">
+                Calculé automatiquement depuis le sous-menu Animaux (statut "Adopté") — non modifiable ici.
+              </p>
+            </div>
             <Field label="Familles d'accueil actives" value={form.chiffres.familles_accueil} type="number"
               onChange={v => set('chiffres.familles_accueil', v)} />
             <Field label="Années d'existence" value={form.chiffres.annees_existence} type="number"

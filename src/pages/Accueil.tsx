@@ -120,8 +120,9 @@ export default function Accueil() {
       {/* STATISTIQUES */}
       {(pc.show_stats !== false) && config && (() => {
         const sg = (plural: string, singular: string) => ({ label: plural, singular });
+        const animauxAdoptesCount = animaux?.filter(a => a.statut === 'Adopté').length ?? 0;
         const items = [
-          ...(config.chiffres.animaux_adoptes  ? [{ value: config.chiffres.animaux_adoptes,  ...sg('animaux adoptés',    'animal adopté') }]   : []),
+          ...(animauxAdoptesCount              ? [{ value: animauxAdoptesCount,              ...sg('animaux adoptés',    'animal adopté') }]   : []),
           ...(config.chiffres.familles_accueil ? [{ value: config.chiffres.familles_accueil, ...sg("familles d'accueil", "famille d'accueil") }] : []),
           ...(config.chiffres.annees_existence ? [{ value: config.chiffres.annees_existence, ...sg("ans d'engagement",   "an d'engagement") }]   : []),
           ...(config.chiffres.custom ?? []).filter(c => c.value && c.label).map(c => ({

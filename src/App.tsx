@@ -18,6 +18,7 @@ import ArticleDetail from './pages/ArticleDetail';
 import CustomPage from './pages/CustomPage';
 import FormulairePage from './pages/FormulairePage';
 import DevenirMembre from './pages/DevenirMembre';
+import GardeADomicile from './pages/GardeADomicile';
 
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminLayout from './pages/admin/AdminLayout';
@@ -83,6 +84,9 @@ function AppContent() {
     <>
       <ScrollToTop />
       <Routes>
+        {/* Landing commerciale autonome — hors navbar/footer du site */}
+        <Route path="/garde-a-domicile" element={<GardeADomicile />} />
+
         {/* Public site */}
         <Route element={<Layout />}>
           <Route path="/"                   element={<Accueil />} />

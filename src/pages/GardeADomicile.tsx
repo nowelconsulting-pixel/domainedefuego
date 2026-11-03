@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import './garde-a-domicile.css';
 
 // Landing commerciale autonome (hors Layout) : header et footer propres.
-const CALENDLY_URL = 'https://calendly.com/domainedefuego/30min?month=2026-11';
+const CALENDLY_URL = 'https://calendly.com/domainedefuego/30min';
 
 const PAGE_TITLE = 'Visites à domicile pour chats & NAC — Domaine de Fuego';
 const PAGE_DESCRIPTION =

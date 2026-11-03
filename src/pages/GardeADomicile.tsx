@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import './garde-a-domicile.css';
 
 // Landing commerciale autonome (hors Layout) : header et footer propres.
-const CALENDLY_URL = 'https://calendly.com/domainedefuego/30min';
+const CALENDLY_URL = 'https://calendly.com/domainedefuego/30min?month=2026-11';
 
 const PAGE_TITLE = 'Visites à domicile pour chats & NAC — Domaine de Fuego';
 const PAGE_DESCRIPTION =
@@ -224,30 +224,12 @@ export default function GardeADomicile() {
           </div>
         </section>
 
-        {/* ═══ 2. POURQUOI À DOMICILE ═══ */}
-        <section className="why">
-          <div className="wrap why-grid">
-            <div>
-              <p className="eyebrow">Pourquoi la visite à domicile</p>
-              <p className="big-quote">Chez lui, il connaît chaque recoin. <span>Pourquoi lui faire quitter ses repères&nbsp;?</span></p>
-              <p className="lead">Un chat est attaché à son territoire, et beaucoup de petits animaux supportent mal d'être déplacés. Avec la visite à domicile, c'est nous qui nous déplaçons&nbsp;: lui ne change rien à sa vie.</p>
-              <div className="situ"><span>Vacances</span><span>Week-end</span><span>Déplacement professionnel</span><span>Quelques jours d'absence</span><span>Indisponibilité ponctuelle</span></div>
-            </div>
-            <div className="keeps">
-              <div className="keep"><i><Icon>{HOME}</Icon></i><h3>Il garde son environnement</h3><p>Son panier, ses odeurs, ses cachettes&nbsp;: tout reste à sa place.</p></div>
-              <div className="keep"><i><Icon><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></Icon></i><h3>Il garde ses habitudes</h3><p>Ses repas, ses moments de jeu, son rythme&nbsp;: on suit vos consignes.</p></div>
-              <div className="keep"><i><Icon>{HEART}</Icon></i><h3>Il n'est pas seul</h3><p>Une présence, des interactions, et un œil attentif sur son état.</p></div>
-              <div className="keep you"><i><Icon>{CAMERA}</Icon></i><h3>Et vous, vous avez des nouvelles</h3><p>Après chaque passage, avec des photos quand c'est possible.</p></div>
-            </div>
-          </div>
-        </section>
-
-        {/* ═══ 3. CE QUE NOUS FAISONS ═══ */}
+        {/* ═══ 2. LA VISITE À DOMICILE ═══ */}
         <section className="visit">
           <div className="wrap">
             <div className="visit-head">
-              <div><p className="eyebrow">Pendant chaque visite</p><h2 className="h2">Tout ce dont il a besoin,<br />comme si vous étiez là.</h2></div>
-              <p className="lead">Chaque visite suit les consignes et les habitudes que vous nous avez transmises.</p>
+              <div><p className="eyebrow">La visite à domicile</p><h2 className="h2">Tout ce dont il a besoin,<br />sans quitter ses repères.</h2></div>
+              <p className="lead">Un chat est attaché à son territoire, et beaucoup de petits animaux supportent mal d'être déplacés. Ici, c'est nous qui venons&nbsp;: chaque visite suit ses habitudes et vos consignes.</p>
             </div>
             <div className="sheet">
               <div className="col">
@@ -287,51 +269,37 @@ export default function GardeADomicile() {
                 </ul>
               </div>
             </div>
-            <div className="nac-note"><i><Icon>{PAW}</Icon></i><p><b>Pour les NAC&nbsp;:</b> soins courants adaptés à l'espèce et à ses besoins.</p></div>
-          </div>
-        </section>
-
-        {/* ═══ 4. POUR QUELS ANIMAUX ═══ */}
-        <section className="animals">
-          <div className="wrap an-grid">
-            <div>
-              <p className="eyebrow">Pour qui</p>
-              <h2 className="h2">Chats et NAC&nbsp;: chacun ses besoins.</h2>
-              <p className="lead">Le service s'adresse avant tout aux chats et aux petits animaux de compagnie, ceux qui sont bien mieux chez eux qu'ailleurs.</p>
-            </div>
-            <div>
-              <div className="tags">
-                <span className="main">Chats <em>1 ou plusieurs</em></span>
-                <span>Lapins</span><span>Cochons d'Inde</span><span>Hamsters</span><span>Rats</span><span>Oiseaux</span><span>Certains reptiles</span>
+            <div className="who-strip">
+              <span className="ws-label">Pour qui</span>
+              <div className="ws-tags">
+                <span className="main">Chats</span><span>Lapins</span><span>Cochons d'Inde</span><span>Hamsters</span>
+                <span>Rats</span><span>Oiseaux</span><span>Certains reptiles</span>
                 <span className="other">Autres petits animaux selon les besoins</span>
               </div>
-              <p className="study"><Icon width="2.2"><circle cx="12" cy="12" r="9" /><path d="M12 16v-4M12 8h.01" /></Icon><span><b>NAC&nbsp;: chaque demande est étudiée individuellement</b> avant la prise en charge, pour être sûr de bien répondre à ses besoins.</span></p>
+              <p className="ws-note"><b>NAC&nbsp;:</b> soins courants adaptés à l'espèce. Chaque demande est étudiée individuellement avant la prise en charge.</p>
             </div>
           </div>
         </section>
 
-        {/* ═══ 5. COMMENT ÇA MARCHE ═══ */}
+        {/* ═══ 3. COMMENT ÇA MARCHE ═══ */}
         <section className="how" id="comment">
           <div className="wrap">
             <div className="how-head">
               <div><p className="eyebrow amber">Comment ça marche</p><h2 className="h2">De votre demande à votre départ.</h2></div>
-              <p>Tout commence par un échange de 15 minutes pour faire le point sur votre animal et vos dates.</p>
             </div>
             <ol className="steps">
               <li className="step"><div className="dot">1</div><div><h3>Vous nous contactez</h3><p>Un échange de 15 minutes&nbsp;: vos dates d'absence, votre commune, le nombre d'animaux, leurs besoins.</p></div></li>
               <li className="step"><div className="dot">2</div><div><h3>Nous faisons connaissance</h3><p>Avant la première prestation, une rencontre peut être organisée chez vous pour découvrir votre animal et noter vos consignes.</p></div></li>
-              <li className="step"><div className="dot">3</div><div><h3>Nous organisons les visites</h3><p>Dates, fréquence, consignes, soins éventuels et accès au domicile&nbsp;: tout est défini ensemble.</p></div></li>
-              <li className="step"><div className="dot">4</div><div><h3>Nous prenons soin de lui</h3><p>Chaque visite suit ses habitudes et vos consignes. Vous recevez des nouvelles après chaque passage.</p></div></li>
-              <li className="step"><div className="dot">5</div><div><h3>Vous partez sereinement</h3><p>Il reste chez lui pendant toute votre absence.</p></div></li>
+              <li className="step"><div className="dot">3</div><div><h3>Nous organisons les visites</h3><p>Dates, fréquence, soins éventuels et accès au domicile&nbsp;: tout est défini ensemble.</p></div></li>
+              <li className="step"><div className="dot">4</div><div><h3>Vous partez sereinement</h3><p>Il reste chez lui, ses habitudes sont respectées, et vous recevez de ses nouvelles après chaque passage.</p></div></li>
             </ol>
             <div className="how-cta">
               <Cta>Demander une visite</Cta>
-              <span>Première étape&nbsp;: un échange de 15 minutes.</span>
             </div>
           </div>
         </section>
 
-        {/* ═══ 6. TARIFS ═══ */}
+        {/* ═══ 4. TARIFS ═══ */}
         <section className="prices" id="tarifs">
           <div className="wrap">
             <div className="prices-head">
@@ -367,51 +335,24 @@ export default function GardeADomicile() {
           </div>
         </section>
 
-        {/* ═══ 7. RÉASSURANCE ═══ */}
-        <section className="trust">
-          <div className="wrap trust-grid">
-            <div className="trust-side">
-              <p className="eyebrow">Pendant votre absence</p>
-              <h2 className="h2">Vous savez qui vient, ce qui est fait, et comment il va.</h2>
-              <p className="lead">Confier ses clés et son animal demande de la confiance. Chaque garde est préparée avec vous, puis suivie visite après visite.</p>
-              <div className="sign"><img src="/logo_transparent.png" alt="Domaine de Fuego" /><span>Un service de visites à domicile proposé par Domaine de Fuego.</span></div>
-            </div>
-            <div>
-              <div className="row"><i><Icon><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="m16 11 2 2 4-4" /></Icon></i><h3>On fait connaissance avant de commencer</h3><p>Un premier échange, puis une rencontre chez vous si besoin, pour découvrir votre animal dans son environnement.</p></div>
-              <div className="row"><i><Icon><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6M8 13h8M8 17h5" /></Icon></i><h3>Vos consignes, suivies à la lettre</h3><p>Repas, habitudes, soins éventuels&nbsp;: chaque visite se déroule comme vous l'avez demandé.</p></div>
-              <div className="row"><i><Icon><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></Icon></i><h3>Un œil attentif à chaque passage</h3><p>Son comportement et son état général sont observés à chaque visite.</p></div>
-              <div className="row"><i><Icon><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></Icon></i><h3>Des nouvelles après chaque visite</h3><p>Vous savez comment il va, avec des photos lorsque c'est possible.</p></div>
-              <div className="row"><i><Icon><circle cx="7.5" cy="15.5" r="5.5" /><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3" /></Icon></i><h3>L'accès à votre domicile, défini ensemble</h3><p>Les modalités d'accès sont convenues avec vous lors de l'organisation des visites.</p></div>
-            </div>
-          </div>
-        </section>
-
-        {/* ═══ 8. FAQ ═══ */}
+        {/* ═══ 5. FAQ ═══ */}
         <section className="faq" id="faq">
           <div className="wrap faq-grid">
             <div className="faq-side">
               <p className="eyebrow">Questions fréquentes</p>
               <h2 className="h2">Avant de demander une visite.</h2>
-              <p className="lead">Les réponses aux questions que vous vous posez sûrement.</p>
-              <div className="ask"><b>Votre question n'est pas là&nbsp;?</b><p>Posez-la lors de l'échange de 15 minutes.</p><Cta className="btn btn-line" arrow={false}>Demander une visite</Cta></div>
             </div>
             <div>
-              <Faq open q={'Quels animaux pouvez-vous garder à domicile ?'}>Principalement les chats et les NAC&nbsp;: lapins, cochons d'Inde, hamsters, rats, oiseaux, certains reptiles et d'autres petits animaux de compagnie selon leurs besoins. Pour les NAC, chaque demande est étudiée individuellement avant la prise en charge.</Faq>
-              <Faq q={'Dans quelle zone intervenez-vous ?'}>Dans un rayon de 15 km autour d'Osny ou d'Hénonville.</Faq>
-              <Faq q={'Comment se passe une première demande ?'}>Tout commence par un échange de 15 minutes&nbsp;: vos dates d'absence, votre commune, le nombre d'animaux et leurs besoins. Avant la première prestation, une rencontre peut ensuite être organisée chez vous pour découvrir votre animal, son environnement et recueillir vos consignes.</Faq>
-              <Faq q={'Combien de temps dure une visite ?'}>Pour un chat, vous avez le choix entre une visite de 30 minutes et une visite d'1 heure. À partir de 2 chats, la visite dure 1 heure. Pour les NAC, la visite est définie lors de l'étude de votre demande.</Faq>
+              <Faq open q={'Dans quelle zone intervenez-vous ?'}>Dans un rayon de 15 km autour d'Osny ou d'Hénonville.</Faq>
               <Faq q={'Puis-je demander plusieurs visites par jour ?'}>Les tarifs affichés correspondent à une visite par jour. La fréquence des visites est définie avec vous lors de l'organisation&nbsp;: parlez-nous de votre besoin dès le premier échange.</Faq>
-              <Faq q="Mon animal a des besoins particuliers ou un traitement.">Signalez-le dès le premier échange&nbsp;: ses besoins et vos consignes sont pris en compte dans l'organisation des visites. Les soins sur ordonnance vétérinaire sont facturés 2&nbsp;€ par jour.</Faq>
-              <Faq q={'Est-ce que je reçois des nouvelles ?'}>Oui, après chaque passage, avec des photos lorsque c'est possible.</Faq>
               <Faq q={'Comment fonctionne le tarif week-end ?'}>Le tarif week-end s'applique au samedi, au dimanche et aux jours fériés. Par exemple, 35&nbsp;€ pour un chat avec une visite de 30 minutes. Le détail est confirmé lors de notre échange.</Faq>
-              <Faq q={'Et si je fais ma demande à la dernière minute ?'}>Contactez-nous quand même&nbsp;: un supplément peut s'appliquer aux demandes de dernière minute.</Faq>
-              <Faq q={'Pouvez-vous aussi relever le courrier ou arroser les plantes ?'}>Oui, en complément des visites&nbsp;: relevé du courrier 10&nbsp;€, arrosage des plantes 10&nbsp;€, nettoyage ou sortie des poubelles 30&nbsp;€.</Faq>
-              <Faq q={'Comment réserver ?'}>Cliquez sur «&nbsp;Demander une visite&nbsp;» pour prendre rendez-vous pour un échange de 15 minutes. Nous organisons ensuite les visites avec vous.</Faq>
+              <Faq q="Mon animal a des besoins particuliers ou un traitement.">Signalez-le dès le premier échange&nbsp;: ses besoins et vos consignes sont pris en compte dans l'organisation des visites. Les soins sur ordonnance vétérinaire sont facturés 2&nbsp;€ par jour.</Faq>
+              <Faq q={'Comment se passe l\'accès à mon domicile ?'}>Les modalités d'accès sont définies avec vous lors de l'organisation des visites, avant la première prestation.</Faq>
             </div>
           </div>
         </section>
 
-        {/* ═══ 9. CTA FINAL ═══ */}
+        {/* ═══ 6. CTA FINAL ═══ */}
         <section className="final" id="reserver" ref={finalRef}>
           <div className="wrap">
             <div className="final-box">
@@ -434,22 +375,10 @@ export default function GardeADomicile() {
       </main>
 
       <footer>
-        <div className="wrap foot">
-          <div><img src="/logo_transparent.png" alt="Domaine de Fuego" /><p style={{ marginTop: 14 }}>Visites à domicile pour chats et NAC, dans un rayon de 15&nbsp;km autour d'Osny ou d'Hénonville.</p></div>
-          <div>
-            <h5>Le service</h5>
-            <ul>
-              <li>Lorem ipsum dolor sit amet</li>
-              <li>Lorem ipsum · SIREN lorem ipsum</li>
-              <li>Contact&nbsp;: <a href="mailto:contact@domainedefuego.fr">contact@domainedefuego.fr</a></li>
-            </ul>
-          </div>
-          <div>
-            <h5>Informations</h5>
-            <ul>
-              <li><Link to="/mentions-legales">Mentions légales</Link></li>
-            </ul>
-          </div>
+        <div className="wrap foot-simple">
+          <img src="/logo_transparent.png" alt="Domaine de Fuego" />
+          <p>Visites à domicile pour chats et NAC, dans un rayon de 15&nbsp;km autour d'Osny ou d'Hénonville.</p>
+          <Link to="/mentions-legales-sas">Mentions légales</Link>
         </div>
         <div className="foot-bottom"><div className="wrap"><span>© {new Date().getFullYear()} Domaine de Fuego · Visites à domicile</span></div></div>
       </footer>

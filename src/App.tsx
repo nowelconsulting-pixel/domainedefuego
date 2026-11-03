@@ -19,6 +19,7 @@ import CustomPage from './pages/CustomPage';
 import FormulairePage from './pages/FormulairePage';
 import DevenirMembre from './pages/DevenirMembre';
 import GardeADomicile from './pages/GardeADomicile';
+import MentionsLegalesSas from './pages/MentionsLegalesSas';
 
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminLayout from './pages/admin/AdminLayout';
@@ -86,6 +87,7 @@ function AppContent() {
       <Routes>
         {/* Landing commerciale autonome — hors navbar/footer du site */}
         <Route path="/garde-a-domicile" element={<GardeADomicile />} />
+        <Route path="/mentions-legales-sas" element={<MentionsLegalesSas />} />
 
         {/* Public site */}
         <Route element={<Layout />}>

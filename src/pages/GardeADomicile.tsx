@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import ZoneMap from '../components/ZoneMap';
 import './garde-a-domicile.css';
 
 // Landing commerciale autonome (hors Layout) : header et footer propres.
@@ -180,7 +181,7 @@ export default function GardeADomicile() {
               <div className="pill"><i><Icon width="2.4">{HOME}</Icon></i>Visites à domicile pour chats &amp; NAC</div>
               <h1 className="h1">Votre animal reste <span className="hl">chez lui.</span><span className="soft">Nous venons prendre soin de lui.</span></h1>
               <p className="lead">Vacances, week-end, déplacement&nbsp;: pendant votre absence, il garde son environnement, ses repères et ses habitudes. Vous partez l'esprit tranquille.</p>
-              <div className="zone"><i><Pin /></i>À 15 km autour d'Osny ou d'Hénonville</div>
+              <a href="#zone" className="zone"><i><Pin /></i>À 15 km autour d'Osny ou d'Hénonville</a>
               <div className="hero-cta">
                 <Cta>Demander une visite</Cta>
                 <a href="#tarifs" className="link">Voir les tarifs <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M12 5v14M6 13l6 6 6-6" /></svg></a>
@@ -307,7 +308,7 @@ export default function GardeADomicile() {
               <h2 className="h2">Des tarifs clairs, selon votre animal.</h2>
               <p className="lead">Une visite par jour&nbsp;: tarifs à la journée, le week-end et à la semaine.</p>
             </div>
-            <div className="zone-chip"><span><Pin />Zone&nbsp;: 15 km autour d'Osny ou d'Hénonville</span></div>
+            <div className="zone-chip"><a href="#zone"><Pin />Zone&nbsp;: 15 km autour d'Osny ou d'Hénonville</a></div>
 
             <div className="cards">
               <PriceCard who="1 chat" icon={CAT} dur="Visite de 30 min" day={18} weekend={35} week={120} />
@@ -332,6 +333,14 @@ export default function GardeADomicile() {
                 <div><span>Demande de dernière minute</span><b className="soft">Supplément possible</b></div>
               </div>
             </div>
+
+            <div className="zone-block" id="zone">
+              <ZoneMap calendlyUrl={CALENDLY_URL}>
+                <p className="eyebrow">Zone d'intervention</p>
+                <h3>Votre commune est-elle desservie&nbsp;?</h3>
+                <p>15 km autour d'Osny ou d'Hénonville. Tapez votre commune ou votre code postal.</p>
+              </ZoneMap>
+            </div>
           </div>
         </section>
 
@@ -343,7 +352,7 @@ export default function GardeADomicile() {
               <h2 className="h2">Avant de demander une visite.</h2>
             </div>
             <div>
-              <Faq open q={'Dans quelle zone intervenez-vous ?'}>Dans un rayon de 15 km autour d'Osny ou d'Hénonville.</Faq>
+              <Faq open q={'Dans quelle zone intervenez-vous ?'}>Dans un rayon de 15 km autour d'Osny ou d'Hénonville. Vérifiez votre commune <a href="#zone">sur la carte</a>.</Faq>
               <Faq q={'Puis-je demander plusieurs visites par jour ?'}>Les tarifs affichés correspondent à une visite par jour. La fréquence des visites est définie avec vous lors de l'organisation&nbsp;: parlez-nous de votre besoin dès le premier échange.</Faq>
               <Faq q={'Comment fonctionne le tarif week-end ?'}>Le tarif week-end s'applique au samedi, au dimanche et aux jours fériés. Par exemple, 35&nbsp;€ pour un chat avec une visite de 30 minutes. Le détail est confirmé lors de notre échange.</Faq>
               <Faq q="Mon animal a des besoins particuliers ou un traitement.">Signalez-le dès le premier échange&nbsp;: ses besoins et vos consignes sont pris en compte dans l'organisation des visites. Les soins sur ordonnance vétérinaire sont facturés 2&nbsp;€ par jour.</Faq>

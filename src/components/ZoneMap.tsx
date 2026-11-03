@@ -1,9 +1,10 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import type { KeyboardEvent, ReactNode } from 'react';
-import type { Circle, Map as LeafletMap, Marker } from 'leaflet';
+import type { Circle, Map as LeafletMap, Marker, Polyline } from 'leaflet';
 
 // Carte de la zone d'intervention + recherche de commune (API Géo de l'État).
-// Leaflet est chargé à la demande, quand la carte arrive à l'écran.
+// L'éligibilité se juge à la distance en voiture (itinéraire IGN Géoplateforme)
+// depuis le centre d'Osny ou d'Hénonville. Leaflet est chargé à la demande.
 
 type LeafletModule = typeof import('leaflet');
 
@@ -16,8 +17,10 @@ const CENTRES: Centre[] = [
 ];
 const RADIUS_KM = 15;
 const GREEN = '#4F7F6A';
+const AMBER = '#E2A94F';
 const GEO_API = 'https://geo.api.gouv.fr/communes';
 const FIELDS = 'fields=nom,code,codesPostaux,centre';
+const ROUTE_API = 'https://data.geopf.fr/navigation/itineraire';
 
 interface Commune {
   nom: string;
@@ -28,9 +31,46 @@ interface Commune {
 
 interface Suggestion { id: string; label: string; nom: string; lat: number; lng: number }
 
-interface Result { nom: string; lat: number; lng: number; distance: number; centre: Centre }
+interface Route { km: number; centre: Centre; coords: [number, number][] } // coords en [lat, lng]
+
+// route : undefined = calcul en cours, null = itinéraire indisponible
+interface Result { nom: string; lat: number; lng: number; route: Route | null | undefined }
 
 type Status = 'idle' | 'empty' | 'error';
+
+interface ItineraireResponse {
+  distance?: number;
+  geometry?: { type: string; coordinates: [number, number][] };
+}
+
+const formatKm = (km: number) => km.toLocaleString('fr-FR', { maximumFractionDigits: 1 });
+
+async function roadRoute(from: Centre, lat: number, lng: number, signal: AbortSignal): Promise<Route> {
+  const params = new URLSearchParams({
+    resource: 'bdtopo-osrm',
+    profile: 'car',
+    optimization: 'shortest',
+    start: `${from.lng},${from.lat}`,
+    end: `${lng},${lat}`,
+    distanceUnit: 'kilometer',
+    geometryFormat: 'geojson',
+    getSteps: 'false',
+  });
+  const res = await fetch(`${ROUTE_API}?${params.toString()}`, { signal });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = (await res.json()) as ItineraireResponse;
+  if (typeof data.distance !== 'number') throw new Error('Réponse d\'itinéraire inattendue');
+  const coords = (data.geometry?.coordinates ?? []).map(([x, y]): [number, number] => [y, x]);
+  return { km: data.distance, centre: from, coords };
+}
+
+// Distance en voiture jusqu'au plus proche des deux centres.
+async function nearestByRoad(lat: number, lng: number, signal: AbortSignal): Promise<Route> {
+  const settled = await Promise.allSettled(CENTRES.map(c => roadRoute(c, lat, lng, signal)));
+  const routes = settled.flatMap(s => (s.status === 'fulfilled' ? [s.value] : []));
+  if (!routes.length) throw new Error('Itinéraire indisponible');
+  return routes.reduce((best, cur) => (cur.km < best.km ? cur : best));
+}
 
 function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371;
@@ -75,6 +115,8 @@ export default function ZoneMap({ calendlyUrl, children }: { calendlyUrl: string
   const mapRef = useRef<LeafletMap | null>(null);
   const circlesRef = useRef<Map<string, Circle>>(new Map());
   const markerRef = useRef<Marker | null>(null);
+  const routeLineRef = useRef<Polyline | null>(null);
+  const routeAbortRef = useRef<AbortController | null>(null);
   const skipSearchRef = useRef(false);
 
   // ── Carte : chargement différé ────────────────────────────────────────────
@@ -92,10 +134,9 @@ export default function ZoneMap({ calendlyUrl, children }: { calendlyUrl: string
         leafletRef.current = L;
 
         const map = L.map(canvasRef.current, { scrollWheelZoom: false });
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-          subdomains: 'abcd',
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         }).addTo(map);
 
         // La vue doit exister avant d'ajouter les cercles : emprise calculée sans la carte.
@@ -135,9 +176,11 @@ export default function ZoneMap({ calendlyUrl, children }: { calendlyUrl: string
     return () => {
       cancelled = true;
       observer.disconnect();
+      routeAbortRef.current?.abort();
       mapRef.current?.remove();
       mapRef.current = null;
       markerRef.current = null;
+      routeLineRef.current = null;
       circles.clear();
     };
   }, []);
@@ -190,6 +233,8 @@ export default function ZoneMap({ calendlyUrl, children }: { calendlyUrl: string
     const L = leafletRef.current;
     const map = mapRef.current;
     if (!mapReady || !L || !map) return;
+    routeLineRef.current?.remove();
+    routeLineRef.current = null;
     if (!result) {
       markerRef.current?.remove();
       markerRef.current = null;
@@ -198,20 +243,37 @@ export default function ZoneMap({ calendlyUrl, children }: { calendlyUrl: string
     const icon = L.divIcon({ className: 'zm-pin', iconSize: [20, 20], iconAnchor: [10, 10] });
     if (markerRef.current) markerRef.current.setLatLng([result.lat, result.lng]);
     else markerRef.current = L.marker([result.lat, result.lng], { icon, keyboard: false }).addTo(map);
-    const circle = circlesRef.current.get(result.centre.nom);
+
     const bounds = L.latLngBounds([[result.lat, result.lng]]);
-    if (circle) bounds.extend(circle.getBounds());
+    if (result.route?.coords.length) {
+      routeLineRef.current = L.polyline(result.route.coords, { color: AMBER, weight: 4, opacity: 0.9, interactive: false }).addTo(map);
+      bounds.extend(routeLineRef.current.getBounds());
+    } else {
+      // Itinéraire en cours ou indisponible : on montre le cercle le plus proche.
+      const circle = circlesRef.current.get(result.route?.centre.nom ?? nearestCentre(result.lat, result.lng).centre.nom);
+      if (circle) bounds.extend(circle.getBounds());
+    }
     map.fitBounds(bounds, { padding: [24, 24] });
   }, [result, mapReady]);
 
   const choose = (s: Suggestion) => {
-    const { centre, distance } = nearestCentre(s.lat, s.lng);
     skipSearchRef.current = true;
     setQuery(s.label);
     setOpen(false);
     setActive(-1);
     setStatus('idle');
-    setResult({ nom: s.nom, lat: s.lat, lng: s.lng, distance, centre });
+    setResult({ nom: s.nom, lat: s.lat, lng: s.lng, route: undefined });
+
+    routeAbortRef.current?.abort();
+    const controller = new AbortController();
+    routeAbortRef.current = controller;
+    nearestByRoad(s.lat, s.lng, controller.signal)
+      .then(route => { if (!controller.signal.aborted) setResult({ nom: s.nom, lat: s.lat, lng: s.lng, route }); })
+      .catch((err: unknown) => {
+        if (controller.signal.aborted) return;
+        console.warn('Calcul d\'itinéraire indisponible', err);
+        setResult({ nom: s.nom, lat: s.lat, lng: s.lng, route: null });
+      });
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -256,7 +318,7 @@ export default function ZoneMap({ calendlyUrl, children }: { calendlyUrl: string
               aria-controls={listId}
               aria-activedescendant={showList && active >= 0 ? `${listId}-${active}` : undefined}
               value={query}
-              onChange={e => { setQuery(e.target.value); setResult(null); }}
+              onChange={e => { routeAbortRef.current?.abort(); setQuery(e.target.value); setResult(null); }}
               onKeyDown={onKeyDown}
               onFocus={() => { if (suggestions.length) setOpen(true); }}
               onBlur={() => setOpen(false)}
@@ -280,15 +342,24 @@ export default function ZoneMap({ calendlyUrl, children }: { calendlyUrl: string
         </div>
 
         <div className="zm-message" aria-live="polite">
-          {result && result.distance <= RADIUS_KM && (
+          {result && result.route === undefined && (
+            <p className="zm-info">Calcul de la distance en voiture…</p>
+          )}
+          {result?.route && result.route.km <= RADIUS_KM && (
             <div className="zm-ok">
-              <p>✓ <b>{result.nom}</b> est dans notre zone d'intervention.</p>
+              <p>✓ <b>{result.nom}</b> est dans notre zone d'intervention&nbsp;: environ <b>{formatKm(result.route.km)} km</b> en voiture depuis {result.route.centre.nom}.</p>
               {cta}
             </div>
           )}
-          {result && result.distance > RADIUS_KM && (
+          {result?.route && result.route.km > RADIUS_KM && (
             <div className="zm-out">
-              <p><b>{result.nom}</b> est à environ <b>{Math.max(1, Math.round(result.distance - RADIUS_KM))} km</b> à vol d'oiseau de notre zone. Contactez-nous&nbsp;: une intervention reste peut-être possible avec un supplément kilométrique.</p>
+              <p><b>{result.nom}</b> est à environ <b>{formatKm(result.route.km)} km</b> en voiture d'{result.route.centre.nom}, au-delà de notre zone de 15&nbsp;km. Contactez-nous&nbsp;: une intervention reste peut-être possible avec un supplément kilométrique.</p>
+              {cta}
+            </div>
+          )}
+          {result && result.route === null && (
+            <div className="zm-info">
+              <p>Le calcul de la distance en voiture est momentanément indisponible. Contactez-nous pour vérifier votre commune.</p>
               {cta}
             </div>
           )}
@@ -305,7 +376,7 @@ export default function ZoneMap({ calendlyUrl, children }: { calendlyUrl: string
         <div ref={canvasRef} className="zm-canvas" role="region" aria-label="Carte de la zone d'intervention : 15 km autour d'Osny et d'Hénonville">
           {mapFailed && <p className="zm-fallback">La carte n'a pas pu être chargée.</p>}
         </div>
-        <p className="zm-note">Distances indicatives, à vol d'oiseau.</p>
+        <p className="zm-note">Distances en voiture, depuis le centre des communes. Cercles de 15&nbsp;km indicatifs.</p>
       </div>
     </>
   );
